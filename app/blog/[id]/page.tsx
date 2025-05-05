@@ -1,42 +1,26 @@
 
 import React from 'react'
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import BlogDetails from './_components/blogDetails'
+import { PageHeader } from '@/Shared/PageHeader'
 
 
 const Page = (props: { params: { id: string } }) => {
     return (
-        <section className="container mt-24">
-            <div className="border-b border-black pb-5">
-                <div className='flex justify-between items-center'>
-                    <div>
-                        <h1>Blogs</h1>
-                    </div>
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem>
-                                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbLink href="/components">Components</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbPage>Blog Details</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </div>
-            </div>
-            <div>
+        <section>
+            <PageHeader
+                title="Blog PDetails"
+                items={[
+                    {
+                        label: "Home",
+                        href: "/",
+                    },
+                    {
+                        label: "blogs",
+                        href: "/blogs",
+                    },
+                ]}
+            />
+            <div className="container">
                 <BlogDetails id={props.params.id} />
             </div>
         </section>

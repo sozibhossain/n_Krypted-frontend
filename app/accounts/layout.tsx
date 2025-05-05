@@ -3,7 +3,6 @@ import type React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
-import PathTracker from "@/Shared/PathTracker";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import LogOutModal from "@/Shared/LogOutModal";
@@ -33,10 +32,6 @@ export default function AccountsLayout({
 
   return (
     <div className="container mt-28 min-h-screen">
-      <div className="border-b border-black pb-5">
-        <PathTracker />
-      </div>
-
       <div className="mt-5">
         <h1 className="text-3xl font-bold text-center mb-6">Accounts</h1>
 
@@ -82,17 +77,17 @@ export default function AccountsLayout({
               className="flex-1 min-w-[120px] text-center rounded-none text-red-500 py-2 px-4"
               onClick={() => setIsLogoutDialogOpen(true)}
             >
-              <div 
-              className="flex items-center justify-center w-full">
+              <div
+                className="flex items-center justify-center w-full">
                 <LogOut className="h-4 w-4 mr-1" /> Log out
               </div>
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
-        <LogOutModal 
-        isLogoutDialogOpen={isLogoutDialogOpen}  
-        setIsLogoutDialogOpen={setIsLogoutDialogOpen}
+        <LogOutModal
+          isLogoutDialogOpen={isLogoutDialogOpen}
+          setIsLogoutDialogOpen={setIsLogoutDialogOpen}
         />
 
         <div className="mt-6">{children}</div>

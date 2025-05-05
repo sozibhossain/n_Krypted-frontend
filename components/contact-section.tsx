@@ -6,7 +6,7 @@ import Link from "next/link"
 export function ContactSection() {
   return (
     <section className="mt-20 lg:mt-44">
-      <div className="container rounded-2xl text-white bg-[#c8b291] flex justify-between relative p-16">
+      <div className="container rounded-2xl text-white bg-[#c8b291] flex justify-between  p-16">
         <div className="-mt-52">
           <Image
             src={'/assets/women.png'}

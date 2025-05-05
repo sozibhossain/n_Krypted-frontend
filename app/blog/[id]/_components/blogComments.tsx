@@ -82,7 +82,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
     return (
         <div className="">
             <div className="mb-4">
-                <h1 className="text-2xl font-bold">Leave a comment</h1>
+                <h1 className="text-2xl font-bold text-white">Leave a comment</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input
@@ -111,7 +111,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                     required
                     className="w-full p-2 border rounded h-32"
                 />
-                <div className="flex items-clenter space-x-2">
+                <div className="flex items-clenter space-x-2 text-white">
                     <input
                         type="checkbox"
                         id="subscribe"
@@ -124,8 +124,8 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                         Save my name and email in this browser for the next time I comment.
                     </label>
                 </div>
-                <div className='flex justify-center items-center'>
-                    <button type="submit" className="bg-[#645949] text-white px-8 py-2 rounded">
+                <div className=''>
+                    <button type="submit" className="bg-white text-black px-8 py-2 rounded">
                         Submit
                     </button>
                 </div>

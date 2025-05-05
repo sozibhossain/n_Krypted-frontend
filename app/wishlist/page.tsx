@@ -1,7 +1,6 @@
 "use client";
 
 import { WishlistCard } from "@/components/card/wishlistCard";
-import PathTracker from "@/Shared/PathTracker";
 import React, { useEffect } from "react";
 import { Auction } from "./_components/type";
 import { useSession } from "next-auth/react";
@@ -92,9 +91,6 @@ function Page() {
   if (loading) {
     return (
       <section className="container mt-24">
-        <div className="border-b border-black pb-5">
-          <PathTracker />
-        </div>
         <div>Loading your wishlist...</div>
       </section>
     );
@@ -103,9 +99,6 @@ function Page() {
   if (error) {
     return (
       <section className="container mt-24">
-        <div className="border-b border-black pb-5">
-          <PathTracker />
-        </div>
         <div>
           Error: {(errorObject as Error)?.message || "Failed to load wishlist"}
         </div>
@@ -115,9 +108,6 @@ function Page() {
 
   return (
     <section className="container mt-24">
-      <div className="border-b border-black pb-5">
-        <PathTracker />
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
         {wishlistItems.length > 0 ? (

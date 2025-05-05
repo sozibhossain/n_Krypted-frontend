@@ -15,8 +15,8 @@ import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Auctions", href: "/auctions" },
-  { name: "About Us", href: "/about-us" },
+  { name: "About", href: "/about-us" },
+  { name: "Deals", href: "/auctions" },
   { name: "FAQ", href: "/faq" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
@@ -83,10 +83,9 @@ export function Navbar() {
 
   const getIconClasses = (href: string) => `
     relative border-2 rounded-full p-2 transition-colors
-    ${
-      pathname.startsWith(href)
-        ? "border-[#E6C475]"
-        : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
+    ${pathname.startsWith(href)
+      ? "border-[#E6C475]"
+      : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
     }
   `;
 
@@ -106,18 +105,24 @@ export function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b bg-[#817667] h-[83px] flex justify-center flex-col">
+    <header className="fixed top-0 z-50 w-full h-[83px] bg-[#212121] flex justify-center flex-col">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <div>
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/assets/logo.png"
-              alt="Logo"
-              width={46}
-              height={39}
-              className="h-[39px] w-[46px]"
-            />
+            <div className="">
+              <Image
+                src="/assets/logoheader.png"
+                alt="Logo"
+                width={100}
+                height={100}
+                className="h-[30px] w-[80px]"
+              />
+              <h1 className="font-benedict font-normal text-[20px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
+                Walk Throughz
+              </h1>
+            </div>
+
           </Link>
         </div>
 
@@ -129,9 +134,8 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[16px] font-medium text-white transition-colors hover:text-[#E4C072] ${
-                    isActive(link.href) ? "text-[#E4C072]" : ""
-                  }`}
+                  className={`text-[16px] font-medium text-white transition-colors hover:text-[#E4C072] ${isActive(link.href) ? "text-[#E4C072]" : ""
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -213,9 +217,8 @@ export function Navbar() {
                     <Link
                       key={link.name}
                       href={link.href}
-                      className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
-                        isActive(link.href) ? "text-foreground" : ""
-                      }`}
+                      className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive(link.href) ? "text-foreground" : ""
+                        }`}
                     >
                       {link.name}
                     </Link>
@@ -231,9 +234,8 @@ export function Navbar() {
                     <>
                       <Link
                         href="/wishlist"
-                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
-                          isActive("/wishlist") ? "text-foreground" : ""
-                        }`}
+                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/wishlist") ? "text-foreground" : ""
+                          }`}
                       >
                         Wishlist
                         {wishlists?.length > 0 && (
@@ -248,9 +250,8 @@ export function Navbar() {
                           await markNotificationsAsRead();
                           router.push("/notifications");
                         }}
-                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
-                          isActive("/notifications") ? "text-foreground" : ""
-                        }`}
+                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/notifications") ? "text-foreground" : ""
+                          }`}
                       >
                         Notifications
                         {typeof notificationCount === "number" && notificationCount > 0 && (
@@ -261,9 +262,8 @@ export function Navbar() {
                       </button>
                       <Link
                         href="/accounts"
-                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
-                          isActive("/accounts") ? "text-foreground" : ""
-                        }`}
+                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/accounts") ? "text-foreground" : ""
+                          }`}
                       >
                         My Account
                       </Link>

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
 import BlogComments from "./blogComments";
-import { Calendar } from "lucide-react";
+import { Calendar, MessageSquareMore } from "lucide-react";
 
 interface BlogDetailsProps {
   id?: string;
@@ -18,6 +18,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
   const params = useParams();
   const blogId = id || (params?.id as string);
 
+  console.log(blogId);
+
   useEffect(() => {
     if (!blogId) {
       setError("No blog ID provided");
@@ -29,7 +31,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/${blogId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/blog/${blogId}`
         );
 
         if (!response.ok) {
@@ -37,7 +39,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
         }
 
         const data = await response.json();
-        setBlog(data.data);
+        setBlog(data.blog);
+        console.log(data);
       } catch (err) {
         console.error("Failed to fetch blog:", err);
         setError(err instanceof Error ? err.message : "Failed to load blog");
@@ -85,18 +88,29 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     <div className="py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-black pb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white pb-4">
             {blog.title}
           </h1>
-          <div className="mt-2 text-[#645949] text-[18px] flex items-center gap-2">
-            <div>
-              <Calendar />
+          <div className="flex items-center space-x-4">
+            <div className="mt-2 text-white  text-[18px] flex items-center gap-2">
+              <div>
+                <Calendar />
+              </div>
+              {new Date(blog.updatedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </div>
-            {new Date(blog.updatedAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
+            <div className="flex items-center text-white gap-2">
+              <div>
+                <MessageSquareMore />
+
+              </div>
+              <div>
+                <p>120</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -111,7 +125,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           />
         </div>
 
-        <div className="text-[#444444] font-[16px] leading-[19.2px]">
+        <div className="text-white font-[16px] leading-[19.2px]">
           <div
             className="list-item list-none"
             dangerouslySetInnerHTML={{

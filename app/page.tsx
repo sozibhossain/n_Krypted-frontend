@@ -10,8 +10,8 @@ import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer"
 
 export default function Home() {
   return (
-    <div className="bg-[#212121]">
-      <CategoriesAndSearchBar/>
+    <div>
+      <CategoriesAndSearchBar />
       <HeroBanner />
       <LiveAuctionSection />
       <AuctionCategoriesSection />
