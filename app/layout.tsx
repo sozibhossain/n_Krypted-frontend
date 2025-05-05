@@ -5,6 +5,7 @@ import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
 import { Toaster } from "sonner";
 import { SocketProvider } from "@/Provider/SocketProvider";
+import { Navbar } from "@/components/navbar";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -23,10 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} antialiased`}>
+      <body className={`${roboto.className} antialiased bg-[#212121]`}>
         <AppProvider>
           <SocketProvider>
-            <LayoutShell>{children}</LayoutShell>
+            <LayoutShell>
+              <Navbar />
+              
+              {children}
+              </LayoutShell>
             <Toaster />
           </SocketProvider>
         </AppProvider>

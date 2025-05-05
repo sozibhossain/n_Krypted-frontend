@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { ChevronDown, ChevronUp,} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -37,13 +37,13 @@ const AccordionTrigger = React.forwardRef<
 
       <div className="ml-4">
         {/* Plus icon (visible when closed) */}
-        <div className="rounded-full bg-[#9f9f9f] h-[40px] w-[40px] flex items-center justify-center group-data-[state=open]:hidden">
-          <PlusIcon className="text-white" />
+        <div className=" flex items-center justify-center group-data-[state=open]:hidden">
+          <ChevronUp  className="text-white" />
         </div>
 
         {/* Minus icon (visible when open) */}
-        <div className="hidden rounded-full bg-[#645949] h-[40px] w-[40px] items-center justify-center group-data-[state=open]:flex">
-          <MinusIcon className="text-white" />
+        <div className="hidden items-center justify-center group-data-[state=open]:flex">
+          <ChevronDown className="text-white" />
         </div>
       </div>
     </AccordionPrimitive.Trigger>

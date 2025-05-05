@@ -9,11 +9,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import FooterCategories from "./footerCategories";
 
 export function Footer() {
   return (
-    <footer className="bg-[#635746] text-white pt-52 pb-8 -mt-36">
+    <footer className="bg-white text-white pt-[50px] pb-8">
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
         <div>
           <Link href="/">
@@ -25,30 +24,30 @@ export function Footer() {
               height={39}
             />
           </Link>
-          <p className="text-gray-300 mb-4">
+          <p className="text-[#4E4E4E] mb-4">
             Join us on social media for exclusive updates, auction previews, and
             special offers!
           </p>
           <div className="flex space-x-4">
-            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
               <Link href="">
-                <Facebook className="w-4 h-4" />
+                <Facebook className="w-4 h-4 text-black" />
               </Link>
             </div>
-            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
               <Link href="">
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-4 h-4 text-black" />
               </Link>
             </div>
-            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
               <Link href="">
-                <Twitter className="w-4 h-4" />
+                <Twitter className="w-4 h-4 text-black" />
               </Link>
             </div>
-            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Linkedin className="w-4 h-4" />
+            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+
               <Link href="">
-                <Linkedin className="w-4 h-4" />
+                <Linkedin className="w-4 h-4 text-black" />
               </Link>
             </div>
           </div>
@@ -56,46 +55,43 @@ export function Footer() {
 
         <div>
           <h3 className="font-semibold text-lg mb-3">Quick Links</h3>
-          <ul className="space-y-2 text-gray-300">
+          <ul className="space-y-2 text-[#4E4E4E]">
             <li><Link href="/">Home</Link></li>
-            <li><Link href="/auctions">Auctions</Link></li>
+
             <li><Link href="/about-us">About Us</Link></li>
-            <li><Link href="/faq">FAQ</Link></li>
+            <li><Link href="/deals">Deals</Link></li>
             <li><Link href="/blogs">Blogs</Link></li>
             <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>
 
-        <div>
-          <h3 className="font-semibold text-lg mb-3">Categories</h3>
-          <FooterCategories/>
-        </div>
-
-        <div>
-          <h3 className="font-semibold text-lg mb-3">Contact us</h3>
-          <div className="flex items-start gap-2 text-gray-300 mb-2">
-            <Mail size={16} className="mt-1" />
-            <span>info@diamondauctionsllc.com</span>
-          </div>
-          <div className="flex items-start gap-2 text-gray-300 mb-2">
+        <div className="text-[#4E4E4E]">
+          <h3 className="text-[#4E4E4E] font-semibold text-lg mb-3">Contact</h3>
+          <div className="flex items-start gap-2 text-[#4E4E4E] mb-2">
             <MapPin size={16} className="mt-1" />
             <span>546 Market Street PMB 830066</span>
           </div>
-          <div className="flex items-start gap-2 text-gray-300">
+          <div className="flex items-start gap-2 text-[#4E4E4E]">
             <Phone size={16} className="mt-1" />
             <span>(000)0005555445</span>
+          </div>
+          <div className="flex text-[#4E4E4E] items-start gap-2 mb-2">
+            <Mail size={16} className="mt-1" />
+            <span>info@diamondauctionsllc.com</span>
           </div>
         </div>
       </div>
 
-      <hr className="my-6 border-gray-600" />
+      <div className="container">
+        <div className="my-6 border-b border-gray-600" />
+      </div>
 
-      <div className="flex flex-col md:flex-row justify-between text-xs text-gray-400 max-w-7xl mx-auto px-6 md:px-16">
+      <div className="flex flex-col md:flex-row justify-between text-xs text-[#595959] max-w-7xl mx-auto px-6 md:px-16">
         <p>© 2025 Agency All rights reserved.</p>
         <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
-          <Link href="/privacypolicy">Privacy Policy</Link>
-          <Link href="/Terms&Conditions">Conditions</Link>
-          <span>Support</span>
+          <Link href="/privacypolicy">Support</Link>
+          <Link href="/privacypolicy">Report Infringement</Link>
+          <Link href="/Terms&Conditions">Refund Policies</Link>
         </div>
       </div>
     </footer>

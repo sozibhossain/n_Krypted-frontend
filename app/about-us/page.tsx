@@ -1,4 +1,4 @@
-import PathTracker from "@/Shared/PathTracker";
+
 import OurMission from "./_components/OurMission";
 import OurVision from "./_components/OurVision";
 import { HowItWorksSection } from "@/components/how-it-works-section";
@@ -7,11 +7,6 @@ import { TestimonialSection } from "@/components/testimonial-section";
 const page = () => {
   return (
     <div className="mt-28 container">
-
-      <div className="border-b border-black pb-5">
-        <PathTracker />
-      </div>
-
       <div className="text-center mt-8">
         <h1 className="text-5xl font-semibold">Let us help you sell your assets</h1>
 

@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react"
 
 export function HeroBanner() {
   return (
-    <section className="relative w-full h-[500px] md:h-[600px] overflow-hidden">
+    <section className="relative w-full h-[500px] md:h-[600px] lg:h-[720px] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -13,15 +13,15 @@ export function HeroBanner() {
           alt="Couple shopping in clothing store"
           fill
           priority
-          className="object-cover"
+          className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Content */}
       <div className="relative h-full flex items-center">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-screen-xl">
-          <div className="max-w-xl">
+        <div className="container">
+          <div className="max-w-xl"> 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
               Lorem ipsum dolor sit amet, consectetur cras amet.
             </h1>
