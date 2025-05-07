@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
-import { AuctionCard } from "@/components/auction-card"
+import { AuctionCard, DealsCard } from "@/components/DealsCard"
 import { MoveLeft, MoveRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -18,7 +18,7 @@ interface AuctionItem {
   auctionId: string;
 }
 
-export function LiveAuctionSection() {
+export function DealsSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsToShow, setItemsToShow] = useState(4)
   const axiosInstance = useAxios()
@@ -77,9 +77,14 @@ export function LiveAuctionSection() {
     <section className="">
       <div className="container">
         <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Live Auctions</h1>
-            <p className="text-gray-600">Browse the current live auctions</p>
+          <div className="mt-24">
+            <div className="flex items-center gap-4">
+              <div className="w-5 h-9 bg-white rounded" />
+              <div>
+                <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Popular</h1>
+              </div>
+            </div>
+            <p className="text-[40px] font-bold text-white">Our Popular Deals</p>
           </div>
 
           {liveAuctionData.length > itemsToShow && (
@@ -107,8 +112,9 @@ export function LiveAuctionSection() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {visibleAuctions.map((auction: AuctionItem) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <DealsCard />
+          {/* {visibleAuctions.map((auction: AuctionItem) => (
             <AuctionCard
               key={auction._id}
               image={auction.images[0]}
@@ -119,7 +125,7 @@ export function LiveAuctionSection() {
               auctionId={auction._id.toString()}
               status={status}
             />
-          ))}
+          ))} */}
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { AuctionCard } from "../auction-card"
+import { AuctionCard } from "../DealsCard"
 
 interface AuctionCategory {
     name: string

@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
@@ -97,12 +96,12 @@ export function Navbar() {
     return pathname.startsWith(href);
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchTerm.trim()) {
-      router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm("");
-    }
-  };
+  // const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter" && searchTerm.trim()) {
+  //     router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`);
+  //     setSearchTerm("");
+  //   }
+  // };
 
   return (
     <header className="fixed top-0 z-50 w-full h-[83px] bg-[#212121] flex justify-center flex-col">
@@ -110,15 +109,17 @@ export function Navbar() {
         {/* Logo */}
         <div>
           <Link href="/" className="flex items-center gap-2">
-            <div className="">
-              <Image
-                src="/assets/logoheader.png"
-                alt="Logo"
-                width={100}
-                height={100}
-                className="h-[30px] w-[80px]"
-              />
-              <h1 className="font-benedict font-normal text-[20px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
+            <div className="text-center">
+              <div className="flex justify-center">
+                <Image
+                  src="/assets/logoheader.png"
+                  alt="Logo"
+                  width={100}
+                  height={100}
+                  className="h-[30px] w-[80px]"
+                />
+              </div>
+              <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
                 Walk Throughz
               </h1>
             </div>
@@ -146,17 +147,6 @@ export function Navbar() {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="relative w-full max-w-[160px] sm:max-w-sm">
-            <Input
-              placeholder="Search..."
-              className="pr-8 h-[32px] w-full border border-[#D1D1D1] focus:outline-none placeholder:text-gray-400 text-white text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleSearch}
-            />
-            <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-white" />
-          </div>
 
           {/* Login Button */}
           {!isLoggedIn && (
