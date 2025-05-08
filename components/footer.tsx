@@ -9,22 +9,34 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import NewsletterSubscription from "./Subscribe";
 
 export function Footer() {
   return (
     <footer className="bg-white text-white pt-[50px] pb-8">
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
         <div>
-          <Link href="/">
-            <Image
-              src="/assets/logo.png"
-              alt="Diamond Auctions Logo"
-              className="mb-4"
-              width={46}
-              height={39}
-            />
-          </Link>
-          <p className="text-[#4E4E4E] mb-4">
+          {/* Logo */}
+          <div>
+            <Link href="/" className="flex items-center">
+              <div className="text-center">
+                <div className="flex justify-center">
+                  <Image
+                    src="/assets/footerlogo1.png"
+                    alt="Logo"
+                    width={100}
+                    height={100}
+                    className="h-[30px] w-[80px]"
+                  />
+                </div>
+                <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-[#212121] drop-shadow-[0_0_5px_white]">
+                  Walk Throughz
+                </h1>
+              </div>
+
+            </Link>
+          </div>
+          <p className="text-[#4E4E4E] py-4">
             Join us on social media for exclusive updates, auction previews, and
             special offers!
           </p>
@@ -51,6 +63,7 @@ export function Footer() {
               </Link>
             </div>
           </div>
+
         </div>
 
         <div>
@@ -80,6 +93,10 @@ export function Footer() {
             <span>info@diamondauctionsllc.com</span>
           </div>
         </div>
+        <div>
+          <NewsletterSubscription />
+        </div>
+
       </div>
 
       <div className="container">
@@ -94,6 +111,9 @@ export function Footer() {
           <Link href="/Terms&Conditions">Refund Policies</Link>
         </div>
       </div>
+
+
+
     </footer>
   );
 }

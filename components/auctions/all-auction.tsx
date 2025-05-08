@@ -4,7 +4,7 @@ import type React from "react";
 import { useState, useEffect, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AuctionCard } from "../auction-card";
+import { AuctionCard } from "../DealsCard";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";

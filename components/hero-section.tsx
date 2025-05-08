@@ -1,27 +1,25 @@
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
 export function HeroBanner() {
   return (
-    <section className="relative w-full h-[500px] md:h-[600px] lg:h-[720px] overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/assets/banner.png"
-          alt="Couple shopping in clothing store"
-          fill
-          priority
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/10" />
-      </div>
+    <section 
+      className="relative w-full h-[500px] md:h-[600px] lg:h-[720px] overflow-hidden"
+      style={{
+        backgroundImage: "url('/assets/banner.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "top",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/10" />
 
       {/* Content */}
       <div className="relative h-full flex items-center">
         <div className="container">
-          <div className="max-w-xl"> 
+          <div className="max-w-xl">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
               Lorem ipsum dolor sit amet, consectetur cras amet.
             </h1>

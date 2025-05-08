@@ -3,80 +3,57 @@
 @tailwind utilities;
 
 @layer base {
+
+  /* Light theme variables */
   :root {
     --background: 36 33% 94%;
     --foreground: 20 14.3% 4.1%;
-
     --card: 36 33% 94%;
     --card-foreground: 20 14.3% 4.1%;
-
     --popover: 36 33% 94%;
     --popover-foreground: 20 14.3% 4.1%;
-
-    --primary: 36 16% 34% 1;
-
+    --primary: 36 16% 34%;
     --primary-foreground: 60 9.1% 97.8%;
-
     --secondary: 36 33% 88%;
     --secondary-foreground: 24 9.8% 10%;
-
     --muted: 36 33% 88%;
     --muted-foreground: 25 5.3% 44.7%;
-
     --accent: 36 33% 88%;
     --accent-foreground: 24 9.8% 10%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
-
     --border: 36 33% 84%;
     --input: 36 33% 84%;
     --ring: 35 91.7% 32.9%;
-
     --radius: 0.5rem;
-
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Dark theme variables */
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
-
     --card: 20 14.3% 4.1%;
     --card-foreground: 60 9.1% 97.8%;
-
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 60 9.1% 97.8%;
-
     --primary: 36 33% 44%;
     --primary-foreground: 60 9.1% 97.8%;
-
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
-
     --muted: 12 6.5% 15.1%;
     --muted-foreground: 24 5.4% 63.9%;
-
     --accent: 12 6.5% 15.1%;
     --accent-foreground: 60 9.1% 97.8%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 60 9.1% 97.8%;
-
     --border: 12 6.5% 15.1%;
     --input: 12 6.5% 15.1%;
     --ring: 35 91.7% 32.9%;
@@ -95,41 +72,46 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
+/* Benedict font (added @font-face) */
+@font-face {
+  font-family: 'Benedict';
+  src: url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff2') format('woff2'),
+    url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 
+.font-benedict {
+  font-family: "Benedict" !important;
+}
 
-/* QuillEditor style start */
 
+/* QuillEditor custom styles */
 .list-item {
   @apply text-base leading-relaxed;
 }
 
-/* List container styling */
-.list-item ul {
-  @apply pl-5; /* Padding for indentation */
-  margin-top: 0.5em;
-  margin-bottom: 1em;
-}
-
+.list-item ul,
 .list-item ol {
-  @apply pl-5; /* Padding for indentation */
+  @apply pl-5;
   margin-top: 0.5em;
   margin-bottom: 1em;
 }
 
-/* List item styling */
 .list-item ul li,
 .list-item ol li {
-  @apply mb-2; /* Space between list items */
-  position: relative; /* For custom markers */
+  @apply mb-2;
+  position: relative;
 }
 
-/* Custom bullet points for unordered lists */
 .list-item ul li::before {
   content: "•";
   @apply text-gray-700;
@@ -137,13 +119,14 @@
   left: -1em;
 }
 
-/* Custom numbers for ordered lists */
 .list-item ol {
   counter-reset: item;
 }
+
 .list-item ol li {
   counter-increment: item;
 }
+
 .list-item ol li::before {
   content: counter(item) ".";
   @apply text-gray-700;
@@ -151,7 +134,7 @@
   left: -1em;
 }
 
-/* Heading styles */
+/* Heading styles for the list items */
 .list-item h1,
 .list-item h2,
 .list-item h3,
@@ -163,12 +146,29 @@
   font-weight: bold;
 }
 
-.list-item h1 { @apply text-3xl; }
-.list-item h2 { @apply text-2xl; }
-.list-item h3 { @apply text-xl; }
-.list-item h4 { @apply text-lg; }
-.list-item h5 { @apply text-base; }
-.list-item h6 { @apply text-sm; }
+.list-item h1 {
+  @apply text-3xl;
+}
+
+.list-item h2 {
+  @apply text-2xl;
+}
+
+.list-item h3 {
+  @apply text-xl;
+}
+
+.list-item h4 {
+  @apply text-lg;
+}
+
+.list-item h5 {
+  @apply text-base;
+}
+
+.list-item h6 {
+  @apply text-sm;
+}
 
 /* Nested list styling */
 .list-item ul ul,
@@ -180,10 +180,8 @@
   margin-bottom: 0.25em;
 }
 
-/* Remove default markers */
+/* Remove default list markers */
 .list-item ::marker {
   display: none;
   content: none;
 }
-
-/* QuillEditor style end */

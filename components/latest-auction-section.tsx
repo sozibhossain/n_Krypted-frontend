@@ -1,10 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { SectionHeader } from "@/components/section-header";
-import { AuctionCard } from "@/components/auction-card";
 import { MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { DealsCard } from "./DealsCard";
 
 interface AuctionItem {
   _id: number;
@@ -20,6 +19,7 @@ interface AuctionItem {
 
 export function LatestAuctionSection() {
   const [latestData, setLatestData] = useState<AuctionItem[]>([]);
+  console.log(latestData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,18 +44,27 @@ export function LatestAuctionSection() {
   return (
     <section className="container mt-24">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <SectionHeader title="Latest Auction" />
+        <div>
+          <div className="flex items-center gap-4">
+            <div className="w-5 h-9 bg-white rounded" />
+            <div>
+              <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Our Deal</h1>
+            </div>
+          </div>
+          <p className="text-[40px] font-bold text-white">Browse Our Deals</p>
+        </div>
         <Link
-        href={'/auctions'}
+          href={'/auctions'}
         >
-          <Button className="bg-[#645949]">
+          <Button className="bg-white text-black">
             Explore All <MoveRight />
           </Button>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {latestData &&
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
+              <DealsCard/>
+        {/* {latestData &&
           latestData
             .slice(0, 8)
             .map((auction: AuctionItem) => (
@@ -69,7 +78,7 @@ export function LatestAuctionSection() {
                 endTime={auction.endTime}
                 auctionId={auction._id.toString()}
               />
-            ))}
+            ))} */}
       </div>
     </section>
   );

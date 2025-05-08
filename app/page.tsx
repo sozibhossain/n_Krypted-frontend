@@ -1,25 +1,26 @@
 import { HeroBanner } from "@/components/hero-section"
-import { LiveAuctionSection } from "@/Shared/live-auction-section"
-import { AuctionCategoriesSection } from "@/components/auction-categories-section"
-import { HowItWorksSection } from "@/components/how-it-works-section"
+import { DealsSection } from "@/Shared/deals-section"
+import { CategoriesSection } from "@/components/categories-section"
 import { LatestAuctionSection } from "@/components/latest-auction-section"
 import { FaqSection } from "@/components/faq-section"
-import { ArticlesSection } from "@/components/articles-section"
+import { BlogsSection } from "@/components/blogs-section"
 import { TestimonialSection } from "@/components/testimonial-section"
-import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer"
+import ContactUsForm from "@/components/ContactUsFrom"
 
 export default function Home() {
   return (
     <div>
-      <CategoriesAndSearchBar />
+      
       <HeroBanner />
-      <LiveAuctionSection />
-      <AuctionCategoriesSection />
-      <HowItWorksSection />
+      <DealsSection />
+      <CategoriesSection />
       <LatestAuctionSection />
-      <FaqSection />
-      <ArticlesSection />
+
+
       <TestimonialSection />
+      <BlogsSection />
+      <FaqSection />
+      <ContactUsForm />
     </div>
   )
 }

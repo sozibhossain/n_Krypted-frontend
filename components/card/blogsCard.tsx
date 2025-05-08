@@ -6,7 +6,6 @@ import { Blog } from '@/app/blog/_components/type'
 import Link from 'next/link'
 
 function BlogsCard({ blog }: { blog: Blog }) {
-    console.log(blog.createdAt);
     return (
         <Link href={`/blog/${blog?._id}`}>
             <Card className="overflow-hidden border-none text-white bg-[#212121]">

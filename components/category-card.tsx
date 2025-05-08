@@ -4,30 +4,28 @@ import Link from "next/link";
 interface CategoryCardProps {
   icon: string;
   title: string;
-  auctions : object[]
+  auctions: object[]
 }
 
-export function CategoryCard({ icon, title, auctions }: CategoryCardProps) {
+export function CategoryCard({  title}: CategoryCardProps) {
   return (
-    <Link
-      href={`/auctions?category=${title}`}
-      className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[100px] w-[150px] relative mt-10"
-    >
-      {icon && (
-        <div className="absolute w-[110px] h-[80px] -top-10 rounded-md overflow-hidden">
+    <Link href={`/auctions?category=${title}`}>
+      <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4">
+        <div className="flex justify-center">
           <Image
-            src={icon}
+            src="/assets/category.png"
             alt={title}
-            fill
-            className="object-cover"
+            width={100}
+            height={100}
+            className="object-cove py-2 w-full h-full"
           />
         </div>
-      )}
 
-      <div className="mt-10">
-        <h1 className="text-[16px] font-medium text-white">{title}</h1>
-        {/* Later you can show dynamic auction count */}
-        <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1>
+        <div className="border-t-2 border-white w-full text-center py-2">
+          <h1 className="text-[20px] font-bold text-white">Fashion</h1>
+          {/* Dynamic auction count (when ready) */}
+          {/* <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1> */}
+        </div>
       </div>
     </Link>
   );

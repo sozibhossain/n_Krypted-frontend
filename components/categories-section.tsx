@@ -6,14 +6,9 @@ import { CategoryCard } from "./category-card";
 import { Button } from "./ui/button";
 import { MoveLeft, MoveRight } from "lucide-react";
 
-interface CategoryType {
-  _id: string;
-  name: string;
-  image: string;
-  auctions: object[];
-}
 
-export function AuctionCategoriesSection() {
+
+export function CategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(6);
   const axiosPublic = useAxios();
@@ -69,29 +64,34 @@ export function AuctionCategoriesSection() {
   }, [itemsToShow, allCategory.length, currentIndex]);
 
   return (
-    <section className="py-12 md:py-16 bg-[#e4dcd0] mt-24">
+    <section className="py-12 md:py-16 mt-24">
       <div className="container">
         <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Auction Categories</h1>
-            <p className="text-gray-600">Browse the highlights Browse the highlights Browse the highlights</p>
+          <div className="">
+            <div className="flex items-center gap-4">
+              <div className="w-5 h-9 bg-white rounded" />
+              <div>
+                <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Categories</h1>
+              </div>
+            </div>
+            <p className="text-[40px] font-bold text-white">Explore Our Category</p>
           </div>
-          
+
           {allCategory.length > itemsToShow && (
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="icon" 
+              <Button
+                variant="outline"
+                size="icon"
                 className="h-[48px] w-[80px] rounded-sm border-[#645949]"
                 onClick={prevSlide}
                 disabled={currentIndex === 0}
               >
                 <MoveLeft className="h-4 w-4" />
               </Button>
-              
-              <Button 
-                variant="outline" 
-                size="icon" 
+
+              <Button
+                variant="outline"
+                size="icon"
                 className="h-[48px] w-[80px] rounded-sm border-[#645949]"
                 onClick={nextSlide}
                 disabled={currentIndex + itemsToShow >= allCategory.length}
@@ -101,16 +101,17 @@ export function AuctionCategoriesSection() {
             </div>
           )}
         </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {visibleCategories.map((category: CategoryType) => (
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <CategoryCard />.
+          {/* {visibleCategories.map((category: CategoryType) => (
             <CategoryCard
               key={category._id}
               icon={category.image}
               title={category.name}
               auctions={category.auctions}
             />
-          ))}
+          ))} */}
         </div>
       </div>
     </section>
