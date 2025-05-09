@@ -1,32 +1,31 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image"
+import Link from "next/link"
 
 interface CategoryCardProps {
-  icon: string;
-  title: string;
-  auctions: object[]
+  icon: string
+  title?: string
+  
 }
 
-export function CategoryCard({  title}: CategoryCardProps) {
+export function CategoryCard({ title, icon,  }: CategoryCardProps) {
   return (
     <Link href={`/auctions?category=${title}`}>
-      <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4">
+      <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4 h-full transition-all hover:scale-105 hover:border-primary w-full md:w-[270px]">
         <div className="flex justify-center">
           <Image
-            src="/assets/category.png"
-            alt={title}
-            width={100}
-            height={100}
-            className="object-cove py-2 w-full h-full"
+            src={icon || "/assets/category.png"}
+            alt={`${title} Category Icon`}
+            width={1000}
+            height={1000}
+            className=" object-cover py-2 w-full h-[300px]"
           />
         </div>
 
         <div className="border-t-2 border-white w-full text-center py-2">
-          <h1 className="text-[20px] font-bold text-white">Fashion</h1>
-          {/* Dynamic auction count (when ready) */}
-          {/* <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1> */}
+          <h1 className="text-[20px] font-bold text-white">{title || "Category"}</h1>
+          {/* {auctions.length > 0 && <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1>} */}
         </div>
       </div>
     </Link>
-  );
+  )
 }

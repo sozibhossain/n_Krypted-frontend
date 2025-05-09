@@ -1,119 +1,112 @@
 "use client"
-import useAxios from "@/hooks/useAxios";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { CategoryCard } from "./category-card";
-import { Button } from "./ui/button";
-import { MoveLeft, MoveRight } from "lucide-react";
 
+import { useState, useEffect } from "react"
+import { useQuery } from "@tanstack/react-query"
+import useAxios from "@/hooks/useAxios"
+import { CategoryCard } from "./category-card"
 
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
+import { CategoryCardSkeleton } from "./card/skeleton"
 
 export function CategoriesSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsToShow, setItemsToShow] = useState(6);
-  const axiosPublic = useAxios();
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const [api, setApi] = useState<any>()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const axiosPublic = useAxios()
 
-  // Responsive items to show
-  useEffect(() => {
-    const updateItemsToShow = () => {
-      if (window.innerWidth < 640) {
-        setItemsToShow(2);
-      } else if (window.innerWidth < 768) {
-        setItemsToShow(3);
-      } else if (window.innerWidth < 1024) {
-        setItemsToShow(4);
-      } else {
-        setItemsToShow(6);
-      }
-    };
-
-    updateItemsToShow();
-    window.addEventListener('resize', updateItemsToShow);
-    return () => window.removeEventListener('resize', updateItemsToShow);
-  }, []);
-
-  const { data: allCategory = [] } = useQuery({
-    queryKey: ["category-with-auctions"],
+  const { data: allCategory, isLoading } = useQuery({
+    queryKey: ["allCategory"],
     queryFn: async () => {
-      const { data } = await axiosPublic('/admin/categories/with-auctions');
-      return data.data;
-    }
-  });
-
-  const nextSlide = () => {
-    if (currentIndex + itemsToShow < allCategory.length) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const visibleCategories = allCategory.slice(
-    currentIndex,
-    currentIndex + itemsToShow
-  );
+      const { data } = await axiosPublic("/api/categories")
+      return data?.categories
+    },
+  })
 
   useEffect(() => {
-    if (allCategory.length > 0 && currentIndex + itemsToShow > allCategory.length) {
-      setCurrentIndex(Math.max(0, allCategory.length - itemsToShow));
+    if (!api) return
+
+    const handleSelect = () => {
+      setCurrentIndex(api.selectedScrollSnap())
     }
-  }, [itemsToShow, allCategory.length, currentIndex]);
+
+    api.on("select", handleSelect)
+
+    return () => {
+      api.off("select", handleSelect)
+    }
+  }, [api])
+
+  // Create placeholder skeletons when loading
+  const skeletonItems = Array(4)
+    .fill(0)
+    .map((_, index) => (
+      <CarouselItem key={`skeleton-${index}`} className="basis-1/4">
+        <CategoryCardSkeleton />
+      </CarouselItem>
+    ))
 
   return (
-    <section className="py-12 md:py-16 mt-24">
+    <section className="py-12 md:py-16 mt-24 ">
       <div className="container">
-        <div className="flex justify-between items-center mb-8">
-          <div className="">
+        <div className="flex justify-between items-center mb-12">
+          <div>
             <div className="flex items-center gap-4">
               <div className="w-5 h-9 bg-white rounded" />
-              <div>
-                <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Categories</h1>
-              </div>
+              <h1 className="font-benedict text-[40px] font-normal text-white" style={{ fontFamily: "cursive" }}>
+                Categories
+              </h1>
             </div>
-            <p className="text-[40px] font-bold text-white">Explore Our Category</p>
+            <p className="text-[40px] font-bold text-white mt-2">Explore Our Category</p>
           </div>
-
-          {allCategory.length > itemsToShow && (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-[48px] w-[80px] rounded-sm border-[#645949]"
-                onClick={prevSlide}
-                disabled={currentIndex === 0}
-              >
-                <MoveLeft className="h-4 w-4" />
-              </Button>
-
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-[48px] w-[80px] rounded-sm border-[#645949]"
-                onClick={nextSlide}
-                disabled={currentIndex + itemsToShow >= allCategory.length}
-              >
-                <MoveRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <CategoryCard />.
-          {/* {visibleCategories.map((category: CategoryType) => (
-            <CategoryCard
-              key={category._id}
-              icon={category.image}
-              title={category.name}
-              auctions={category.auctions}
-            />
-          ))} */}
+        <div className="w-full">
+          <Carousel
+            setApi={setApi}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+          >
+            <CarouselContent>
+              {isLoading
+                ? // Show skeleton items when loading
+                skeletonItems
+                : // Show actual category items when data is loaded
+                /* eslint-disable @typescript-eslint/no-explicit-any */
+                allCategory?.map((category: any, index: number) => (
+                  <CarouselItem key={category._id || index} className="basis-1/1 md:basis-1/4">
+                    <CategoryCard title={category.categoryName} icon={category.image || ""} />
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+            <div className="flex items-center justify-center gap-2 mt-10">
+              <div className="flex gap-2">
+                {isLoading
+                  ? // Show skeleton dots when loading
+                  Array(4)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div
+                        key={`skeleton-dot-${index}`}
+                        className={`h-2 rounded-full transition-all ${index === 0 ? "bg-gray-600 w-6" : "bg-gray-700 w-2"}`}
+                      />
+                    ))
+                  : // Show actual dots when data is loaded
+                  /* eslint-disable @typescript-eslint/no-explicit-any */
+                  allCategory?.map((category: any, index: number) => (
+                    <div
+                      key={index}
+                      className={`h-2 rounded-full transition-all ${currentIndex === index ? "bg-white w-6" : "bg-gray-500/50 w-2"
+                        }`}
+                    />
+                  ))}
+              </div>
+            </div>
+          </Carousel>
         </div>
       </div>
     </section>
-  );
+  )
 }

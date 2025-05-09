@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight, Users } from "lucide-react"
 import Link from "next/link"
-import { useSession } from "next-auth/react"
+
 import { useState } from "react"
 
 interface DealsCardProps {
@@ -17,6 +17,7 @@ interface DealsCardProps {
   participations: number
   maxParticipants?: number
   image?: string
+  status?: string
 }
 
 export function DealsCard({
@@ -26,13 +27,15 @@ export function DealsCard({
   price,
   participations,
   maxParticipants ,
-  image = "/assets/deals.png",
+  image,
 }: DealsCardProps) {
   // const session = useSession()
   const [isHovered, setIsHovered] = useState(false)
+  console.log("image", image);
+  
 
   return (
-    <Card className="overflow-hidden border-none bg-white p-2 shadow-[0px_0px_20px_2px_#FFFFFF] w-full ">
+    <Card className="overflow-hidden border-none bg-white p-2 shadow-[0px_0px_10px_2px_#FFFFFF]  w-full ">
       <div
         className="relative overflow-hidden rounded-lg"
         onMouseEnter={() => setIsHovered(true)}
@@ -74,7 +77,7 @@ export function DealsCard({
         </div>
       </CardContent>
 
-      <Link href={`/deals/${id}`}>
+      <Link href={`/auctions/${id}`}>
         <CardFooter>
           <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Book now!</Button>
         </CardFooter>

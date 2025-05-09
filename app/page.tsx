@@ -1,7 +1,7 @@
 import { HeroBanner } from "@/components/hero-section"
 import { DealsSection } from "@/Shared/deals-section"
 import { CategoriesSection } from "@/components/categories-section"
-import { LatestAuctionSection } from "@/components/latest-auction-section"
+import { BrowseOurDeals, } from "@/components/BrowseOurDeals"
 import { FaqSection } from "@/components/faq-section"
 import { BlogsSection } from "@/components/blogs-section"
 import { TestimonialSection } from "@/components/testimonial-section"
@@ -14,7 +14,7 @@ export default function Home() {
       <HeroBanner />
       <DealsSection />
       <CategoriesSection />
-      <LatestAuctionSection />
+      <BrowseOurDeals />
 
 
       <TestimonialSection />

@@ -1,12 +1,12 @@
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
-import AuctionDetails from "@/components/auctions/auction-details/auction-details"
+import DealDetails from "@/components/auctions/auction-details/deal-details"
 
 export default function AuctionPage({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto py-8 px-4 mt-20">
       <Suspense fallback={<AuctionDetailsSkeleton />}>
-        <AuctionDetails auctionId={params.id} />
+        <DealDetails auctionId={params.id} />
       </Suspense>
     </div>
   )
