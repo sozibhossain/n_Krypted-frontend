@@ -6,10 +6,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMobile } from "@/hooks/use-mobile-nav";
-import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
+import { BellRing, Heart, Menu,  UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
@@ -36,7 +35,7 @@ const fetchWishlist = async (token: string | undefined) => {
 };
 
 export function Navbar() {
-  const [searchTerm, setSearchTerm] = useState("");
+  
   const router = useRouter();
   const isMobile = useMobile();
   const pathname = usePathname();

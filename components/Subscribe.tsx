@@ -27,7 +27,9 @@ export default function NewsletterSubscription() {
             setMessage("Thanks for subscribing!")
             setEmail("")
         } catch (error) {
-            setMessage("Something went wrong. Please try again.")
+            setMessage("Something went wrong. Please try again.",)
+            console.log(error);
+            
         } finally {
             setIsSubmitting(false)
         }

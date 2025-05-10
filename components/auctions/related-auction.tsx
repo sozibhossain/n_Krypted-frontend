@@ -2,7 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { AuctionCard } from "../DealsCard"
+import { DealsCard } from "../DealsCard"
+
+
 
 interface AuctionCategory {
     name: string
@@ -63,16 +65,7 @@ export default function RelatedAuction({ name }: AuctionCategory) {
                     <CarouselContent className="-ml-4">
                         {relatedAuctions?.map((auction: AuctionItem) => (
                             <CarouselItem key={auction._id} className="lg:pl-4 basis-full md:basis-1/2 lg:basis-1/4">
-                                <AuctionCard
-                                    status={auction.status}
-                                    key={auction._id}
-                                    image={auction.images[0]}
-                                    title={auction.title}
-                                    currentBid={auction.currentBid}
-                                    auctionId={auction._id.toString()}
-                                    startTime={auction.startTime}
-                                    endTime={auction.endTime}
-                                />
+                                <DealsCard id={""} title={""} description={""} price={0} participations={0} />
                             </CarouselItem>
                         ))}
                     </CarouselContent>

@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react"
 export function HeroBanner() {
   return (
     <section 
-      className="relative w-full h-[500px] md:h-[600px] lg:h-[720px] overflow-hidden"
+      className="relative w-full h-[500px] md:h-[600px] lg:h-[720px] overflow-hidden mb-[80px]"
       style={{
         backgroundImage: "url('/assets/banner.png')",
         backgroundSize: "cover",

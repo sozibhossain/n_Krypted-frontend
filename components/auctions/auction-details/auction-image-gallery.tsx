@@ -11,8 +11,8 @@ interface AuctionImageGalleryProps {
 
 export default function AuctionImageGallery({ images, selectedIndex, onSelect }: AuctionImageGalleryProps) {
     return (
-        <div className="grid grid-cols-4 gap-3">
-            {images.map((image, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-1 gap-3 w-[120px] h-[120px]">
+            {images?.map((image, index) => (
                 <button
                     key={index}
                     className={cn(
