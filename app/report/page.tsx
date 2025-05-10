@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button"
 
 export default function ReportInfringement() {
     return (
-        <div className="min-h-screen bg-[#1a1a1a] text-white p-4 md:p-8 lg:p-12">
-            <div className="max-w-3xl mx-auto">
+        <div className="container py-12">
+            <div className="w-full">
                 <h1 className="text-2xl md:text-3xl font-bold mb-6">Report Infringement</h1>
 
-                <p className="mb-6 text-sm md:text-base">
+                <p className="mb-6 text-sm md:text-base text-white">
                     At Walk Through, we take intellectual property rights seriously and are committed to ensuring that all content
                     on our website adheres to the applicable laws and regulations. If you believe that your intellectual property
                     rights have been infringed upon in any way, please report it promptly. Below is the process for reporting any

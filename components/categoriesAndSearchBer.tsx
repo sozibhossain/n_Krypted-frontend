@@ -63,6 +63,7 @@ export function CategoriesAndSearchBar() {
   })
 
   // Extract unique locations from deals
+  
   const uniqueLocations: string[] = Array.from(new Set(dealsData?.map((deal: any) => deal.location) || [])).filter(Boolean) as string[]
 
   // Apply filters and search
