@@ -9,7 +9,7 @@ interface CategoryCardProps {
 
 export function CategoryCard({ title, icon,  }: CategoryCardProps) {
   return (
-    <Link href={`/auctions?category=${title}`}>
+    <Link href={`/deals?category=${title}`}>
       <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4 h-full transition-all hover:scale-105 hover:border-primary w-full md:w-[270px]">
         <div className="flex justify-center">
           <Image

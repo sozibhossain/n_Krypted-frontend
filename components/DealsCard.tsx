@@ -35,7 +35,7 @@ export function DealsCard({
   
 
   return (
-    <Card className="overflow-hidden border-none bg-white p-2 shadow-[0px_0px_10px_2px_#FFFFFF]  w-full ">
+    <Card className="overflow-hidden border-none bg-white p-2 w-full hover:shadow-[0px_0px_10px_2px_#FFFFFF] transition-shadow duration-300">
       <div
         className="relative overflow-hidden rounded-lg"
         onMouseEnter={() => setIsHovered(true)}
@@ -60,11 +60,12 @@ export function DealsCard({
       <CardContent className="space-y-2 pt-4">
         <h3 className="font-bold text-[18px] my-1 line-clamp-1">{title}</h3>
         <p className="text-[16px] font-normal text-[#737373] line-clamp-2">{description}</p>
-
+        <Link href={`/deals/${id}`}>
         <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
           <span>Read More</span>
           <ChevronRight className="w-4 h-4" />
         </div>
+        </Link>
 
         <div className="flex items-center justify-between">
           <span className="font-semibold">${price?.toFixed(2)}</span>
@@ -77,7 +78,7 @@ export function DealsCard({
         </div>
       </CardContent>
 
-      <Link href={`/auctions/${id}`}>
+      <Link href="">
         <CardFooter>
           <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Book now!</Button>
         </CardFooter>

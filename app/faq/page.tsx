@@ -1,3 +1,4 @@
+import ContactUsForm from "@/components/ContactUsFrom";
 import Faq from "@/components/faq";
 import { PageHeader } from "@/Shared/PageHeader";
 import Image from "next/image";
@@ -7,6 +8,7 @@ const page = () => {
     <div>
       <PageHeader
         title="Frequently Asked Questions"
+        imge="/assets/faq2.png"
         items={[
           {
             label: "Home",
@@ -33,7 +35,9 @@ const page = () => {
             <Faq />
           </div>
         </div>
-
+        <div>
+          <ContactUsForm/>
+        </div>
       </div>
     </div>
   );

@@ -30,6 +30,7 @@ function Blogs() {
     <section>
       <PageHeader
         title="Blog Page"
+        imge="/assets/herobg.png"
         items={[
           {
             label: "Home",
