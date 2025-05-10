@@ -1,13 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Map, FilterIcon, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { DealsCard } from "../DealsCard"
 import { Pagination } from "../dashboard/pagination"
-import { FilterSidebar } from "@/app/auctions/filter-sidebar"
+
+import { useQuery } from "@tanstack/react-query"
+import useAxios from "@/hooks/useAxios"
+import LatestSidebar from "@/app/deals/filter-sidebar"
 
 interface Deal {
   _id: string
@@ -27,52 +30,40 @@ interface Deal {
 export default function DealsPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const axiosInstance = useAxios()
 
-  // State for filters
-  const [deals, setDeals] = useState<Deal[]>([])
-  const [loading, setLoading] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(5)
+  // State for UI controls
+  const [currentPage, setCurrentPage] = useState<number>(parseInt(searchParams.get("page") || "1"))
   const [showMap, setShowMap] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   // Get filter values from URL
-  const categoryName = searchParams.get("categoryName")
-  const location = searchParams.get("location")
-  const minPrice = searchParams.get("minPrice")
-  const maxPrice = searchParams.get("maxPrice")
-  const dealType = searchParams.get("dealType")
-  const page = searchParams.get("page") || "1"
+  const categoryName = searchParams.get("categoryName") || ""
+  const location = searchParams.get("location") || "all"
+  const minPrice = searchParams.get("minPrice") || "0"
+  const maxPrice = searchParams.get("maxPrice") || "1000"
+  const dealType = searchParams.get("dealType") || ""
 
-  // Fetch deals based on filters
-  useEffect(() => {
-    const fetchDeals = async () => {
-      setLoading(true)
-      try {
-        // Build query string from all filters
-        const params = new URLSearchParams()
-        if (categoryName) params.set("categoryName", categoryName)
-        if (location) params.set("location", location)
-        if (minPrice) params.set("minPrice", minPrice)
-        if (maxPrice) params.set("maxPrice", maxPrice)
-        if (dealType) params.set("dealType", dealType)
-        params.set("page", page)
+  // Fetch deals using useQuery
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["deals", categoryName, location, minPrice, maxPrice, dealType, currentPage],
+    queryFn: async () => {
+      const params = new URLSearchParams()
+      if (categoryName) params.set("categoryName", categoryName)
+      if (location && location !== "all") params.set("location", location)
+      if (minPrice) params.set("minPrice", minPrice)
+      if (maxPrice) params.set("maxPrice", maxPrice)
+      if (dealType) params.set("dealType", dealType)
+      params.set("page", currentPage.toString())
+      params.set("limit", "10")
 
-        // Fetch from your actual API
-        const response = await fetch(`http://localhost:5000/api/deals?${params.toString()}page=${page}&limit=10`, )
-        const data = await response.json()
+      const { data } = await axiosInstance.get(`/api/deals?${params.toString()}`)
+      return data
+    },
+  })
 
-        setDeals(data.deals || data)
-        setTotalPages(data.pagination?.totalPages || data.totalPages || 5)
-        setLoading(false)
-      } catch (error) {
-        console.error("Error fetching deals:", error)
-        setLoading(false)
-      }
-    }
-
-    fetchDeals()
-  }, [categoryName, location, minPrice, maxPrice, dealType, page])
+  const deals: Deal[] = data?.deals || []
+  const totalPages: number = data?.pagination?.totalPages || 5
 
   // Update URL when page changes
   const handlePageChange = (page: number) => {
@@ -93,7 +84,7 @@ export default function DealsPage() {
     if (categoryName) count++
     if (location && location !== "all") count++
     if (dealType) count++
-    if (minPrice || maxPrice) count++
+    if (minPrice !== "0" || maxPrice !== "1000") count++
     return count
   }
 
@@ -125,7 +116,7 @@ export default function DealsPage() {
                 </SheetClose>
               </div>
               <div className="overflow-y-auto h-[calc(100vh-60px)]">
-                <FilterSidebar />
+                <LatestSidebar />
               </div>
             </SheetContent>
           </Sheet>
@@ -140,16 +131,20 @@ export default function DealsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Sidebar with filters - hidden on mobile */}
         <div className="hidden md:block md:col-span-1">
-          <FilterSidebar />
+          <LatestSidebar />
         </div>
 
         {/* Deals grid */}
         <div className="md:col-span-3">
-          {loading ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[1, 2, 3, 4].map((item) => (
                 <div key={item} className="h-80 bg-gray-200 animate-pulse rounded-lg"></div>
               ))}
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-10">
+              <p className="text-red-500">Error loading deals. Please try again later.</p>
             </div>
           ) : (
             <>
@@ -169,7 +164,7 @@ export default function DealsPage() {
                         description={deal.description}
                         price={deal.price}
                         participations={deal.participations}
-                        maxParticipants={deal.participations}
+                        maxParticipants={deal.participations} // Adjust if maxParticipants is available in API
                       />
                     ))
                   ) : (

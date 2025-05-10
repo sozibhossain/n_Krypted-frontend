@@ -1,16 +1,34 @@
 
+import ContactUsForm from "@/components/ContactUsFrom";
 import OurMission from "./_components/OurMission";
 import OurVision from "./_components/OurVision";
-import { HowItWorksSection } from "@/components/how-it-works-section";
+
 import { TestimonialSection } from "@/components/testimonial-section";
+import { PageHeader } from "@/Shared/PageHeader";
 
 const page = () => {
   return (
-    <div className="mt-28 container">
+    <div className="">
+      <PageHeader
+        title="About Us"
+        imge="/assets/about-us.png"
+        items={[
+          {
+            label: "Home",
+            href: "/",
+          },
+          {
+            label: "A",
+            href: "/blogs",
+          },
+        ]}
+      />
+      <div className="mt-28 container">
       <div className="text-center mt-8">
-        <h1 className="text-5xl font-semibold">Let us help you sell your assets</h1>
+        <h1 className="text-[40px] font-semibold text-[#FFFFFF]">What are Walk Throughz?</h1>
 
-        <p className="mt-3 text-[#645949]">At Diamond Auctions, we make selling your valuable assets simple, secure, and rewarding. Whether you are parting with fine jewelry, rare collectibles, or high-end items, our expert team is here to guide you every step of the way. With a trusted process, global reach, and dedicated support, we will help you get the best value for your assets—quickly and confidently. Let us help you sell your assets with ease!</p>
+        <p className="mt-3 text-xl text-[#E0E0E0] leading-[150%]">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis molestie, sapien et vulputate porttitor, eros magna laoreet mauris, eu suscipit tortor turpis in elit. Sed tristique pharetra ligula. Aenean eu tempor lorem. Sed posuere ante id laoreet finibus. Vivamus a pulvinar ex. Quisque nec metus rutrum diam pulvinar rutrum. Sed enim tortor, accumsan ac dignissim in, finibus placerat lorem. Cras rhoncus hendrerit diam nec vestibulum. Cras vehicula neque augue, vel posuere neque blandit vel nisi.</p>
       </div>
 
       <div>
@@ -21,14 +39,16 @@ const page = () => {
         <OurVision />
       </div>
 
-      <div>
-        <HowItWorksSection />
-      </div>
+   
 
       <div>
         <TestimonialSection />
       </div>
+      <div>
+        <ContactUsForm/>
+      </div>
 
+      </div>
     </div>
   );
 };

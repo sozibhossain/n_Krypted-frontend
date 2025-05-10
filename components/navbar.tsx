@@ -1,62 +1,63 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useMobile } from "@/hooks/use-mobile-nav";
-import { BellRing, Heart, Menu,  UserRound } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
-import { useSocketContext } from "@/Provider/SocketProvider";
+import Link from "next/link"
+import Image from "next/image"
+import { usePathname, useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useMobile } from "@/hooks/use-mobile-nav"
+import { BellRing, Heart, Menu, UserRound } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useQuery } from "@tanstack/react-query"
+import { useSocketContext } from "@/Provider/SocketProvider"
+import * as React from "react"
 
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about-us" },
-  { name: "Deals", href: "/auctions" },
+  { name: "Deals", href: "/deals" },
   { name: "FAQ", href: "/faq" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
-];
+]
 
 const fetchWishlist = async (token: string | undefined) => {
-  if (!token) return null;
+  if (!token) return null
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  });
+  })
   if (!response.ok) {
-    throw new Error("Failed to fetch wishlist");
+    throw new Error("Failed to fetch wishlist")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 export function Navbar() {
-  
-  const router = useRouter();
-  const isMobile = useMobile();
-  const pathname = usePathname();
-  const { status } = useSession();
-  const isLoggedIn = status === "authenticated";
-  const session = useSession();
-  const token = session?.data?.user?.accessToken;
+  const router = useRouter()
+  const [open, setOpen] = React.useState(false)
+  const isMobile = useMobile()
+  const pathname = usePathname()
+  const { status } = useSession()
+  const isLoggedIn = status === "authenticated"
+  const session = useSession()
+  const token = session?.data?.user?.accessToken
 
   const { data: wishlistData } = useQuery({
     queryKey: ["wishlist-length"],
     queryFn: () => fetchWishlist(token),
     enabled: isLoggedIn,
     refetchInterval: 5000,
-  });
+  })
 
-  const wishlists = wishlistData?.data?.auctions || [];
+  const wishlists = wishlistData?.data?.auctions || []
 
-  const { notificationCount, setNotificationCount } = useSocketContext();
+  const { notificationCount, setNotificationCount } = useSocketContext()
 
   const markNotificationsAsRead = async () => {
-    if (!token) return;
+    if (!token) return
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`, {
         method: "POST",
@@ -64,36 +65,32 @@ export function Navbar() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      });
-      localStorage.removeItem("notificationCount");
-      setNotificationCount(null);
-      if (!res.ok) throw new Error("Failed to mark notifications as read");
+      })
+      localStorage.removeItem("notificationCount")
+      setNotificationCount(null)
+      if (!res.ok) throw new Error("Failed to mark notifications as read")
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   const iconLinks = [
     { icon: Heart, href: "/wishlist", count: wishlists?.length },
     { icon: BellRing, href: "/notifications", count: notificationCount },
     { icon: UserRound, href: "/accounts" },
-  ];
+  ]
 
   const getIconClasses = (href: string) => `
     relative border-2 rounded-full p-2 transition-colors
-    ${pathname.startsWith(href)
-      ? "border-[#E6C475]"
-      : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
-    }
-  `;
+    ${pathname.startsWith(href) ? "border-[#E6C475]" : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"}
+  `
 
-  const getIconColor = (href: string) =>
-    pathname.startsWith(href) ? "text-[#E6C475]" : "text-white";
+  const getIconColor = (href: string) => (pathname.startsWith(href) ? "text-[#E6C475]" : "text-white")
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === href;
-    return pathname.startsWith(href);
-  };
+    if (href === "/") return pathname === href
+    return pathname.startsWith(href)
+  }
 
   // const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
   //   if (e.key === "Enter" && searchTerm.trim()) {
@@ -110,19 +107,12 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <div className="text-center">
               <div className="flex justify-center">
-                <Image
-                  src="/assets/logoheader.png"
-                  alt="Logo"
-                  width={100}
-                  height={100}
-                  className="h-[30px] w-[80px]"
-                />
+                <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
               </div>
               <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
                 Walk Throughz
               </h1>
             </div>
-
           </Link>
         </div>
 
@@ -134,7 +124,9 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[16px] font-medium text-white transition-colors hover:text-[#E4C072] ${isActive(link.href) ? "text-[#E4C072]" : ""
+                  className={`text-[16px] font-medium text-white transition-colors  relative ${isActive(link.href)
+                      ? "text-[#E4C072] after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:w-full after:h-[2px] after:bg-[#FFFFFF] after:transition-all after:duration-300"
+                      : "after:content-[''] after:absolute after:left-1/2 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-[#FFFFFF] after:transition-all after:duration-300 hover:after:w-full hover:after:left-0"
                     }`}
                 >
                   {link.name}
@@ -146,7 +138,6 @@ export function Navbar() {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-
           {/* Login Button */}
           {!isLoggedIn && (
             <Link href="/login" className="hidden md:block">
@@ -164,9 +155,9 @@ export function Navbar() {
                   <button
                     key={href}
                     onClick={async (e) => {
-                      e.preventDefault();
-                      await markNotificationsAsRead();
-                      router.push("/notifications");
+                      e.preventDefault()
+                      await markNotificationsAsRead()
+                      router.push("/notifications")
                     }}
                     className={getIconClasses(href)}
                   >
@@ -186,14 +177,14 @@ export function Navbar() {
                       </span>
                     )}
                   </Link>
-                )
+                ),
               )}
             </div>
           )}
 
           {/* Mobile Menu */}
           {isMobile && (
-            <Sheet>
+            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
                   <Menu className="h-5 w-5 text-white" />
@@ -206,7 +197,8 @@ export function Navbar() {
                     <Link
                       key={link.name}
                       href={link.href}
-                      className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive(link.href) ? "text-foreground" : ""
+                      onClick={() => setOpen(false)}
+                      className={`text-base font-medium transition-colors hover:text-foreground ${isActive(link.href) ? "text-foreground" : "text-muted-foreground"
                         }`}
                     >
                       {link.name}
@@ -215,6 +207,7 @@ export function Navbar() {
                   {!isLoggedIn ? (
                     <Link
                       href="/login"
+                      onClick={() => setOpen(false)}
                       className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
                       Login
@@ -223,7 +216,8 @@ export function Navbar() {
                     <>
                       <Link
                         href="/wishlist"
-                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/wishlist") ? "text-foreground" : ""
+                        onClick={() => setOpen(false)}
+                        className={`relative text-base font-medium transition-colors hover:text-foreground ${isActive("/wishlist") ? "text-foreground" : "text-muted-foreground"
                           }`}
                       >
                         Wishlist
@@ -235,11 +229,12 @@ export function Navbar() {
                       </Link>
                       <button
                         onClick={async (e) => {
-                          e.preventDefault();
-                          await markNotificationsAsRead();
-                          router.push("/notifications");
+                          e.preventDefault()
+                          await markNotificationsAsRead()
+                          router.push("/notifications")
+                          setOpen(false)
                         }}
-                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/notifications") ? "text-foreground" : ""
+                        className={`relative text-base font-medium transition-colors hover:text-foreground ${isActive("/notifications") ? "text-foreground" : "text-muted-foreground"
                           }`}
                       >
                         Notifications
@@ -251,7 +246,8 @@ export function Navbar() {
                       </button>
                       <Link
                         href="/accounts"
-                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${isActive("/accounts") ? "text-foreground" : ""
+                        onClick={() => setOpen(false)}
+                        className={`text-base font-medium transition-colors hover:text-foreground ${isActive("/accounts") ? "text-foreground" : "text-muted-foreground"
                           }`}
                       >
                         My Account
@@ -265,5 +261,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  );
+  )
 }

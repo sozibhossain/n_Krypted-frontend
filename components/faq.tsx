@@ -33,7 +33,7 @@ const faqs = [
 function Faq() {
     return (
         <div>
-            <Accordion type="single" collapsible className="w-full flex flex-col gap-4">
+            <Accordion type="single" collapsible className="w-full flex flex-col gap-4 ">
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="rounded-lg">
                         <AccordionTrigger className="text-left text-base md:text-xl lg:text-2xl font-semibold text-white">{faq.question}</AccordionTrigger>

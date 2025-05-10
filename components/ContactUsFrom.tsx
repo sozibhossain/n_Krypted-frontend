@@ -8,7 +8,7 @@ export default function ContactUsForm() {
     fullName: "",
     email: "",
     phone: "",
-    message: "" // Added missing message field
+    message: ""
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -26,17 +26,22 @@ export default function ContactUsForm() {
   }
 
   return (
-    <div className="container py-14">
+    <div className="container px-4 sm:px-6 lg:px-8 py-10 md:py-14 ">
       <div>
-        <h1 className="text-[48px] font-bold mb-4 text-white text-center">Any suggestions or feedback, </h1>
-        <h1 className="font-benedict text-3xl md:text-4xl mb-8 text-center text-white">
+        <h1 className="text-3xl sm:text-4xl lg:text-[48px] font-bold mb-4 text-white text-center">
+          Any suggestions or feedback,
+        </h1>
+        <h1
+          className="font-benedict text-2xl sm:text-3xl md:text-4xl mb-6 md:mb-8 text-center text-white"
+          style={{ fontFamily: "cursive" }}
+        >
           Get in touch.
         </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             <div>
               <input
                 type="text"
@@ -44,7 +49,7 @@ export default function ContactUsForm() {
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Enter your full name"
-                className="w-full p-3 border bg-[#212121] border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 required
               />
             </div>
@@ -56,7 +61,7 @@ export default function ContactUsForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your Email Address"
-                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 required
               />
             </div>
@@ -68,27 +73,27 @@ export default function ContactUsForm() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Enter your Phone Number"
-                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 required
               />
             </div>
           </div>
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <textarea
               name="message"
               value={formData.message}
               onChange={handleChange}
               placeholder="Enter your message"
-              className="w-full h-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="w-full h-[150px] sm:h-[200px] lg:h-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
               required
             />
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-6">
           <button
             type="submit"
-            className="bg-white text-black px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
+            className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base"
           >
             Submit
           </button>

@@ -9,6 +9,15 @@ export function FaqSection() {
       <div className="grid gap-8 md:grid-cols-6">
 
         <div className="col-span-2">
+          <div className="flex items-center gap-4">
+            <div className="w-4 h-7 sm:w-5 sm:h-9 bg-white rounded" />
+            <h1
+              className="font-benedict text-4xl sm:text-5xl lg:text-[60px] font-normal text-white"
+              style={{ fontFamily: "cursive" }}
+            >
+              FAQS
+            </h1>
+          </div>
           <h2 className="text-white text-[20px] font-semibold tracking-tight md:text-[30px] lg:text-[40px] mt-2 mb-4">Frequently Asked Questions</h2>
           <Link href="/faq">
             <Button className="bg-white text-black">

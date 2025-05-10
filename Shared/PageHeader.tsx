@@ -12,17 +12,19 @@ import * as React from "react";
 
 interface PageHeaderProps {
   title: string;
+  imge?: string;
   items: {
     label: string;
     href: string;
   }[];
 }
-export function PageHeader({ title, items }: PageHeaderProps) {
+
+export function PageHeader({ title, items, imge }: PageHeaderProps) {
   return (
     <div
       className="relative w-full flex flex-col items-center justify-center bg-black h-[400px] pt-10"
       style={{
-        backgroundImage: `url(/assets/heroBg.png)`,
+        backgroundImage: `url(${imge})`,
         backgroundSize: "cover",
         backgroundRepeat: "repeat",
         top: 0,
@@ -30,11 +32,11 @@ export function PageHeader({ title, items }: PageHeaderProps) {
       }}
     >
       <div className={cn("relative z-10 flex flex-col items-center")}>
-        <h1 className="text-[25px] lg:text-4xl font-semibold tracking-tight text-white text-center">
+        <h1 className="text-[25px] lg:text-[48px] font-semibold  text-white text-center mb-5 tracking-wide">
           {title}
         </h1>
         <Breadcrumb>
-          <BreadcrumbList className="text-white">
+          <BreadcrumbList className="text-white"> 
             {items.map((item, index) => (
               <React.Fragment key={`fragment-${item.label}-${index}`}>
                 {index > 0 && (
