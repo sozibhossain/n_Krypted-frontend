@@ -107,8 +107,8 @@ export function Footer() {
         <p>© 2025 Agency All rights reserved.</p>
         <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
           <Link href="/privacypolicy">Support</Link>
-          <Link href="/privacypolicy">Report Infringement</Link>
-          <Link href="/Terms&Conditions">Refund Policies</Link>
+          <Link href="/report">Report Infringement</Link>
+          <Link href="/refund-policies">Refund Policies</Link>
         </div>
       </div>
 
