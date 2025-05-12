@@ -63,7 +63,7 @@ export function CategoriesAndSearchBar() {
   })
 
   // Extract unique locations from deals
-  
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const uniqueLocations: string[] = Array.from(new Set(dealsData?.map((deal: any) => deal.location) || [])).filter(Boolean) as string[]
 
   // Apply filters and search

@@ -55,10 +55,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (token && !socket) {
-      const socket = io("http://localhost:5100", {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
+      const socket = io("http://localhost:5000", {
+        // extraHeaders: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
       setSocket(socket);
     }
