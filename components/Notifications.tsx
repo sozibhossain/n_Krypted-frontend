@@ -4,8 +4,11 @@ import { formatDistanceToNow } from "date-fns";
 import { useSocketContext } from "@/Provider/SocketProvider";
 import { useSession } from "next-auth/react";
 
+
 const Notifications = () => {
   const { notifications, setNotifications } = useSocketContext();
+
+  console.log("notifications", notifications);
   const session = useSession();
   const token = session?.data?.user?.accessToken;
 
@@ -14,7 +17,7 @@ const Notifications = () => {
       if (token) {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=67ff7a693b8cb22538753372`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -23,7 +26,8 @@ const Notifications = () => {
           );
           const data = await response.json();
           if (data.status && data.data) {
-            setNotifications(data.data);
+            setNotifications(data.notifications);
+          
           } else {
             console.error(
               "Failed to fetch initial notifications:",

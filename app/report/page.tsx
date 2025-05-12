@@ -1,24 +1,25 @@
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/Shared/PageHeader"
+import Link from "next/link"
 
 export default function ReportInfringement() {
     return (
         <div className="">
             <PageHeader
                 title="Report Infringement"
-                    imge="/assets/herobg.png"
-                    items={[
-                      {
+                imge="/assets/herobg.png"
+                items={[
+                    {
                         label: "Home",
                         href: "/",
-                      },
-                      {
-                          label: "Report Infringement",
+                    },
+                    {
+                        label: "Report Infringement",
                         href: "/faq",
-                      },
-                    ]}
-                  />
+                    },
+                ]}
+            />
             <div className="w-full container mt-[80px] pb-[120px]">
                 <h1 className="text-2xl md:text-[32px] font-semibold text-[#FFFFFF] mb-6">Report Infringement</h1>
 
@@ -86,13 +87,15 @@ export default function ReportInfringement() {
                 </ol>
 
                 <div className="mt-10">
-                    <Button
-                        variant="outline"
-                        className="bg-white text-black hover:bg-gray-200 rounded-md px-4 !h-[40px] text-sm flex items-center gap-2 transition-colors"
-                    >
-                        Contact To Support
-                        <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <Link href="/suport">
+                        <Button
+                            variant="outline"
+                            className="bg-white text-black hover:bg-gray-200 rounded-md px-4 !h-[40px] text-sm flex items-center gap-2 transition-colors"
+                        >
+                            Contact To Support
+                            <ArrowRight className="h-4 w-4" />
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>
