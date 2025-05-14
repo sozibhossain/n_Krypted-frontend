@@ -6,7 +6,7 @@ export default function page() {
   return (
     <div className="">
       <PageHeader
-        title="About Us"
+        title="Our All Deals"
         imge="/assets/deals-banner.png"
         items={[
           {
