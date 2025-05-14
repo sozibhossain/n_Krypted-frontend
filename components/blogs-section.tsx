@@ -27,7 +27,7 @@ export function BlogsSection() {
   }, []);
 
   return (
-    <section className="container mt-24">
+    <section className="container lg:mt-24">
       <div>
         <div className="flex items-center gap-4">
           <div className="w-5 h-9 bg-white rounded" />

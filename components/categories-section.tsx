@@ -46,21 +46,20 @@ export function CategoriesSection() {
     ))
 
   return (
-    <section className="py-8 md:py-12 lg:py-16 mt-12 md:mt-24">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 md:mb-12">
-          <div>
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="w-3 md:w-5 h-6 md:h-9 bg-white rounded" />
-              <h1
-                className="font-benedict text-2xl md:text-[40px] font-normal text-white"
-                style={{ fontFamily: "cursive" }}
-              >
-                Categories
-              </h1>
-            </div>
-            <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Explore Our Category</p>
+    <section className="mt-24 ">
+      <div className="container px-4 md:px-6 lg:px-8 space-y-12">
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="w-3 md:w-5 h-6 md:h-9 bg-white rounded" />
+            <h1
+              className="font-benedict text-2xl md:text-[40px] font-normal text-white"
+              style={{ fontFamily: "cursive" }}
+            >
+              Categories
+            </h1>
           </div>
+          <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Explore Our Category</p>
         </div>
 
         <div className="w-full">

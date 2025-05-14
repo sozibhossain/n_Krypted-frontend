@@ -17,7 +17,7 @@ export function CategoryCard({ title, icon,  }: CategoryCardProps) {
             alt={`${title} Category Icon`}
             width={1000}
             height={1000}
-            className=" object-cover py-2 w-full h-[300px]"
+            className="max-w-[190px] object-cover py-2 w-full h-[300px]"
           />
         </div>
 

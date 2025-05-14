@@ -48,7 +48,7 @@ export function BrowseOurDeals() {
 
   return (
     <section className="container mt-24">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+      <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-4">
             <div className="w-5 h-9 bg-white rounded" />
@@ -56,7 +56,7 @@ export function BrowseOurDeals() {
               <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Our Deal</h1>
             </div>
           </div>
-          <p className="text-[40px] font-bold text-white">Browse Our Deals</p>
+          <p className="text-[20px] lg:text-[40px] font-bold text-white">Browse Our Deals</p>
         </div>
         <Link href={"/auctions"}>
           <Button className="bg-white text-black">

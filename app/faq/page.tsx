@@ -20,8 +20,8 @@ const page = () => {
           },
         ]}
       />
-      <div className="container ">
-        <div className="grid grid-cols-3 gap-4 py-16">
+      <div className="container">
+        <div className="grid grid-cols-3 gap-4 pt-16">
           <div className="hidden lg:block lg:col-span-1">
             <Image
               src="/assets/faq.png"

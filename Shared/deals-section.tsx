@@ -3,10 +3,16 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { Button } from "@/components/ui/button"
 import { DealsCard } from "@/components/DealsCard"
-import { useKeenSlider } from "keen-slider/react"
-import "keen-slider/keen-slider.min.css"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface Deal {
   _id: string
@@ -24,25 +30,7 @@ interface Deal {
 }
 
 export function DealsSection() {
-  const [itemsToShow, setItemsToShow] = useState(3)
   const axiosInstance = useAxios()
-
-  // Responsive items to show
-  useEffect(() => {
-    const updateItemsToShow = () => {
-      if (window.innerWidth < 640) {
-        setItemsToShow(1)
-      } else if (window.innerWidth < 1024) {
-        setItemsToShow(2)
-      } else {
-        setItemsToShow(3)
-      }
-    }
-
-    updateItemsToShow()
-    window.addEventListener("resize", updateItemsToShow)
-    return () => window.removeEventListener("resize", updateItemsToShow)
-  }, [])
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["deals"],
@@ -54,38 +42,35 @@ export function DealsSection() {
 
   const dealsData = response?.deals || []
 
-  const [sliderRef, instanceRef] = useKeenSlider({
-    slides: {
-      perView: itemsToShow,
-      spacing: 16,
-    },
-    mode: "snap",
-    loop: false,
-    breakpoints: {
-      "(max-width: 640px)": {
-        slides: { perView: 1, spacing: 0 },
-      },
-      "(max-width: 1024px)": {
-        slides: { perView: 2, spacing: 12 },
-      },
-    },
-  })
+  // Determine number of items to show based on screen size
+  const [itemsPerView, setItemsPerView] = useState(3)
 
-  // Update slider when itemsToShow changes
   useEffect(() => {
-    instanceRef.current?.update({
-      slides: {
-        perView: itemsToShow,
-        spacing: 16,
-      },
-    })
-  }, [itemsToShow, instanceRef])
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerView(1)
+      } else if (window.innerWidth < 1024) {
+        setItemsPerView(2)
+      } else {
+        setItemsPerView(3)
+      }
+    }
+
+    // Set initial value
+    handleResize()
+
+    // Add event listener
+    window.addEventListener("resize", handleResize)
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   return (
-    <section className=" ">
+    <section className="">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-8">
-          <div className="mb-4 sm:mb-0">
+        <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-8">
+          <div className="mb-4 sm:mb-0 space-y-4">
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-3 sm:w-5 h-6 sm:h-9 bg-white rounded" />
               <div>
@@ -98,23 +83,25 @@ export function DealsSection() {
           </div>
 
           <div className="flex gap-2 mt-2 sm:mt-0">
-            <button
-              onClick={() => instanceRef.current?.prev()}
-              disabled={dealsData.length <= itemsToShow}
-              className="w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px] lg:w-[80px] lg:h-[70px] rounded-full bg-white flex items-center justify-center transition-all hover:bg-gray-100 disabled:opacity-50"
+            <Button
+              size="icon"
+              variant="outline"
+              className="w-10 h-10 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50"
+              id="carousel-prev-button"
               aria-label="Previous slide"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-black" />
-            </button>
+            </Button>
 
-            <button
-              onClick={() => instanceRef.current?.next()}
-              disabled={dealsData.length <= itemsToShow}
-              className="w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px] lg:w-[80px] lg:h-[70px] rounded-full bg-white flex items-center justify-center transition-all hover:bg-gray-100 disabled:opacity-50"
+            <Button
+              size="icon"
+              variant="outline"
+              className="w-10 h-10 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50"
+              id="carousel-next-button"
               aria-label="Next slide"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-black" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -128,23 +115,58 @@ export function DealsSection() {
           </div>
         ) : (
           <div className="relative px-0 sm:px-4">
-            <div ref={sliderRef} className="keen-slider">
-              {dealsData.map((deal: Deal) => (
-                <div key={deal._id} className="keen-slider__slide px-2 sm:px-4 p-5">
-                  <div className="mx-auto w-full md:max-[32%]">
-                    <DealsCard
-                      id={deal._id}
-                      title={deal.title}
-                      image={deal.images[0] || "/assets/deals.png"}
-                      description={deal.description}
-                      price={deal.price}
-                      participations={deal.participations}
-                      maxParticipants={deal.participations}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: false,
+              }}
+              className="w-full"
+              setApi={(api) => {
+                if (api) {
+                  const prevButton = document.getElementById("carousel-prev-button")
+                  const nextButton = document.getElementById("carousel-next-button")
+                  
+                  if (prevButton) {
+                    prevButton.addEventListener("click", () => api.scrollPrev())
+                  }
+                  
+                  if (nextButton) {
+                    nextButton.addEventListener("click", () => api.scrollNext())
+                  }
+                }
+              }}
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {dealsData.map((deal: Deal) => (
+                  <CarouselItem 
+                    key={deal._id} 
+                    className={`pl-2 md:pl-4 ${
+                      itemsPerView === 1 
+                        ? 'basis-full' 
+                        : itemsPerView === 2 
+                          ? 'basis-1/2' 
+                          : 'basis-1/3'
+                    }`}
+                  >
+                    <div className="p-1">
+                      <DealsCard
+                        id={deal._id}
+                        title={deal.title}
+                        image={deal.images[0] || "/assets/deals.png"}
+                        description={deal.description}
+                        price={deal.price}
+                        participations={deal.participations}
+                        maxParticipants={deal.participations}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="hidden">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+            </Carousel>
           </div>
         )}
       </div>

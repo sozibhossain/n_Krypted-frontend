@@ -26,9 +26,9 @@ export default function ContactUsForm() {
   }
 
   return (
-    <div className="container px-4 sm:px-6 lg:px-8 py-10 md:py-14 ">
+    <div className="container py-24 lg:mt-24">
       <div>
-        <h1 className="text-3xl sm:text-4xl lg:text-[48px] font-bold mb-4 text-white text-center">
+        <h1 className="text-xl lg:text-4xl lg:text-[48px] font-bold mb-4 text-white text-center">
           Any suggestions or feedback,
         </h1>
         <h1

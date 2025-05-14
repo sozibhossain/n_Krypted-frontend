@@ -125,9 +125,9 @@ export function CategoriesAndSearchBar() {
   return (
     <header className="container py-3 mt-20">
       <form onSubmit={handleSearchSubmit}>
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
           {/* Categories Dropdown */}
-          <div className="col-span-1">
+          <div className="col-span-4 md:col-span-1 lg:col-span-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -162,7 +162,7 @@ export function CategoriesAndSearchBar() {
             </DropdownMenu>
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-4 md:col-span-3 lg:col-span-3">
             {/* Search Input */}
             <div className="flex items-center border border-white justify-between rounded-lg">
               <div className="relative flex-1 max-w-2xl">
@@ -170,7 +170,7 @@ export function CategoriesAndSearchBar() {
                 <Input
                   type="search"
                   placeholder="Walk Through: Durchsuchen"
-                  className="pl-10 bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="pl-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onKeyDown={(e) => {
@@ -186,7 +186,7 @@ export function CategoriesAndSearchBar() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="bg-white h-[52px] text-black !rounded-l-none hover:bg-gray-100 border-0 gap-2"
+                    className="bg-white py-[25px] lg:h-[52px] text-black !rounded-l-none hover:bg-gray-100 border-0 gap-2"
                   >
                     <MapPin className="h-4 w-4" />
                     <span>{selectedLocation === "all" ? "location" : selectedLocation}</span>

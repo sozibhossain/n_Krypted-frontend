@@ -18,16 +18,16 @@ const page = () => {
             href: "/",
           },
           {
-            label: "A",
+            label: "About Us",
             href: "/blogs",
           },
         ]}
       />
-      <div className="mt-28 container">
+      <div className="mt-18 lg:mt-24 container">
       <div className="text-center mt-8">
-        <h1 className="text-[40px] font-semibold text-[#FFFFFF]">What are Walk Throughz?</h1>
+        <h1 className="text-[25px] lg:text-[40px] font-semibold text-[#FFFFFF]">What are Walk Throughz?</h1>
 
-        <p className="mt-3 text-xl text-[#E0E0E0] leading-[150%]">
+        <p className="mt-3 text-base lg:text-xl text-[#E0E0E0] leading-[150%]">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis molestie, sapien et vulputate porttitor, eros magna laoreet mauris, eu suscipit tortor turpis in elit. Sed tristique pharetra ligula. Aenean eu tempor lorem. Sed posuere ante id laoreet finibus. Vivamus a pulvinar ex. Quisque nec metus rutrum diam pulvinar rutrum. Sed enim tortor, accumsan ac dignissim in, finibus placerat lorem. Cras rhoncus hendrerit diam nec vestibulum. Cras vehicula neque augue, vel posuere neque blandit vel nisi.</p>
       </div>
 
