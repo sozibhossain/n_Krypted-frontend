@@ -1,4 +1,4 @@
-import AllAuction from "@/components/auctions/all-auction";
+import AllAuction from "@/components/auctions/all-deals";
 import { PageHeader } from "@/Shared/PageHeader";
 import React, { Suspense } from "react";
 
