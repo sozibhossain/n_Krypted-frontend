@@ -10,6 +10,7 @@ import { ChevronDown, MapPin, Search } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
+import Hideon from "@/Provider/Hideon"
 
 interface Category {
   _id: string
@@ -122,99 +123,111 @@ export function CategoriesAndSearchBar() {
     setSelectedLocation(currentLocation)
   }, [currentSearchQuery, currentCategory, currentLocation])
 
-  return (
-    <header className="container py-3 mt-20">
-      <form onSubmit={handleSearchSubmit}>
-        <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
-          {/* Categories Dropdown */}
-          <div className="col-span-4 md:col-span-1 lg:col-span-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-white text-white h-[52px] hover:bg-gray-800 hover:text-white w-full justify-between"
-                >
-                  <span>{selectedCategory || "Kategorien"}</span>
-                  <ChevronDown className="h-4 w-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-[270px]">
-                <DropdownMenuItem
-                  onClick={() => handleCategorySelect("")}
-                  className={!selectedCategory ? "bg-gray-100" : ""}
-                >
-                  All Categories
-                </DropdownMenuItem>
-                {isLoadingCategories ? (
-                  <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
-                ) : (
-                  categoriesData?.map((category: Category) => (
-                    <DropdownMenuItem
-                      key={category._id}
-                      onClick={() => handleCategorySelect(category.categoryName)}
-                      className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
-                    >
-                      {category.categoryName}
-                    </DropdownMenuItem>
-                  ))
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+  const HIDDEN_ROUTES = [
+    "/dashboard",
+    "/login",
+    "/registration",
+    "/reset-password",
+    "/forgot-password",
+  ];
 
-          <div className="col-span-4 md:col-span-3 lg:col-span-3">
-            {/* Search Input */}
-            <div className="flex items-center border border-white justify-between rounded-lg">
-              <div className="relative flex-1 max-w-2xl">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Walk Through: Durchsuchen"
-                  className="pl-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      applyFilters()
-                    }
-                  }}
-                />
-              </div>
-              {/* Location Dropdown */}
+  return (
+    <Hideon
+      routes={HIDDEN_ROUTES}
+    >
+      <header className="container py-3 mt-20">
+        <form onSubmit={handleSearchSubmit}>
+          <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
+            {/* Categories Dropdown */}
+            <div className="col-span-4 md:col-span-1 lg:col-span-1">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="bg-white py-[25px] lg:h-[52px] text-black !rounded-l-none hover:bg-gray-100 border-0 gap-2"
+                    className="bg-transparent border-white text-white h-[52px] hover:bg-gray-800 hover:text-white w-full justify-between"
                   >
-                    <MapPin className="h-4 w-4" />
-                    <span>{selectedLocation === "all" ? "location" : selectedLocation}</span>
-                    <ChevronDown className="h-4 w-4" />
+                    <span>{selectedCategory || "Kategorien"}</span>
+                    <ChevronDown className="h-4 w-4 ml-2" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="start" className="w-[270px]">
                   <DropdownMenuItem
-                    onClick={() => handleLocationSelect("all")}
-                    className={selectedLocation === "all" ? "bg-gray-100" : ""}
+                    onClick={() => handleCategorySelect("")}
+                    className={!selectedCategory ? "bg-gray-100" : ""}
                   >
-                    All Locations
+                    All Categories
                   </DropdownMenuItem>
-                  {uniqueLocations.map((location: string) => (
-                    <DropdownMenuItem
-                      key={location}
-                      onClick={() => handleLocationSelect(location)}
-                      className={selectedLocation === location ? "bg-gray-100" : ""}
-                    >
-                      {location}
-                    </DropdownMenuItem>
-                  ))}
+                  {isLoadingCategories ? (
+                    <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
+                  ) : (
+                    categoriesData?.map((category: Category) => (
+                      <DropdownMenuItem
+                        key={category._id}
+                        onClick={() => handleCategorySelect(category.categoryName)}
+                        className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
+                      >
+                        {category.categoryName}
+                      </DropdownMenuItem>
+                    ))
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+
+            <div className="col-span-4 md:col-span-3 lg:col-span-3">
+              {/* Search Input */}
+              <div className="flex items-center border border-white justify-between rounded-lg">
+                <div className="relative flex-1 max-w-2xl">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="search"
+                    placeholder="Walk Through: Durchsuchen"
+                    className="pl-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        applyFilters()
+                      }
+                    }}
+                  />
+                </div>
+                {/* Location Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="bg-white py-[25px] lg:h-[52px] text-black !rounded-l-none hover:bg-gray-100 border-0 gap-2"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      <span>{selectedLocation === "all" ? "location" : selectedLocation}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => handleLocationSelect("all")}
+                      className={selectedLocation === "all" ? "bg-gray-100" : ""}
+                    >
+                      All Locations
+                    </DropdownMenuItem>
+                    {uniqueLocations.map((location: string) => (
+                      <DropdownMenuItem
+                        key={location}
+                        onClick={() => handleLocationSelect(location)}
+                        className={selectedLocation === location ? "bg-gray-100" : ""}
+                      >
+                        {location}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </header>
+        </form>
+      </header>
+    </Hideon>
   )
 }
