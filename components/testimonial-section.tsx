@@ -40,15 +40,15 @@ export function TestimonialSection() {
   const testimonial = testimonials[currentIndex];
 
   return (
-    <section className="container mt-24 py-[50px]">
-      <div className="grid gap-8 grid-cols-1 md:grid-cols-6">
-        <div className="col-span-2">
+    <section className="container lg:mt-24 py-[50px]">
+      <div className="grid gap-8 grid-cols-6">
+        <div className="col-span-6 md:col-span-2 lg:col-span-2">
           <h2 className="text-white lg:mb-4 text-2xl lg:text-5xl font-bold tracking-tight">
             What does our client say?
           </h2>
         </div>
 
-        <div className="col-span-4">
+        <div className="col-span-6 md:col-span-4 lg:col-span-4">
           <div className="relative mb-5 pl-6">
             <Quote className="absolute left-0 top-0 h-5 w-5 text-white" />
             <p className="text-white text-lg italic text-muted-foreground">{testimonial.text}</p>
@@ -69,24 +69,20 @@ export function TestimonialSection() {
             </div>
 
             <div className="ml-auto flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-[48px] w-[80px] rounded-sm border-white bg-[#212121]"
+              <button
+                className="px-[35px] py-[15px] rounded-sm border flex items-center justify-center border-white bg-[#212121] hover:bg-white hover:text-black"
                 onClick={handlePrev}
               >
-                <MoveLeft className="h-4 w-4 -rotate-45 text-white" />
+                <MoveLeft className="h-4 w-4 -rotate-45 text-white hover:text-black" />
                 <span className="sr-only ">Previous</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-[48px] w-[80px] rounded-sm border-white bg-[#212121]"
+              </button>
+              <button
+                className="px-[35px] py-[15px] rounded-sm border flex items-center justify-center border-white bg-[#212121] hover:bg-white hover:text-black"
                 onClick={handleNext}
               >
-                <MoveRight className="h-4 w-4 -rotate-45 text-white" />
+                <MoveRight className="h-4 w-4 -rotate-45 text-white hover:text-black" />
                 <span className="sr-only">Next</span>
-              </Button>
+              </button>
             </div>
           </div>
         </div>
