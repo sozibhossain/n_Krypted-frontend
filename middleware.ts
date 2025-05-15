@@ -11,48 +11,48 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const publicRoutes = ["/login", "/register", "/verify", "/forgot-password"];
-  const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  // const publicRoutes = ["/login", "/register", "/verify", "/forgot-password"];
+  // const isPublicRoute = publicRoutes.some((route) =>
+  //   pathname.startsWith(route)
+  // );
 
   // If not logged in and accessing protected route
-  if (!token && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  // if (!token && !isPublicRoute) {
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // }
 
   // If logged in and trying to access auth pages
-  if (token && isPublicRoute) {
-    // Redirect based on role
-    if (token.role === "admin") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    } else if (token.role === "seller") {
-      return NextResponse.redirect(new URL("/seller-dashboard", request.url));
-    } else if (token.role === "bidder") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
+  // if (token && isPublicRoute) {
+  //   // Redirect based on role
+  //   if (token.role === "admin") {
+  //     return NextResponse.redirect(new URL("/dashboard", request.url));
+  //   } else if (token.role === "seller") {
+  //     return NextResponse.redirect(new URL("/seller-dashboard", request.url));
+  //   } else if (token.role === "bidder") {
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
+  // }
 
   // Protect role-based pages
-  if (pathname.startsWith("/dashboard")) {
-    if (token?.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
+  // if (pathname.startsWith("/dashboard")) {
+  //   if (token?.role !== "admin") {
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
+  // }
 
-  if (pathname.startsWith("/seller-dashboard")) {
-    if (token?.role !== "seller") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
+  // if (pathname.startsWith("/seller-dashboard")) {
+  //   if (token?.role !== "seller") {
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
+  // }
 
-  if (pathname.startsWith("/account")) {
-    if (token?.role !== "bidder") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
+  // if (pathname.startsWith("/account")) {
+  //   if (token?.role !== "bidder") {
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
 
-  return NextResponse.next();
+
+return NextResponse.next();
 }
 
 // Protect these routes

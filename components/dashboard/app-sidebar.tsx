@@ -11,7 +11,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  HandCoins,
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,7 +20,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import LogOutModal from "@/Shared/LogOutModal";
@@ -36,185 +34,133 @@ export function AppSidebar({ }: AppSidebarProps) {
   const { data: session } = useSession();
   const role = session?.user?.role;
 
-  const isActive = (path: string) => {
-    return pathname === path;
-  };
-
-  const isSellerActive = (path: string) => {
-    // For the dashboard paths, we want exact matches
-    if (path === "/seller-dashboard" || path === "/dashboard") {
-      return pathname === path || pathname === path + "/";
-    }
-    // For other paths, check if it starts with the path (but not the dashboards)
-    return pathname.startsWith(path) && 
-           path !== "/seller-dashboard" && 
-           path !== "/dashboard";
-  };
-
+  const isActive = (path: string) => pathname === path;
 
   return (
     <>
-      <Sidebar className="border-r-0" collapsible="none">
-        <SidebarHeader className="h-[72px] flex items-center justify-center border-b border-[#5c5343] bg-[#645949]">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Image
-                src="/assets/logo.png"
-                alt="Diamond Auctions"
-                width={100}
-                height={100}
-                className="w-[46px] h-[39px]"
-              />
-            </div>
-          </Link>
-        </SidebarHeader>
-        <SidebarContent className="p-4 bg-[#6b614f]">
-          <SidebarMenu className="space-y-2">
-            {role === "admin" ? (
-              <>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3">
-                      <LayoutDashboard className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Dashboard</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard/categories")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/categories" className="flex items-center gap-3 px-4 py-3">
-                      <Layers className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Categories</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard/auctions")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/auctions" className="flex items-center gap-3 px-4 py-3">
-                      <Gavel className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Auctions</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard/bidders")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/bidders" className="flex items-center gap-3 px-4 py-3">
-                      <Users className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Bidders</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard/seller")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/seller" className="flex items-center gap-3 px-4 py-3">
-                      <User className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Seller</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/dashboard/blogs")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/blogs" className="flex items-center gap-3 px-4 py-3">
-                      <FileText className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Blogs Management</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith("/dashboard/settings")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3">
-                      <Settings className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Settings</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </>
-            ) : (
-              <>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isSellerActive("/seller-dashboard")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/seller-dashboard" className="flex items-center gap-3 px-4 py-3">
-                      <LayoutDashboard className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Dashboard</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isSellerActive("/seller-dashboard/auctions")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/seller-dashboard/auctions" className="flex items-center gap-3 px-4 py-3">
-                      <Gavel className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Auctions</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isSellerActive("/seller-dashboard/bids")}
-                    className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
-                  >
-                    <Link href="/seller-dashboard/bids" className="flex items-center gap-3 px-4 py-3">
-                      <HandCoins className="h-5 w-5 text-white" />
-                      <span className="text-base font-medium text-white">Bids</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </>
-            )}
+      <Sidebar className="border-r-0 w-[108px]" collapsible="none">
+        <SidebarContent className="p-4 bg-[#212121]">
+          <SidebarMenu className="space-y-2 pt-[80px]">
+            <>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard" className="flex flex-col items-center">
+                    <LayoutDashboard className={`h-5 w-5 ${isActive("/dashboard") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Dashboard
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/categories")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/categories" className="flex flex-col items-center">
+                    <Layers className={`h-5 w-5 ${isActive("/dashboard/categories") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/categories") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Categories
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/auctions")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/auctions" className="flex flex-col items-center">
+                    <Gavel className={`h-5 w-5 ${isActive("/dashboard/auctions") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/auctions") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Deals
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/bidders")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/bidders" className="flex flex-col items-center">
+                    <Users className={`h-5 w-5 ${isActive("/dashboard/bidders") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/bidders") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Booking
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/blogs")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/blogs" className="flex flex-col items-center">
+                    <FileText className={`h-5 w-5 ${isActive("/dashboard/blogs") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/blogs") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Blogs
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/seller")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/seller" className="flex flex-col items-center">
+                    <User className={`h-5 w-5 ${isActive("/dashboard/seller") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/seller") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Notify Me
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={pathname.startsWith("/dashboard/settings")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/settings" className="flex flex-col items-center">
+                    <Settings className={`h-5 w-5 ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Settings
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </>
           </SidebarMenu>
         </SidebarContent>
-        <div className="mt-auto p-4 bg-[#6b614f] border-t border-[#5c5343]">
+
+        <div className="mt-auto p-4 bg-[#212121] border-t border-[#5c5343]">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => setIsLogoutDialogOpen(true)}
-                className="text-white hover:bg-[#7d7260] hover:text-white flex items-center gap-3 px-4 py-3"
+                className="group py-8 flex justify-center hover:bg-[#ffffff]"
               >
-                <LogOut className="h-5 w-5" />
-                <span>Logout</span>
+                <div className="flex flex-col items-center">
+                  <LogOut className="h-5 w-5 text-[#ffffff] group-hover:text-[#212121]" />
+                  <span className="text-[12px] font-medium text-[#ffffff] group-hover:text-[#212121]">Logout</span>
+                </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </div>
       </Sidebar>
 
-      <LogOutModal isLogoutDialogOpen={isLogoutDialogOpen} setIsLogoutDialogOpen={setIsLogoutDialogOpen}/>
+      <LogOutModal isLogoutDialogOpen={isLogoutDialogOpen} setIsLogoutDialogOpen={setIsLogoutDialogOpen} />
     </>
   );
 }
