@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -45,11 +47,10 @@ export default function Layout({ children }: LayoutProps) {
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetTrigger asChild className="md:hidden">
           <Button
-            variant="ghost"
             size="icon"
-            className="absolute top-3 left-3 z-50"
+            className="absolute top-3 left-3 z-50 bg-inherit"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 text-white " />
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
@@ -59,18 +60,25 @@ export default function Layout({ children }: LayoutProps) {
       </Sheet>
 
       <SidebarInset className="bg-gray-100 w-full flex flex-col h-screen">
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6 py-4">
-          <div className="md:hidden w-6"></div> {/* Spacer for mobile */}
-          <div className="hidden md:block"></div> {/* Empty div for desktop */}
+        <header className="flex h-16 items-center justify-end lg:justify-between border-b bg-[#212121] py-4">
+          {/* <div className="md:hidden w-6"></div> 
+          <div className="hidden md:block"></div> */}
+          {/* Logo */}
+          <div className="ml-[-50px] hidden lg:block">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="text-center">
+                <div className="flex justify-center">
+                  <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
+                </div>
+                <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
+                  Walk Throughz
+                </h1>
+              </div>
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
-            {/* <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                1
-              </span>
-            </Button> */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-white">
                 {user?.name || "User"}
               </span>
               <DropdownMenu>
