@@ -15,13 +15,13 @@ import {
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
+  // SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import LogOutModal from "@/Shared/LogOutModal";
 
 interface AppSidebarProps {
@@ -31,8 +31,8 @@ interface AppSidebarProps {
 export function AppSidebar({ }: AppSidebarProps) {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const { data: session } = useSession();
-  const role = session?.user?.role;
+  // const { data: session } = useSession();
+  // const role = session?.user?.role;
 
   const isActive = (path: string) => pathname === path;
 

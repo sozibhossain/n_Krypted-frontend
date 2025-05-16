@@ -251,8 +251,7 @@ export default function BlogsPage() {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
+          onPageChange={setCurrentPage} totalItems={0} itemsPerPage={0}        />
       </div>
     </Layout>
   );
