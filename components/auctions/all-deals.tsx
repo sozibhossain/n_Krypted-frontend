@@ -422,7 +422,7 @@ export default function DealsPage() {
                 )}
 
                 <div className="mt-8">
-                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalItems={0} itemsPerPage={0} />
                 </div>
               </>
             )}

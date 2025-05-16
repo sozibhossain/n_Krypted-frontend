@@ -1,654 +1,607 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState, useEffect } from "react";
-import Layout from "@/components/dashboard/layout";
-import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  useAllCategories,
-  useCreateCategory,
-  useDeleteCategory,
-  useUpdateCategory,
-} from "@/hooks/use-queries";
-import { toast } from "sonner";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import Image from "next/image";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import { apiService } from "@/lib/api-service";
-import { useSession } from "next-auth/react";
+import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
+import {  Trash2, Plus, X, Upload, Edit } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import Layout from "@/components/dashboard/layout"
+import { toast } from "sonner"
+import { Pagination } from "@/components/dashboard/pagination"
 
 interface Category {
-  _id: string;
-  name: string;
-  description: string;
-  image: string;
+  _id: string
+  categoryName: string
+  image: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+  __v: number
+  dealCount: number
 }
-export default function CategoriesPage() {
-  const { data: categoriesData, isLoading } = useAllCategories();
-  const createCategoryMutation = useCreateCategory();
-  const deleteCategoryMutation = useDeleteCategory();
-  const updateCategoryMutation = useUpdateCategory();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const [categories, setCategories] = useState<any>([]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
+
+interface EditCategoryForm {
+  categoryName: string
+  image: File | null
+  existingImage?: string
+}
+
+interface PaginationInfo {
+  currentPage: number
+  totalPages: number
+  totalItems: number
+  itemsPerPage: number
+}
+
+interface CategoryResponse {
+  success: boolean
+  data: Category[]
+  pagination: PaginationInfo
+}
+
+const CategoriesPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [newCategory, setNewCategory] = useState({
-    name: "",
-    description: "",
+    categoryName: "",
     image: null as File | null,
-  });
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [editPreviewUrl, setEditPreviewUrl] = useState("");
-  const session = useSession();
-  const user = session.data?.user;
+  })
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editCategory, setEditCategory] = useState<EditCategoryForm>({
+    categoryName: "",
+    image: null,
+    existingImage: "",
+  })
+  const [editCategoryId, setEditCategoryId] = useState<string>("")
+  const [editImagePreview, setEditImagePreview] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [page, setPage] = useState(1)
 
-  // Set token whenever user changes
-  useEffect(() => {
-    if (user?.accessToken) {
-      apiService.setToken(user.accessToken);
-    }
-  }, [user]);
+  // Fetch categories with pagination
+  const { data, isLoading, error } = useQuery<CategoryResponse>({
+    queryKey: ["categories", page],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories?page=${page}&limit=5`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories")
+        }
+        return await response.json()
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        throw err
+      }
+    },
+  })
 
-  useEffect(() => {
-    if (categoriesData?.data) {
-      setCategories(categoriesData.data);
-      // Calculate total pages based on your desired items per page (e.g., 5)
-      setTotalPages(Math.ceil((categoriesData.data as any[]).length / 5));
-    }
-  }, [categoriesData]);
+  // Add category mutation
+  const addCategoryMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
+          method: "POST",
+          body: formData,
+        })
 
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isEdit = false
-  ) => {
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null)
+          console.error("Error response:", errorData)
+          throw new Error("Failed to add category")
+        }
+
+        return response.json()
+      } catch (err) {
+        console.error("Error adding category:", err)
+        throw err
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      setIsModalOpen(false)
+      resetForm()
+      toast.success("Category added successfully", { position: "top-right" })
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error)
+      toast.error("Failed to add category", { position: "top-right" })
+    },
+  })
+
+  // Delete category mutation
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (categoryId: string) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}`, {
+          method: "DELETE",
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to delete category")
+        }
+
+        return response.json()
+      } catch (err) {
+        console.error("Error deleting category:", err)
+        throw err
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      toast.success("Category deleted successfully", { position: "top-right" })
+    },
+    onError: (error) => {
+      console.error("Delete mutation error:", error)
+      toast.error("Failed to delete category", { position: "top-right" })
+    },
+  })
+
+  // Edit category mutation
+  const editCategoryMutation = useMutation({
+    mutationFn: async ({ categoryId, formData }: { categoryId: string; formData: FormData }) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}`, {
+          method: "PUT",
+          body: formData,
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to update category")
+        }
+
+        return response.json()
+      } catch (err) {
+        console.error("Error updating category:", err)
+        throw err
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      setIsEditModalOpen(false)
+      resetEditForm()
+      toast.success("Category updated successfully", { position: "top-right" })
+    },
+    onError: (error) => {
+      console.error("Edit mutation error:", error)
+      toast.error("Failed to update category", { position: "top-right" })
+    },
+  })
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+      const file = e.target.files[0]
+      setNewCategory({ ...newCategory, image: file })
 
-      if (isEdit && selectedCategory) {
-        setSelectedCategory({
-          ...selectedCategory,
-          image: URL.createObjectURL(file),
-        });
-        // Create preview URL
-        const reader = new FileReader();
-        reader.onload = () => {
-          setEditPreviewUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setNewCategory({ ...newCategory, image: file });
-        // Create preview URL
-        const reader = new FileReader();
-        reader.onload = () => {
-          setPreviewUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
       }
+      reader.readAsDataURL(file)
+
+      // Reset the input value to allow selecting the same file again if needed
+      e.target.value = ""
     }
-  };
+  }
 
-  const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
 
-    if (!newCategory.name || !newCategory.description || !newCategory.image) {
-      toast.error("Please fill all fields and upload an image");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", newCategory.name);
-    formData.append("description", newCategory.description);
-    formData.append("image", newCategory.image);
-
-    createCategoryMutation.mutate(formData, {
-      onSuccess: () => {
-        setIsAddDialogOpen(false);
-        setNewCategory({ name: "", description: "", image: null });
-        setPreviewUrl("");
-      },
-    });
-  };
-
-  const handleEditCategory = (category: Category) => {
-    setSelectedCategory(category);
-    setEditPreviewUrl(category.image);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleUpdateCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedCategory) return;
-
-    const formData = new FormData();
-    formData.append("name", selectedCategory.name);
-    formData.append("description", selectedCategory.description);
-
-    if (editPreviewUrl !== selectedCategory.image) {
-      // This means the image was changed
-      const response = await fetch(editPreviewUrl);
-      const blob = await response.blob();
-      formData.append("image", blob);
+    if (!newCategory.categoryName) {
+      return
     }
 
-    updateCategoryMutation.mutate(
-      { id: selectedCategory._id, data: formData },
-      {
-        onSuccess: () => {
-          setIsEditDialogOpen(false);
-          setSelectedCategory(null);
-        },
+    const formData = new FormData()
+    formData.append("categoryName", newCategory.categoryName)
+    if (newCategory.image) {
+      formData.append("image", newCategory.image)
+    }
+
+    addCategoryMutation.mutate(formData)
+  }
+
+  const resetForm = () => {
+    setNewCategory({
+      categoryName: "",
+      image: null,
+    })
+    setImagePreview(null)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString()
+  }
+
+  const handleDeleteClick = (categoryId: string) => {
+    setCategoryToDelete(categoryId)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (categoryToDelete) {
+      deleteCategoryMutation.mutate(categoryToDelete)
+      setIsDeleteModalOpen(false)
+      setCategoryToDelete(null)
+    }
+  }
+
+  const handleEditClick = (category: Category) => {
+    setEditCategoryId(category._id)
+    setEditCategory({
+      categoryName: category.categoryName,
+      image: null,
+      existingImage: category.image,
+    })
+    setEditImagePreview(category.image)
+    setIsEditModalOpen(true)
+  }
+
+  const handleEditImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setEditCategory({ ...editCategory, image: file })
+
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setEditImagePreview(reader.result as string)
       }
-    );
-  };
+      reader.readAsDataURL(file)
 
-  const handleDeleteCategory = async (id: string) => {
-    deleteCategoryMutation.mutate(id);
-  };
+      // Reset the input value to allow selecting the same file again if needed
+      e.target.value = ""
+    }
+  }
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
 
-  // Calculate pagination
-  const startIndex = (currentPage - 1) * 5;
-  const endIndex = startIndex + 5;
-  const displayedCategories = categories.slice(startIndex, endIndex);
+    if (!editCategory.categoryName) {
+      return
+    }
+
+    const formData = new FormData()
+    formData.append("categoryName", editCategory.categoryName)
+
+    // Only append image if a new one was selected
+    if (editCategory.image) {
+      formData.append("image", editCategory.image)
+    }
+
+    editCategoryMutation.mutate({ categoryId: editCategoryId, formData })
+  }
+
+  const resetEditForm = () => {
+    setEditCategory({
+      categoryName: "",
+      image: null,
+      existingImage: "",
+    })
+    setEditImagePreview(null)
+    setEditCategoryId("")
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+  }
 
   return (
     <Layout>
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
+      <div className=" ">
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
-            <p className="text-muted-foreground">Manage your Categories</p>
+            <h1 className="text-[40px] text-[#1F2937] font-bold tracking-tight">Categories</h1>
+            <div className="text-xl text-[#595959]">Dashboard &gt; Categories</div>
           </div>
-
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-[#6b614f] hover:bg-[#5c5343]">
-                <Plus className="mr-2 h-4 w-4" /> Add Category
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add Category</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleAddCategory} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Category Name</Label>
-                  <Input
-                    id="name"
-                    value={newCategory.name}
-                    onChange={(e) =>
-                      setNewCategory({ ...newCategory, name: e.target.value })
-                    }
-                    placeholder="Type category name here..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={newCategory.description}
-                    onChange={(e) =>
-                      setNewCategory({
-                        ...newCategory,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Type category description here..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="image">Thumbnail</Label>
-                  <div className="border rounded-md p-4">
-                    {previewUrl ? (
-                      <div className="flex flex-col items-center gap-4">
-                        <Image
-                          src={previewUrl || "/placeholder.svg"}
-                          alt="Preview"
-                          className="max-h-40 object-contain"
-                          width={200}
-                          height={200}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setPreviewUrl("");
-                            setNewCategory({ ...newCategory, image: null });
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          {/* <Image
-                            src="/placeholder.svg?height=40&width=40"
-                            alt="Upload"
-                            width={100}
-                            height={100}
-                          /> */}
-                        </div>
-                        <p className="text-sm text-center text-muted-foreground">
-                          Drag and drop image here, or click add image
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() =>
-                            document.getElementById("image-upload")?.click()
-                          }
-                        >
-                          Add Image
-                        </Button>
-                        <input
-                          id="image-upload"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageChange}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    className="bg-[#6b614f] hover:bg-[#5c5343]"
-                    disabled={createCategoryMutation.isPending}
-                  >
-                    {createCategoryMutation.isPending ? "Saving..." : "Save"}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* <Button
-            className="bg-[#6b614f] hover:bg-[#5c5343] gap-2"
-            onClick={() => setIsAddDialogOpen(true)}
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[52px]"
           >
-            <Plus className="h-4 w-4" /> Add Category
-          </Button> */}
+            Add Category <Plus className="ml-2 h-4 w-4" />
+          </Button>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center p-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6b614f]"></div>
-          </div>
-        ) : (
-          <div className="bg-white rounded-md shadow">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="text-left p-4 font-medium text-gray-500">
-                    Image
-                  </th>
-                  <th className="text-left p-4 font-medium text-gray-500">
-                    Name
-                  </th>
-                  <th className="text-left p-4 font-medium text-gray-500">
-                    Description
-                  </th>
-                  <th className="text-center p-4 font-medium text-gray-500">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {displayedCategories.map((category: Category) => (
-                  <tr key={category._id} className="hover:bg-gray-50">
-                    <td className="p-4">
-                      <div className="h-16 w-16 rounded overflow-hidden bg-gray-100">
+        {/* Categories Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="min-w-full divide-y divide-gray-200">
+            <div className="bg-gray-50">
+              <div className="grid grid-cols-12 gap-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-4">
+                <div className="col-span-4 text-[#4E4E4E] text-base">Category Name</div>
+                <div className="col-span-2 text-[#4E4E4E] text-base text-center">Deals</div>
+                <div className="col-span-3 text-[#4E4E4E] text-base text-center">Added</div>
+                <div className="col-span-3 text-[#4E4E4E] text-base text-center">Actions</div>
+              </div>
+            </div>
+            <div className="bg-white divide-y divide-gray-200">
+              {isLoading ? (
+                <div className="px-6 py-4 text-center">Loading categories...</div>
+              ) : error ? (
+                <div className="px-6 py-4 text-center text-red-500">Error loading categories</div>
+              ) : data?.data?.length === 0 ? (
+                <div className="px-6 py-4 text-center">No categories found</div>
+              ) : (
+                data?.data?.map((category) => (
+                  <div key={category._id} className="grid grid-cols-12 gap-3 px-6 py-4 hover:bg-gray-50">
+                    <div className="col-span-4 flex items-center">
+                      <div className="flex-shrink-0 h-[70px] w-[70px] mr-4">
                         <Image
                           src={category.image || "/placeholder.svg"}
-                          alt={category.name}
-                          className="h-16 w-16 object-cover"
-                          height={100}
+                          alt={category.categoryName}
                           width={100}
+                          height={100}
+                          className="rounded-md w-full h-full object-cover"
                         />
                       </div>
-                    </td>
-                    <td className="p-4">
-                      <h3 className="font-medium">{category.name}</h3>
-                    </td>
-                    <td className="p-4">
-                      <p className="text-sm text-gray-500 line-clamp-2">
-                        {category.description}
-                      </p>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-gray-500 hover:text-blue-600"
-                          onClick={() => handleEditCategory(category)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-gray-500 hover:text-red-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete the category.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() =>
-                                  handleDeleteCategory(category._id)
-                                }
-                                className="bg-red-500 hover:bg-red-700"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                      <div>
+                        <div className="font-medium text-gray-900">{category.categoryName}</div>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="p-4 border-t flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                Showing {startIndex + 1} to{" "}
-                {Math.min(endIndex, categories.length)} of {categories.length}{" "}
-                results
-              </div>
-              <div className="flex gap-1">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-10 h-10"
-                  disabled={currentPage === 1}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  &lt;
-                </Button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <Button
-                      key={pageNum}
-                      variant={currentPage === pageNum ? "default" : "outline"}
-                      size="icon"
-                      className={`w-10 h-10 ${
-                        currentPage === pageNum
-                          ? "bg-[#c9b18d] text-[#6b614f] border-[#c9b18d]"
-                          : ""
-                      }`}
-                      onClick={() => handlePageChange(pageNum)}
-                    >
-                      {pageNum}
-                    </Button>
-                  );
-                })}
-                {totalPages > 5 && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-10 h-10"
-                      disabled
-                    >
-                      ...
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-10 h-10"
-                      onClick={() => handlePageChange(totalPages)}
-                    >
-                      {totalPages}
-                    </Button>
-                  </>
-                )}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-10 h-10"
-                  disabled={currentPage === totalPages}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  &gt;
-                </Button>
-              </div>
+                    </div>
+                    <div className="col-span-2 flex justify-center items-center">
+                      <span className="px-2 py-1 text-center">{category.dealCount || 0}</span>
+                    </div>
+                    <div className="col-span-3 flex justify-center items-center">
+                      <span className="text-sm text-gray-500">{formatDate(category.createdAt)}</span>
+                    </div>
+                    <div className="col-span-3 flex justify-center items-center space-x-2">
+                      <Button variant="ghost" size="icon" onClick={() => handleEditClick(category)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(category._id)}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Add Category Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add Category</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleAddCategory} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Category Name</Label>
-              <Input
-                id="name"
-                value={newCategory.name}
-                onChange={(e) =>
-                  setNewCategory({ ...newCategory, name: e.target.value })
-                }
-                placeholder="Type category name here..."
+          {/* Pagination */}
+          {data?.pagination && (
+            <div className="px-6 py-4 border-t">
+              <Pagination
+                currentPage={data.pagination.currentPage}
+                totalPages={data.pagination.totalPages}
+                totalItems={data.pagination.totalItems}
+                itemsPerPage={data.pagination.itemsPerPage}
+                onPageChange={handlePageChange}
+                isLoading={isLoading}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={newCategory.description}
-                onChange={(e) =>
-                  setNewCategory({
-                    ...newCategory,
-                    description: e.target.value,
-                  })
-                }
-                placeholder="Type category description here..."
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="image">Thumbnail</Label>
-              <div className="border rounded-md p-4">
-                {previewUrl ? (
-                  <div className="flex flex-col items-center gap-4">
-                    <Image
-                      src={previewUrl || "/placeholder.svg"}
-                      alt="Preview"
-                      className="max-h-40 object-contain"
-                      height={400}
-                      width={400}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setPreviewUrl("");
-                        setNewCategory({ ...newCategory, image: null });
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                      {/* <Image
-                        src="/placeholder.svg?height=40&width=40"
-                        alt="Upload"
-                        height={100}
-                        width={100}
-                      /> */}
-                    </div>
-                    <p className="text-sm text-center text-muted-foreground">
-                      Drag and drop image here, or click add image
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() =>
-                        document.getElementById("image-upload")?.click()
-                      }
-                    >
-                      Add Image
-                    </Button>
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageChange(e)}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="bg-[#6b614f] hover:bg-[#5c5343]"
-                disabled={createCategoryMutation.isPending}
-              >
-                {createCategoryMutation.isPending ? "Saving..." : "Save"}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+          )}
+        </div>
 
-      {/* Edit Category Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-          </DialogHeader>
-          {selectedCategory && (
-            <form onSubmit={handleUpdateCategory} className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-name">Category Name</Label>
-                <Input
-                  id="edit-name"
-                  value={selectedCategory.name}
-                  onChange={(e) =>
-                    setSelectedCategory({
-                      ...selectedCategory,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="Type category name here..."
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-description">Description</Label>
-                <Textarea
-                  id="edit-description"
-                  value={selectedCategory.description}
-                  onChange={(e) =>
-                    setSelectedCategory({
-                      ...selectedCategory,
-                      description: e.target.value,
-                    })
-                  }
-                  placeholder="Type category description here..."
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-image">Thumbnail</Label>
-                <div className="border rounded-md p-4">
-                  <div className="flex flex-col items-center gap-4">
-                    <Image
-                      src={editPreviewUrl || "/placeholder.svg"}
-                      alt="Preview"
-                      className="max-h-40 object-contain"
-                      height={400}
-                      width={400}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() =>
-                        document.getElementById("edit-image-upload")?.click()
-                      }
-                    >
-                      Change Image
-                    </Button>
-                    <input
-                      id="edit-image-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageChange(e, true)}
-                    />
-                  </div>
+        {/* Add Category Modal */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className=" max-w-7xl bg-[#FFFFFF] rounded-lg shadow-lg p-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">Add Category</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="categoryName" className="block text-sm font-medium mb-1">
+                    Category Name
+                  </label>
+                  <Input
+                    id="categoryName"
+                    placeholder="Type category name here..."
+                    value={newCategory.categoryName}
+                    onChange={(e) => setNewCategory({ ...newCategory, categoryName: e.target.value })}
+                    required
+                  />
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div>
+                <label className="block text-sm font-medium mb-1">Photo</label>
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center h-[250px]"
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      const file = e.dataTransfer.files[0]
+                      setNewCategory({ ...newCategory, image: file })
+                      const reader = new FileReader()
+                      reader.onloadend = () => {
+                        setImagePreview(reader.result as string)
+                      }
+                      reader.readAsDataURL(file)
+                    }
+                  }}
+                >
+                  {imagePreview ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={imagePreview || "/placeholder.svg"}
+                        alt="Category preview"
+                        fill
+                        className="object-contain"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 bg-white rounded-full"
+                        onClick={() => {
+                          setImagePreview(null)
+                          setNewCategory({ ...newCategory, image: null })
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-500 mb-4 text-center">
+                        Drag and drop image here, or click add image
+                      </p>
+                      <div>
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          <Button type="button" variant="outline" className="cursor-pointer">
+                            Add image
+                          </Button>
+                          <Input
+                            id="image-upload"
+                            type="file"
+                            accept="image/*"
+                            // className="hidden"
+                            onChange={handleImageChange}
+                          />
+                        </label>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="md:col-span-2 flex justify-end">
                 <Button
                   type="submit"
-                  className="bg-[#6b614f] hover:bg-[#5c5343]"
-                  disabled={updateCategoryMutation.isPending}
+                  className="bg-black hover:bg-gray-800 text-white"
+                  disabled={addCategoryMutation.isPending}
                 >
-                  {updateCategoryMutation.isPending
-                    ? "Saving..."
-                    : "Save Changes"}
+                  {addCategoryMutation.isPending ? "Adding..." : "Add Category"}
                 </Button>
               </div>
             </form>
-          )}
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Category Modal */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent className="max-w-7xl bg-[#FFFFFF] rounded-lg shadow-lg p-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">Edit Category</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="editCategoryName" className="block text-sm font-medium mb-1">
+                    Category Name
+                  </label>
+                  <Input
+                    id="editCategoryName"
+                    placeholder="Type category name here..."
+                    value={editCategory.categoryName}
+                    onChange={(e) => setEditCategory({ ...editCategory, categoryName: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Photo</label>
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center h-[250px]"
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      const file = e.dataTransfer.files[0]
+                      setEditCategory({ ...editCategory, image: file })
+                      const reader = new FileReader()
+                      reader.onloadend = () => {
+                        setEditImagePreview(reader.result as string)
+                      }
+                      reader.readAsDataURL(file)
+                    }
+                  }}
+                >
+                  {editImagePreview ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={editImagePreview || "/placeholder.svg"}
+                        alt="Category preview"
+                        fill
+                        className="object-contain"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 bg-white rounded-full"
+                        onClick={() => {
+                          setEditImagePreview(null)
+                          setEditCategory({ ...editCategory, image: null, existingImage: "" })
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-500 mb-4 text-center">
+                        Drag and drop image here, or click add image
+                      </p>
+                      <div>
+                        <label htmlFor="edit-image-upload" className="cursor-pointer">
+                          <Button type="button" variant="outline" className="cursor-pointer">
+                            Add image
+                          </Button>
+                          <input
+                            id="edit-image-upload"
+                            type="file"
+                            accept="image/*"
+                            // className="hidden"
+                            onChange={handleEditImageChange}
+                          />
+                        </label>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="md:col-span-2 flex justify-end">
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 text-white"
+                  disabled={editCategoryMutation.isPending}
+                >
+                  {editCategoryMutation.isPending ? "Updating..." : "Update"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">Delete Category</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-gray-700">
+                Are you sure you want to delete this category? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deleteCategoryMutation.isPending}>
+                {deleteCategoryMutation.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </Layout>
-  );
+  )
 }
+
+export default CategoriesPage

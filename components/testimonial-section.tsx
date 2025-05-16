@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { MoveLeft, MoveRight, Quote } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const testimonials = [
