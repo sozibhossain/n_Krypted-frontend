@@ -1,134 +1,243 @@
-"use server";
+"use server"
 
-import { cookies } from "next/headers";
+type LoginCredentials = {
+  email: string
+  password: string
+}
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+type RegisterData = {
+  name: string
+  email: string
+  password: string
+  phoneNumber: string
+}
 
-console.log("url", API_BASE_URL);
+type AuthResponse = {
+  success: boolean
+  message?: string
+  data?: any
+  accessToken?: string
+  refreshToken?: string
+}
 
-export async function registerUser(userData: {
-  username: string;
-  email: string;
-  role: string;
-  password: string;
-  confirmPassword: string;
-}) {
+export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    })
 
-    const data = await response.json();
-    // console.log("signup data", data);
+    const data = await response.json()
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Login failed",
+      }
+    }
+
+    return {
+      success: true,
+      data: data.user,
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    }
+  } catch (error) {
+    console.error("Login error:", error)
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
+}
+
+export async function registerUser(userData: RegisterData): Promise<AuthResponse> {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    })
+
+    const data = await response.json()
 
     if (!response.ok) {
       return {
         success: false,
         message: data.message || "Registration failed",
-      };
+      }
     }
 
     return {
       success: true,
-      data: data.data,
-    };
+      message: "Registration successful",
+      data: data.user,
+    }
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Registration error:", error)
     return {
       success: false,
-      message: "An error occurred during registration",
-    };
+      message: "An unexpected error occurred",
+    }
   }
 }
 
-export async function loginUser(credentials: {
-  username: string;
-  password: string;
-}) {
+export async function forgotPassword(email: string): Promise<AuthResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to send reset email",
+      }
+    }
+
+    return {
+      success: true,
+      message: "Password reset email sent",
+    }
+  } catch (error) {
+    console.error("Forgot password error:", error)
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
+}
+
+export async function verifyOTP(email: string, otp: string): Promise<AuthResponse> {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Invalid OTP",
+      }
+    }
+
+    return {
+      success: true,
+      message: "OTP verified successfully",
+      data: data,
+    }
+  } catch (error) {
+    console.error("OTP verification error:", error)
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
+}
+
+export async function resetPassword(email: string, password: string, token: string): Promise<AuthResponse> {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, token }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to reset password",
+      }
+    }
+
+    return {
+      success: true,
+      message: "Password reset successful",
+    }
+  } catch (error) {
+    console.error("Reset password error:", error)
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
+}
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+  token: string,
+): Promise<AuthResponse> {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/change-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(credentials),
-    });
+      body: JSON.stringify({ currentPassword, newPassword }),
+    })
 
-    const data = await response.json();
+    const data = await response.json()
 
-    if (!response.ok || !data.status) {
+    if (!response.ok) {
       return {
         success: false,
-        message: data.message || "Login failed",
-      };
+        message: data.message || "Failed to change password",
+      }
     }
-
-    // Optional: Store refreshToken in cookie if needed
-    const cookieStore = cookies();
-    cookieStore.set("refreshToken", data.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
 
     return {
       success: true,
-      data: data.data, // user info
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-    };
+      message: "Password changed successfully",
+    }
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Change password error:", error)
     return {
       success: false,
-      message: "An error occurred during login",
-    };
+      message: "An unexpected error occurred",
+    }
   }
 }
 
-// export async function verifyCode(code: string) {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/users/verify-registration`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ code }),
-//     });
+export async function resendVerificationOTP(token: string): Promise<AuthResponse> {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/verify", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
-//     const data = await response.json();
-//     console.log(data, "verify data");
+    const data = await response.json()
 
-//     if (!response.ok) {
-//       return {
-//         success: false,
-//         message: data.message || "Verification failed",
-//       };
-//     }
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to resend OTP",
+      }
+    }
 
-//     return {
-//       success: true,
-//       data: data.data,
-//     };
-//   } catch (error) {
-//     console.error("Verification error:", error);
-//     return {
-//       success: false,
-//       message: "An error occurred during verification",
-//     };
-//   }
-// }
-
-export async function logout() {
-  const cookieStore = cookies();
-  const allCookies = cookieStore.getAll();
-  // Delete each cookie
-  allCookies.forEach((cookie) => {
-    cookieStore.delete(cookie.name);
-  });
+    return {
+      success: true,
+      message: "OTP resent successfully",
+    }
+  } catch (error) {
+    console.error("Resend OTP error:", error)
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
 }

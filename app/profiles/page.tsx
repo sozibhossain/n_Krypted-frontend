@@ -4,16 +4,21 @@ import { useState } from "react"
 import Image from "next/image"
 import { User, Lock, Calendar, Bell, LogOut } from "lucide-react"
 import PersonalInfoForm from "@/components/personal-info-form"
-import ChangePasswordForm from "@/components/change-password-form"
+import { ChangePasswordForm } from "@/components/ChangePasswordForm"
 import BookingHistoryTable from "@/components/booking-history-table"
 import NotifyMeList from "@/components/notify-me-list"
 import { PageHeader } from "@/Shared/PageHeader"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useSession, signOut } from "next-auth/react"
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState("personal-info")
     const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+
+    const session = useSession();
+    const user = session.data?.user
+    console.log(user)
 
     const userData = {
         name: "Bessie Edwards",
@@ -30,11 +35,14 @@ export default function Dashboard() {
         },
     }
 
-    const handleLogout = () => {
-        // Add your logout logic here
-        console.log("Logging out...")
-        // Redirect to login page or perform logout action
-        setShowLogoutDialog(false)
+    const handleLogout = async () => {
+        try {
+            await signOut({ callbackUrl: '/' }); // Redirect to home page after logout
+        } catch (error) {
+            console.error('Error during logout:', error);
+        } finally {
+            setShowLogoutDialog(false);
+        }
     }
 
     return (
@@ -79,8 +87,8 @@ export default function Dashboard() {
                                 </svg>
                             </div>
                         </div>
-                        <h2 className="text-xl font-bold">{userData.name}</h2>
-                        <p className="text-sm text-gray-400">{userData.email}</p>
+                        <h2 className="text-xl font-bold">{user?.name}</h2>
+                        <p className="text-sm text-gray-400">{user?.email}</p>
                     </div>
 
                     <nav className="w-full space-y-2">

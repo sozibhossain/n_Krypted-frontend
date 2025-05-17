@@ -14,13 +14,14 @@ export function CategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const axiosPublic = useAxios()
 
-  const { data: allCategory, isLoading } = useQuery({
+  const { data: allCategory=[], isLoading } = useQuery({
     queryKey: ["allCategory"],
     queryFn: async () => {
       const { data } = await axiosPublic("/api/categories")
-      return data?.categories
+      return data?.data
     },
   })
+
 
   useEffect(() => {
     if (!api) return
@@ -47,7 +48,7 @@ export function CategoriesSection() {
 
   return (
     <section className="mt-24 ">
-      <div className="container px-4 md:px-6 lg:px-8 space-y-12">
+      <div className="container space-y-12">
 
         <div className="space-y-4">
           <div className="flex items-center gap-2 md:gap-4">

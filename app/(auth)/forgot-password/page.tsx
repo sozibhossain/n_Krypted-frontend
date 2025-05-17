@@ -1,95 +1,54 @@
-"use client";
-
-import type React from "react";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import Image from "next/image"
+import { ForgotPasswordForm } from "@/components/ForgotPasswordForm"
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to send OTP");
-      }
-
-      // Store email in session storage for later use
-      sessionStorage.setItem("resetEmail", email);
-
-      // Redirect to OTP verification page
-      router.push("/verify-otp");
-    } catch (error) {
-      toast("Failed to send OTP. Please try again.");
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="bg-gradient-to-l from-[#F5EDE2] to-[#645949] w-full h-screen flex flex-col items-center justify-center">
-      <div className="container lg:p-8 bg-[#f8f3ea] rounded-3xl shadow-xl h-[500px]">
-        <div className="space-y-6 lg:max-w-xl mx-auto h-full flex flex-col items-center justify-center">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-semibold text-[#6b5d4d]">
-              Forgot Password
-            </h1>
-            <p className="text-[#6b5d4d]">
-              Enter your email to receive the OTP
+    <div className="flex min-h-screen">
+      <div className="hidden w-1/2 bg-gray-900 lg:block">
+        <div className="relative flex h-full flex-col items-center justify-center">
+          <div className="absolute inset-0">
+            <Image
+              src="/assets/auth.jpg"
+              alt="Background"
+              fill
+              className="object-cover opacity-50"
+              priority
+            />
+          </div>
+          <div className="z-10 flex flex-col items-center justify-center text-center text-white">
+            <div className="mb-4 rounded-full bg-gray-800/70 p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-8 w-8"
+              >
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h2 className="mb-2 text-4xl font-bold">Recover your password</h2>
+            <p className="max-w-md text-gray-300">
+              Discover amazing products and enjoy a seamless shopping experience with us.
             </p>
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <div className="relative">
-                <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 py-6 bg-transparent border-[#6b5d4d] border-opacity-30 focus:border-[#6b5d4d] focus:ring-0 lg:w-[500px]"
-                />
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6b5d4d] h-5 w-5" />
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full py-6 bg-[#6b5d4d] hover:bg-[#5a4d3d] text-white"
-              disabled={isLoading}
-            >
-              {isLoading ? "Sending..." : "Send OTP"}
-            </Button>
-          </form>
+        </div>
+      </div>
+      <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
+        <div className="w-full max-w-md space-y-8 p-8 text-white">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Enter OTP</h1>
+            <p className="text-gray-400">Enter your email to receive the OTP</p>
+          </div>
+          <ForgotPasswordForm />
         </div>
       </div>
     </div>
-  );
+  )
 }

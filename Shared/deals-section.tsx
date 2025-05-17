@@ -68,7 +68,7 @@ export function DealsSection() {
 
   return (
     <section className="">
-      <div className="container mx-auto px-4">
+      <div className="container">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-8">
           <div className="mb-4 sm:mb-0 space-y-4">
             <div className="flex items-center gap-2 sm:gap-4">
