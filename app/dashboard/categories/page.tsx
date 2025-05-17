@@ -2,10 +2,10 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
-import {  Trash2, Plus, X, Upload, Edit } from "lucide-react"
+import { Trash2, Plus, X, Upload, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -62,6 +62,8 @@ const CategoriesPage = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [page, setPage] = useState(1)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const editFileInputRef = useRef<HTMLInputElement>(null)
 
   // Fetch categories with pagination
   const { data, isLoading, error } = useQuery<CategoryResponse>({
@@ -319,7 +321,32 @@ const CategoriesPage = () => {
             </div>
             <div className="bg-white divide-y divide-gray-200">
               {isLoading ? (
-                <div className="px-6 py-4 text-center">Loading categories...</div>
+                <>
+                  {Array(5)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div key={`skeleton-${index}`} className="grid grid-cols-12 gap-3 px-6 py-4 hover:bg-gray-50">
+                        <div className="col-span-4 flex items-center">
+                          <div className="flex-shrink-0 h-[70px] w-[70px] mr-4">
+                            <div className="rounded-md w-full h-full bg-gray-200 animate-pulse" />
+                          </div>
+                          <div className="w-3/4">
+                            <div className="h-5 bg-gray-200 rounded animate-pulse mb-2 w-full" />
+                          </div>
+                        </div>
+                        <div className="col-span-2 flex justify-center items-center">
+                          <div className="h-5 bg-gray-200 rounded animate-pulse w-8" />
+                        </div>
+                        <div className="col-span-3 flex justify-center items-center">
+                          <div className="h-5 bg-gray-200 rounded animate-pulse w-24" />
+                        </div>
+                        <div className="col-span-3 flex justify-center items-center space-x-2">
+                          <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse" />
+                          <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse" />
+                        </div>
+                      </div>
+                    ))}
+                </>
               ) : error ? (
                 <div className="px-6 py-4 text-center text-red-500">Error loading categories</div>
               ) : data?.data?.length === 0 ? (
@@ -362,18 +389,28 @@ const CategoriesPage = () => {
           </div>
 
           {/* Pagination */}
-          {data?.pagination && (
-            <div className="px-6 py-4 border-t">
-              <Pagination
-                currentPage={data.pagination.currentPage}
-                totalPages={data.pagination.totalPages}
-                totalItems={data.pagination.totalItems}
-                itemsPerPage={data.pagination.itemsPerPage}
-                onPageChange={handlePageChange}
-                isLoading={isLoading}
-              />
-            </div>
-          )}
+          <div className="px-6 py-4 border-t">
+            {isLoading ? (
+              <div className="flex justify-center items-center space-x-2">
+                <div className="h-8 bg-gray-200 rounded animate-pulse w-24" />
+                <div className="h-8 bg-gray-200 rounded animate-pulse w-8" />
+                <div className="h-8 bg-gray-200 rounded animate-pulse w-8" />
+                <div className="h-8 bg-gray-200 rounded animate-pulse w-8" />
+                <div className="h-8 bg-gray-200 rounded animate-pulse w-24" />
+              </div>
+            ) : (
+              data?.pagination && (
+                <Pagination
+                  currentPage={data.pagination.currentPage}
+                  totalPages={data.pagination.totalPages}
+                  totalItems={data.pagination.totalItems}
+                  itemsPerPage={data.pagination.itemsPerPage}
+                  onPageChange={handlePageChange}
+                  isLoading={isLoading}
+                />
+              )
+            )}
+          </div>
         </div>
 
         {/* Add Category Modal */}
@@ -446,20 +483,17 @@ const CategoriesPage = () => {
                       <p className="text-sm text-gray-500 mb-4 text-center">
                         Drag and drop image here, or click add image
                       </p>
-                      <div>
-                        <label htmlFor="image-upload" className="cursor-pointer">
-                          <Button type="button" variant="outline" className="cursor-pointer">
-                            Add image
-                          </Button>
-                          <Input
-                            id="image-upload"
-                            type="file"
-                            accept="image/*"
-                            // className="hidden"
-                            onChange={handleImageChange}
-                          />
-                        </label>
-                      </div>
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                        Add image
+                      </Button>
+                      <Input
+                        id="image-upload"
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
                     </>
                   )}
                 </div>
@@ -547,20 +581,17 @@ const CategoriesPage = () => {
                       <p className="text-sm text-gray-500 mb-4 text-center">
                         Drag and drop image here, or click add image
                       </p>
-                      <div>
-                        <label htmlFor="edit-image-upload" className="cursor-pointer">
-                          <Button type="button" variant="outline" className="cursor-pointer">
-                            Add image
-                          </Button>
-                          <input
-                            id="edit-image-upload"
-                            type="file"
-                            accept="image/*"
-                            // className="hidden"
-                            onChange={handleEditImageChange}
-                          />
-                        </label>
-                      </div>
+                      <Button type="button" variant="outline" onClick={() => editFileInputRef.current?.click()}>
+                        Add image
+                      </Button>
+                      <Input
+                        id="edit-image-upload"
+                        ref={editFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleEditImageChange}
+                      />
                     </>
                   )}
                 </div>
