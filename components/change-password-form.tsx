@@ -90,7 +90,7 @@ export default function ChangePasswordForm() {
                 </div>
 
                 <div className="flex justify-end">
-                    <Button type="submit">Update Password</Button>
+                    <Button type="submit" className="text-[#212121] bg-white">Update Password</Button>
                 </div>
             </form>
         </div>

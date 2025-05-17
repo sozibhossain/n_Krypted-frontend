@@ -40,7 +40,7 @@ export function AppSidebar({ }: AppSidebarProps) {
     <>
       <Sidebar className="border-r-0 w-[108px]" collapsible="none">
         <SidebarContent className="p-4 bg-[#212121]">
-          <SidebarMenu className="space-y-2 pt-[80px]">
+          <SidebarMenu className="space-y-2 pt-[100px]">
             <>
               <SidebarMenuItem>
                 <SidebarMenuButton

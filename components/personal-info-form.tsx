@@ -156,10 +156,11 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
                                 setFormData(initialData)
                                 setIsEditing(false)
                             }}
+                            className="text-[#212121]"
                         >
                             Cancel
                         </Button>
-                        <Button type="submit">Save Changes</Button>
+                        <Button type="submit" className="bg-white text-[#212121]">Save Changes</Button>
                     </div>
                 )}
             </form>
