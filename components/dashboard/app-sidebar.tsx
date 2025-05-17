@@ -23,6 +23,7 @@ import {
 import { useState } from "react";
 // import { useSession } from "next-auth/react";
 import LogOutModal from "@/Shared/LogOutModal";
+import { signOut, useSession } from "next-auth/react";
 
 interface AppSidebarProps {
   isMobile?: boolean;
@@ -31,8 +32,16 @@ interface AppSidebarProps {
 export function AppSidebar({ }: AppSidebarProps) {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  // const { data: session } = useSession();
-  // const role = session?.user?.role;
+  const session = useSession();
+
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
 
   const isActive = (path: string) => pathname === path;
 
@@ -160,7 +169,7 @@ export function AppSidebar({ }: AppSidebarProps) {
         </div>
       </Sidebar>
 
-      <LogOutModal isLogoutDialogOpen={isLogoutDialogOpen} setIsLogoutDialogOpen={setIsLogoutDialogOpen} />
+      <LogOutModal isLogoutDialogOpen={isLogoutDialogOpen} setIsLogoutDialogOpen={setIsLogoutDialogOpen} onConfirmLogout={handleLogout} />
     </>
   );
 }

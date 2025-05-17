@@ -1,196 +1,199 @@
-"use client";
+"use client"
 
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
+import { useState } from "react"
+import { getSession, signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+export function SignInForm() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { toast } = useToast()
 
-import { Eye, EyeOff } from "lucide-react";
-import { toast } from "sonner";
-
-// Schema with explicit typing
-const loginFormSchema = z.object({
-  username: z.string().min(1, "Username is required."),
-  password: z.string().min(1, "Password is required."),
-});
-
-type LoginFormValues = z.infer<typeof loginFormSchema>;
-
-export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (data: LoginFormValues) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
-    // console.log(data, "login data");
+
     try {
-      const response = await signIn("credentials", {
-        username: data.username,
-        password: data.password,
+      const res = await signIn("credentials", {
+        email,
+        password,
         redirect: false,
-        callbackUrl: "/dashboard",
       });
 
-      // console.log("login data df", response);
-      if (response?.error) {
-        toast.error(response?.error);
-        alert(response?.error);
-      } else {
-        toast.success("Login successful");
-        // router.push("/dashboard");
+      if (res?.error) {
+        throw new Error(res.error);
+      }
+
+      // ✅ Optional: wait a bit for session to be updated
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const session = await getSession(); // ← you need to import this from 'next-auth/react'
+
+      const role = session?.user?.role;
+
+      toast({
+        title: "Success",
+        description: "Login successful",
+      });
+
+      if (role === "admin") {
         window.location.href = "/dashboard";
-        // router.refresh();
+      } else {
+        window.location.href = "/";
       }
     } catch (error) {
-      toast.error("Something went wrong. Please try again. || " + error);
+      console.error("Login error:", error);
+      toast({
+        title: "Error",
+        description: "Login failed. Please check your credentials.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+
+  const handleSocialSignIn = async (provider: string) => {
+    try {
+      setIsLoading(true)
+      await signIn(provider, { callbackUrl: "/dashboard" })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to sign in with ${provider}`,
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
-    <div className="container px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16  mx-auto">
-      <div className="flex flex-col lg:flex-row justify-between bg-[#F5EDE2] rounded-2xl h-auto lg:h-[600px] overflow-hidden">
-        {/* Left section */}
-        <div className="hidden lg:flex w-full lg:w-[45%] bg-[#645949] text-white flex-col justify-center items-center rounded-t-2xl lg:rounded-tr-[100px] lg:rounded-br-[100px] lg:rounded-tl-2xl lg:rounded-bl-2xl py-8 lg:py-0">
-          <div className="text-center">
-            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F5EDE2] mb-4">
-              Welcome Back!
-            </h3>
-            <p className="text-base sm:text-lg lg:text-xl font-semibold text-[#F5EDE2] mb-6">
-              Don’t have an account?
-            </p>
-            <Link href="/sign-up">
-              <Button className="px-8 py-3 border border-[#F5EDE2] text-base font-semibold hover:bg-[#F5EDE2] hover:text-[#645949]">
-                Register
-              </Button>
-            </Link>
-          </div>
-        </div>
-        {/* Right section */}
-        <div className="flex flex-col justify-center w-full lg:w-[55%] py-8 px-4 sm:px-6 lg:px-10">
-          <div className="w-full max-w-md mx-auto space-y-6">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#645949] text-center">
-              Login
-            </h2>
-
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm sm:text-base">
-                        Username
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="string"
-                          placeholder="Enter your email"
-                          {...field}
-                          className="h-10 sm:h-12 text-sm sm:text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm sm:text-base">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter your password"
-                            {...field}
-                            className="h-10 sm:h-12 text-sm sm:text-base"
-                          />
-                          <button
-                            type="button"
-                            className="absolute top-1/2 right-4 transform -translate-y-1/2"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <Eye className="h-5 w-5" />
-                            ) : (
-                              <EyeOff className="h-5 w-5" />
-                            )}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-center">
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-xs sm:text-sm text-[#0a1155] hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full h-10 sm:h-12 bg-[#645949] hover:bg-[#645949]/90 text-sm sm:text-base font-bold text-white"
-                >
-                  {isLoading ? "Logging in..." : "Log In"}
-                </Button>
-              </form>
-            </Form>
-
-            {/* Mobile-only Register Link */}
-            <div className="lg:hidden text-center mt-4">
-              <p className="text-sm text-[#645949] mb-2">
-                Don’t have an account?
-              </p>
-              <Link href="/sign-up">
-                <Button
-                  variant="outline"
-                  className="px-6 py-2 border-[#645949] text-[#645949] hover:bg-[#645949] hover:text-white text-sm"
-                >
-                  Register
-                </Button>
-              </Link>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <Input
+            id="email"
+            type="email"
+            placeholder="Enter your Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+          />
         </div>
       </div>
-    </div>
-  );
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+        </div>
+        <div className="relative">
+          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-gray-400"
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        </div>
+        <div className="flex justify-end">
+          <Link href="/forgot-password" className="text-sm text-blue-500 hover:text-blue-400">
+            Forgot password?
+          </Link>
+        </div>
+      </div>
+
+      <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-200" disabled={isLoading}>
+        {isLoading ? "Signing in..." : "Sign In"}
+      </Button>
+
+      <div className="relative flex items-center justify-center">
+        <div className="h-px flex-1 bg-gray-600"></div>
+        <span className="mx-4 text-sm text-gray-400">Or continue with</span>
+        <div className="h-px flex-1 bg-gray-600"></div>
+      </div>
+
+      <div className="grid gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => handleSocialSignIn("apple")}
+          className="flex items-center justify-center gap-2 border-gray-600 bg-gray-700 text-white hover:bg-gray-600"
+          disabled={isLoading}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
+            <path d="M10 2c1 .5 2 2 2 5"></path>
+          </svg>
+          Continue With Apple
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => handleSocialSignIn("google")}
+          className="flex items-center justify-center gap-2 border-gray-600 bg-gray-700 text-white hover:bg-gray-600"
+          disabled={isLoading}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v12"></path>
+            <path d="M6 12h12"></path>
+          </svg>
+          Continue With Google
+        </Button>
+      </div>
+
+      <div className="text-center text-sm">
+        Don&apos;t have an account?{" "}
+        <Link href="/sign-up" className="text-blue-500 hover:text-blue-400">
+          Sign Up
+        </Link>
+      </div>
+    </form>
+  )
 }

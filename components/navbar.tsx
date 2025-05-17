@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useMobile } from "@/hooks/use-mobile-nav"
 import { BellRing, Heart, Menu, UserRound } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { useQuery } from "@tanstack/react-query"
 import { useSocketContext } from "@/Provider/SocketProvider"
 import * as React from "react"
 import Hideon from "@/Provider/Hideon"
+import { ro } from "date-fns/locale"
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -78,7 +79,7 @@ export function Navbar() {
   const iconLinks = [
     { icon: Heart, href: "/wishlist", count: wishlists?.length },
     { icon: BellRing, href: "/notifications", count: notificationCount },
-    { icon: UserRound, href: "/accounts" },
+    { icon: UserRound, href: "/profiles" },
   ]
 
   const getIconClasses = (href: string) => `
@@ -93,17 +94,21 @@ export function Navbar() {
     return pathname.startsWith(href)
   }
 
-  // const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter" && searchTerm.trim()) {
-  //     router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`);
-  //     setSearchTerm("");
-  //   }
-  // };
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
+  const role = session?.data?.user?.role
 
   const HIDDEN_ROUTES = [
     "/dashboard",
     "/login",
+    "/sign-up",
+    "/verify-otp",
     "/registration",
     "/reset-password",
     "/forgot-password",
@@ -151,16 +156,21 @@ export function Navbar() {
           {/* Right Side */}
           <div className="flex items-center gap-4">
             {/* Login Button */}
-            {!isLoggedIn && (
+            {role === "admin" || role === "user" || (
               <Link href="/login" className="hidden md:block">
                 <Button variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
                   Login
                 </Button>
               </Link>
             )}
+            {role === "admin" && (
+              <Button onClick={handleLogout} variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
+                Logout
+              </Button>
+            )}
 
             {/* Icons when logged in */}
-            {isLoggedIn && (
+            {isLoggedIn && role === "user" && (
               <div className="flex items-center gap-2 sm:gap-4">
                 {iconLinks.map(({ icon: Icon, href, count }) =>
                   href === "/notifications" ? (
@@ -257,7 +267,7 @@ export function Navbar() {
                           )}
                         </button>
                         <Link
-                          href="/accounts"
+                          href="/profiles"
                           onClick={() => setOpen(false)}
                           className={`text-base font-medium transition-colors hover:text-foreground ${isActive("/accounts") ? "text-foreground" : "text-muted-foreground"
                             }`}
