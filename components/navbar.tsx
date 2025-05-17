@@ -153,7 +153,7 @@ export function Navbar() {
             {/* Login Button */}
             {!isLoggedIn && (
               <Link href="/login" className="hidden md:block">
-                <Button variant="default" className="px-6 hidden lg:block">
+                <Button variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
                   Login
                 </Button>
               </Link>

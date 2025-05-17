@@ -60,7 +60,7 @@ export default function Layout({ children }: LayoutProps) {
       </Sheet>
 
       <SidebarInset className="bg-gray-100 w-full flex flex-col h-screen">
-        <header className="flex h-16 items-center justify-end lg:justify-between border-b bg-[#212121] py-4">
+        <header className="flex h-16 items-center justify-end lg:justify-between border-b bg-[#212121] py-12">
           {/* <div className="md:hidden w-6"></div> 
           <div className="hidden md:block"></div> */}
           {/* Logo */}

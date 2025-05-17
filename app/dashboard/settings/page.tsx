@@ -49,13 +49,15 @@ interface SettingCardProps {
 
 function SettingCard({ title, href }: SettingCardProps) {
   return (
-    <Link href={href}>
-      <Card className="hover:bg-gray-50">
-        <CardContent className="flex items-center justify-between p-6">
-          <h3 className="text-lg font-medium">{title}</h3>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-        </CardContent>
-      </Card>
-    </Link>
+    <div className="bg-white space-y-2 rounded-lg">
+      <Link href={href}>
+        <Card className="">
+          <CardContent className="flex items-center justify-between p-4  space-y-2">
+            <h3 className="text-lg font-medium">{title}</h3>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </CardContent>
+        </Card>
+      </Link>
+    </div>
   );
 }

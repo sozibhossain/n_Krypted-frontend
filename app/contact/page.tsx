@@ -20,9 +20,9 @@ const page = () => {
           },
         ]}
       />
-    <div className="mt-28 container  ">
+    <div className="lg:mt-28 container">
       <div className="flex flex-col md:flex-row  items-center">
-        <div className="w-full md:w-[30%]">
+        <div className="w-full md:w-[30%] hidden md:block">
           <Image
             src="/assets/contact.png"
             alt="Auction speaker"
@@ -36,7 +36,7 @@ const page = () => {
           <ContactUsFrom />
         </div>
       </div>
-      <div className="mt-[120px] mb-[120px]">
+      <div className="lg:mt-[120px] mb-[120px]">
         <FaqSection />
       </div>
       </div>
