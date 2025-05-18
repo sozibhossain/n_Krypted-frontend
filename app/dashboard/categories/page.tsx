@@ -295,12 +295,12 @@ const CategoriesPage = () => {
       <div className=" ">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-[40px] text-[#1F2937] font-bold tracking-tight">Categories</h1>
-            <div className="text-xl text-[#595959]">Dashboard &gt; Categories</div>
+            <h1 className="text-[25px] lg:text-[40px] text-[#1F2937] font-bold tracking-tight">Categories</h1>
+            <div className="text-base lg:text-xl text-[#595959]">Dashboard &gt; Categories</div>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[52px]"
+            className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[38px] lg:h-[52px] "
           >
             Add Category <Plus className="ml-2 h-4 w-4" />
           </Button>

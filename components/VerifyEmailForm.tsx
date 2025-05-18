@@ -1,139 +1,159 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
-import { useToast } from "@/hooks/use-toast"
-import { verifyOTP, resendVerificationOTP } from "@/app/actions/auth"
+import { useState, useEffect, useRef } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 import { CustomOtpInput } from "./custom-otp-input"
 
 export function VerifyEmailForm() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
-  const [isLoading, setIsLoading] = useState(false)
+  const [canResend, setCanResend] = useState(true)
+  const [resendTimer, setResendTimer] = useState(30)
   const router = useRouter()
-  const { data: session } = useSession()
-  const { toast } = useToast()
+  const searchParams = useSearchParams()
+  const email = decodeURIComponent(searchParams.get("email") || "")
+  const hasAutoVerified = useRef(false) // Prevent auto verify loop
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const { mutate: verifyOtp, isPending: isVerifying } = useMutation({
+    mutationKey: ["verify-otp"],
+    mutationFn: async () => {
+      const otpValue = otp.join("").toLowerCase()
 
-    const otpString = otp.join("")
-    if (otpString.length !== 6) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid 6-character verification code",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsLoading(true)
-
-    if (!session?.user.email) {
-      toast({
-        title: "Error",
-        description: "Email not found. Please sign in again.",
-        variant: "destructive",
-      })
-      router.push("/login")
-      return
-    }
-
-    try {
-      const result = await verifyOTP(session.user.email, otpString)
-
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Email verified successfully",
+      const response = await fetch("http://localhost:5000/api/auth/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          code: otpValue
         })
+      })
 
-        router.push("/dashboard")
-      } else {
-        toast({
-          title: "Error",
-          description: result.message || "Invalid verification code",
-          variant: "destructive",
-        })
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Verification failed")
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+
+      return await response.json()
+    },
+    onSuccess: (data) => {
+      if (!data.success) {
+        toast.error(data.message || "Verification failed")
+        return
+      }
+      toast.success("Email verified successfully!")
+      router.push("/login")
+    },
+    onError: (error) => {
+      console.error("Verification error:", error)
+      toast.error(error.message || "Invalid verification code")
     }
+  })
+
+  const { mutate: resendOtp, isPending: isResending } = useMutation({
+    mutationKey: ["resend-otp"],
+    mutationFn: async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/resend-verification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to resend verification code")
+      }
+      return await response.json()
+    },
+    onSuccess: () => {
+      toast.success("New verification code sent!")
+      setOtp(Array(6).fill(""))
+      setCanResend(false)
+      startResendTimer()
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to resend code. Please try again.")
+    }
+  })
+
+  const startResendTimer = () => {
+    setResendTimer(30)
+    const timer = setInterval(() => {
+      setResendTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          setCanResend(true)
+          return 30
+        }
+        return prev - 1
+      })
+    }, 1000)
   }
 
-  const handleResendOtp = async () => {
-    if (!session?.user.accessToken) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to resend the verification code",
-        variant: "destructive",
-      })
-      router.push("/login")
+  // Auto-trigger verify once all 6 digits are filled
+  useEffect(() => {
+    const joined = otp.join("")
+    if (joined.length === 6 && !hasAutoVerified.current) {
+      hasAutoVerified.current = true
+      verifyOtp()
+    } else if (joined.length < 6) {
+      hasAutoVerified.current = false
+    }
+  }, [otp, verifyOtp])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const otpValue = otp.join("")
+    if (otpValue.length !== 6) {
+      toast.error("Please enter all 6 digits")
       return
     }
-
-    try {
-      const result = await resendVerificationOTP(session.user.accessToken)
-
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Verification code has been resent to your email",
-        })
-      } else {
-        toast({
-          title: "Error",
-          description: result.message || "Failed to resend verification code",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
-    }
+    verifyOtp()
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <CustomOtpInput value={otp} onChange={setOtp} disabled={isLoading} />
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center mb-6">Verify Your Email</h2>
+      <p className="text-center mb-6">
+        Enter the 6-digit code sent to <span className="font-semibold">{email}</span>
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <CustomOtpInput 
+          value={otp}
+          onChange={setOtp}
+          disabled={isVerifying || isResending}
+          numericOnly={false}
+          className="justify-center"
+          inputClassName="text-gray-900 border-gray-300 focus:border-blue-500"
+        />
+        <button
+          type="submit"
+          disabled={isVerifying || isResending}
+          className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        >
+          {isVerifying ? "Verifying..." : "Verify Email"}
+        </button>
+      </form>
 
-      <div className="flex items-center justify-between">
+      <div className="mt-6 flex justify-between items-center">
         <button
           type="button"
-          onClick={handleResendOtp}
-          className="text-sm text-blue-500 hover:text-blue-400"
-          disabled={isLoading}
+          onClick={() => router.push("/register")}
+          className="text-blue-600 hover:underline text-sm"
         >
-          Didn&apos;t Receive Code?
+          Back to Register
         </button>
         <button
           type="button"
-          onClick={handleResendOtp}
-          className="text-sm text-blue-500 hover:text-blue-400"
-          disabled={isLoading}
+          onClick={() => resendOtp()}
+          disabled={!canResend || isResending}
+          className="text-blue-600 hover:underline text-sm disabled:opacity-50"
         >
-          RESEND CODE
+          {isResending ? "Sending..." : canResend ? "Resend Code" : `Resend in ${resendTimer}s`}
         </button>
       </div>
-
-      <button
-        type="submit"
-        className="w-full rounded-md bg-white py-2 font-medium text-gray-900 hover:bg-gray-200 disabled:opacity-50"
-        disabled={isLoading}
-      >
-        {isLoading ? "Verifying..." : "Verify"}
-      </button>
-    </form>
+    </div>
   )
 }

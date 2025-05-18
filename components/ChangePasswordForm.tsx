@@ -10,7 +10,7 @@ import { Eye, EyeOff, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState("")
@@ -22,26 +22,17 @@ export function ChangePasswordForm() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { data: session } = useSession() as { data: (Session & { accessToken?: string }) | null }
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords do not match",
-        variant: "destructive",
-      })
+      toast.success("Passwords do not match")
       return
     }
 
     if (newPassword.length < 8) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long",
-        variant: "destructive",
-      })
+      toast.success("Password must be at least 8 characters long")
       return
     }
 
@@ -51,7 +42,7 @@ export function ChangePasswordForm() {
       const response = await fetch("http://localhost:5000/api/auth/change-password", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${session?.accessToken ?? (session as any)?.user?.accessToken ?? ""}`,
+          Authorization: `Bearer ${session?.accessToken ?? (session)?.user?.accessToken ?? ""}`,
         },
         body: JSON.stringify({
           currentPassword,
@@ -62,25 +53,15 @@ export function ChangePasswordForm() {
       const data = await response.json()
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Password has been changed successfully",
-        })
+        toast.success("Password changed successfully")
 
         router.push("/dashboard")
       } else {
-        toast({
-          title: "Error",
-          description: data.message || "Failed to change password",
-          variant: "destructive",
-        })
+        toast.success(data.message)
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Failed to change password")
+      
     } finally {
       setIsLoading(false)
     }

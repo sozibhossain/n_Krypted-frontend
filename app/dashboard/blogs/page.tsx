@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Pagination } from "@/components/dashboard/pagination";
+// import { Pagination } from "@/components/dashboard/pagination";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -25,13 +25,17 @@ import DeleteModal from "./_components/detetemodal";
 interface Blog {
   _id: string;
   title: string;
-  content: string;
+  description: string; // matches the actual API field
   image: string;
   createdAt: string;
-  commentCount: number;
+  commentCount?: number; // optional, since it's not provided
 }
 
+
 export default function BlogsPage() {
+  // Define the expected API response type
+
+
   const { data: blogsData, isLoading } = useAllBlogs();
   const createBlogMutation = useCreateBlog();
   const updateBlogMutation = useUpdateBlog(); // <-- added
@@ -39,23 +43,24 @@ export default function BlogsPage() {
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
 
   const [formBlog, setFormBlog] = useState({
     title: "",
-    content: "",
+    description: "",
     image: null as File | null,
   });
   const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
-    if (blogsData?.data) {
-      setBlogs(blogsData.data as Blog[]);
+    if (blogsData && 'blogs' in blogsData) {
+      setBlogs(blogsData.blogs as Blog[]);
       setTotalPages(blogsData.totalPages || 1);
     }
   }, [blogsData]);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -73,13 +78,13 @@ export default function BlogsPage() {
   const handleAddOrEditBlog = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formBlog.title || !formBlog.content || (!formBlog.image && !editingBlog)) {
+    if (!formBlog.title || !formBlog.description || (!formBlog.image && !editingBlog)) {
       return;
     }
 
     const formData = new FormData();
     formData.append("title", formBlog.title);
-    formData.append("content", formBlog.content);
+    formData.append("description", formBlog.description);
     if (formBlog.image) {
       formData.append("image", formBlog.image);
     }
@@ -91,7 +96,7 @@ export default function BlogsPage() {
           onSuccess: () => {
             setIsDialogOpen(false);
             setEditingBlog(null);
-            setFormBlog({ title: "", content: "", image: null });
+            setFormBlog({ title: "", description: "", image: null });
             setPreviewUrl("");
           },
         }
@@ -100,7 +105,7 @@ export default function BlogsPage() {
       createBlogMutation.mutate(formData, {
         onSuccess: () => {
           setIsDialogOpen(false);
-          setFormBlog({ title: "", content: "", image: null });
+          setFormBlog({ title: "", description: "", image: null });
           setPreviewUrl("");
         },
       });
@@ -115,7 +120,7 @@ export default function BlogsPage() {
     setEditingBlog(blog);
     setFormBlog({
       title: blog.title,
-      content: blog.content,
+      description: blog.description,
       image: null,
     });
     setPreviewUrl(blog.image);
@@ -138,13 +143,13 @@ export default function BlogsPage() {
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             if (!open) {
               setEditingBlog(null);
-              setFormBlog({ title: "", content: "", image: null });
+              setFormBlog({ title: "", description: "", image: null });
               setPreviewUrl("");
             }
             setIsDialogOpen(open);
           }}>
             <DialogTrigger asChild>
-              <Button className="bg-[#6b614f] hover:bg-[#5c5343]">
+              <Button className="bg-[#212121] ">
                 <Plus className="mr-2 h-4 w-4" /> Add Blog
               </Button>
             </DialogTrigger>
@@ -206,7 +211,7 @@ export default function BlogsPage() {
                             <h4 className="font-medium">{blog.title}</h4>
                             <p
                               className="text-sm text-muted-foreground line-clamp-2"
-                              dangerouslySetInnerHTML={{ __html: blog.content }}
+                              dangerouslySetInnerHTML={{ __html: blog.description }}
                             />
                           </div>
                         </div>
@@ -248,10 +253,19 @@ export default function BlogsPage() {
           )}
         </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage} totalItems={0} itemsPerPage={0}        />
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t">
+            {/* <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              isLoading={isLoading}
+              totalItems={blogsData?.totalItems || blogs.length}
+              itemsPerPage={blogsData?.itemsPerPage || 10}
+            /> */}
+          </div>
+        )}
       </div>
     </Layout>
   );

@@ -1,20 +1,16 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [emailSent, setEmailSent] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,31 +26,29 @@ export function ForgotPasswordForm() {
       const data = await response.json()
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "OTP has been sent to your email",
-        })
-
-        // Store email in session storage for the next step
-        sessionStorage.setItem("resetEmail", email)
-
-        router.push("/verify-otp")
+        toast.success("OTP sent successfully")
+        setEmailSent(true)
       } else {
-        toast({
-          title: "Error",
-          description: data.message || "Failed to send OTP",
-          variant: "destructive",
-        })
+        toast.error(data.message)
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Failed to send OTP")
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (emailSent) {
+    return (
+      <div className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg text-center">
+        <div className="space-y-2">
+          <h3 className="text-xl font-medium text-white">Check your email</h3>
+          <p className="text-gray-400">
+            We&apos;ve sent a password reset link to {email}
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -76,7 +70,7 @@ export function ForgotPasswordForm() {
       </div>
 
       <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-200" disabled={isLoading}>
-        {isLoading ? "Sending OTP..." : "Send OTP"}
+        {isLoading ? "Sending email..." : "Send email"}
       </Button>
     </form>
   )

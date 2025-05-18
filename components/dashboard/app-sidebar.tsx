@@ -23,7 +23,7 @@ import {
 import { useState } from "react";
 // import { useSession } from "next-auth/react";
 import LogOutModal from "@/Shared/LogOutModal";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 interface AppSidebarProps {
   isMobile?: boolean;
@@ -32,7 +32,7 @@ interface AppSidebarProps {
 export function AppSidebar({ }: AppSidebarProps) {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const session = useSession();
+  // const session = useSession();
 
   const handleLogout = async () => {
     try {
@@ -84,7 +84,7 @@ export function AppSidebar({ }: AppSidebarProps) {
                   isActive={isActive("/dashboard/auctions")}
                   className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
                 >
-                  <Link href="/dashboard/auctions" className="flex flex-col items-center">
+                  <Link href="/dashboard/deals" className="flex flex-col items-center">
                     <Gavel className={`h-5 w-5 ${isActive("/dashboard/auctions") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
                     <span className={`text-[12px] font-medium ${isActive("/dashboard/auctions") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
                       Deals
@@ -98,7 +98,7 @@ export function AppSidebar({ }: AppSidebarProps) {
                   isActive={isActive("/dashboard/bidders")}
                   className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
                 >
-                  <Link href="/dashboard/bidders" className="flex flex-col items-center">
+                  <Link href="/dashboard/booking" className="flex flex-col items-center">
                     <Users className={`h-5 w-5 ${isActive("/dashboard/bidders") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
                     <span className={`text-[12px] font-medium ${isActive("/dashboard/bidders") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
                       Booking
@@ -126,7 +126,7 @@ export function AppSidebar({ }: AppSidebarProps) {
                   isActive={isActive("/dashboard/seller")}
                   className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
                 >
-                  <Link href="/dashboard/seller" className="flex flex-col items-center">
+                  <Link href="/dashboard/notify" className="flex flex-col items-center">
                     <User className={`h-5 w-5 ${isActive("/dashboard/seller") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
                     <span className={`text-[12px] font-medium ${isActive("/dashboard/seller") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
                       Notify Me

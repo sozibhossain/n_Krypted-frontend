@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea f
 
 interface Blog {
   title: string;
-  content: string;
+  description: string;
   image: File | null;
 }
 
@@ -16,7 +16,7 @@ interface AddEditBlogsProps {
   handleAddBlog: (e: React.FormEvent) => void;
   newBlog: {
     title: string;
-    content: string;
+    description: string;
     image: File | null;
   };
   setNewBlog: React.Dispatch<React.SetStateAction<Blog>>;
@@ -44,6 +44,8 @@ function AddEditBlogs({
   updateBlogMutation,
   editingBlog,
 }: AddEditBlogsProps) {
+
+  console.log("editingBlog", newBlog);
   return (
     <ScrollArea className="h-[calc(100vh-200px)]">
       {" "}
@@ -63,14 +65,14 @@ function AddEditBlogs({
         </div>
         {/* Content */}
         <div className="space-y-2">
-          <Label htmlFor="content">Description</Label>
+          <Label htmlFor="description">Description</Label>
           <div className="rounded-md border">
             {" "}
             {/* Container for editor with border */}
             <QuillEditor
-              id="content"
-              value={newBlog.content}
-              onChange={(value) => setNewBlog({ ...newBlog, content: value })}
+              id="description"
+              value={newBlog.description}
+              onChange={(value) => setNewBlog({ ...newBlog, description: value })}
             />
           </div>
         </div>
@@ -101,12 +103,7 @@ function AddEditBlogs({
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                  <Image
-                    src="/placeholder.svg"
-                    alt="Upload"
-                    width={40}
-                    height={40}
-                  />
+                  <h1>Upload</h1>
                 </div>
                 <p className="text-sm text-center text-muted-foreground">
                   Drag and drop image here, or click add image
@@ -137,7 +134,7 @@ function AddEditBlogs({
           {/* Add bottom padding */}
           <Button
             type="submit"
-            className="bg-[#6b614f] hover:bg-[#5c5343]"
+            className="bg-[#212121]"
             disabled={
               createBlogMutation.isPending || updateBlogMutation.isPending
             }

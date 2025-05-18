@@ -3,9 +3,10 @@ import { Poppins } from "next/font/google";  // Google Font (Poppins)
 import "./globals.css";
 import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
-import { Toaster } from "sonner";
+// import { Toaster } from "";
 import { SocketProvider } from "@/Provider/SocketProvider";
 import { Navbar } from "@/components/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 // Import Poppins font from Google Fonts
 const poppins = Poppins({
@@ -25,11 +26,11 @@ export default function RootLayout({
       <body className={`${poppins.variable} font-poppins antialiased bg-[#212121]`}>
         <AppProvider>
           <SocketProvider>
+            <Toaster position="top-right"/>
             <LayoutShell>
               <Navbar />
               {children}
             </LayoutShell>
-            <Toaster />
           </SocketProvider>
         </AppProvider>
       </body>

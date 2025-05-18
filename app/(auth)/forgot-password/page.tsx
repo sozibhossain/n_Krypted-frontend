@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Enter OTP</h1>
-            <p className="text-gray-400">Enter your email to receive the OTP</p>
+            <h1 className="text-2xl font-bold">Enter Email</h1>
+            <p className="text-gray-400">Enter your email to receive the link</p>
           </div>
           <ForgotPasswordForm />
         </div>

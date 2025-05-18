@@ -27,7 +27,7 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
 
-    console.log(this.token, "token");
+    // console.log(this.token, "token");
 
     const headers: HeadersInit = {
       Authorization: `Bearer ${this.token}`,
@@ -184,32 +184,32 @@ class ApiService {
 
   // Blogs
   async getAllBlogs() {
-    return this.request("/admin/blogs/all");
+    return this.request("/api/blog");
   }
 
-  async getBlogDetails(id: string) {
-    return this.request(`/admin/blogs/${id}`);
-  }
+  // async getBlogDetails(id: string) {
+  //   return this.request(`/api/blog/${id}`);
+  // }
 
   async createBlog(data: FormData) {
-    return this.request("/admin/blogs/create", "POST", data);
+    return this.request("/api/blog", "POST", data);
   }
 
   async updateBlog(id: string, data: FormData) {
-    return this.request(`/admin/blogs/update/${id}`, "PUT", data);
+    return this.request(`/api/blog/${id}`, "PUT", data);
   }
 
   async deleteBlog(id: string) {
-    return this.request(`/admin/blogs/delete/${id}`, "DELETE");
+    return this.request(`/api/blog/${id}`, "DELETE");
   }
 
-  async getBlogComments(id: string) {
-    return this.request(`/admin/blogs/get-comment/${id}`);
-  }
+  // async getBlogComments(id: string) {
+  //   return this.request(`/admin/blogs/get-comment/${id}`);
+  // }
 
-  async deleteBlogComment(blogId: string, commentId: string) {
-    return this.request(`/admin/blogs/delete/${blogId}/${commentId}`, "DELETE");
-  }
+  // async deleteBlogComment(blogId: string, commentId: string) {
+  //   return this.request(`/admin/blogs/delete/${blogId}/${commentId}`, "DELETE");
+  // }
 
   // Sellers
   async getAllSellers() {
