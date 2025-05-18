@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTransition } from "react"
 import { Edit, Trash, Plus } from "lucide-react"
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
@@ -22,8 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { Skeleton } from "@/components/ui/skeleton"
-import AddDealModal from "./_component/add-deal-modal"
+
 
 interface Category {
   _id: string
@@ -31,8 +31,7 @@ interface Category {
   image: string
   createdAt: string
   updatedAt: string
-  __v?: number
-  dealCount?: number
+
 }
 
 interface Deal {
@@ -89,6 +88,7 @@ export default function DealsManagement() {
     },
   })
 
+
   // Fetch categories from API
   const { data: categoriesData } = useQuery<CategoriesResponse>({
     queryKey: ["categories"],
@@ -135,6 +135,7 @@ export default function DealsManagement() {
     },
   })
 
+
   const statusMutation = useMutation({
     mutationFn: async ({ id, newStatus }: { id: string; newStatus: string }) => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}/status`, {
@@ -178,7 +179,9 @@ export default function DealsManagement() {
   }
 
   const [isPending, startTransition] = useTransition()
+
   const [updatingStatusIds, setUpdatingStatusIds] = useState<string[]>([])
+
 
   const handlePageChange = (page: number) => {
     startTransition(() => {
@@ -188,6 +191,7 @@ export default function DealsManagement() {
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
+
       // Add the deal ID to the updating list
       setUpdatingStatusIds((prev) => [...prev, id])
 
@@ -221,11 +225,13 @@ export default function DealsManagement() {
       console.error("Error updating deal status:", error)
       // Make sure to remove from updating list in case of error
       setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id))
+
     }
   }
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [dealToDelete, setDealToDelete] = useState<string | null>(null)
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -246,6 +252,7 @@ export default function DealsManagement() {
       setDealToDelete(null)
     }
   }
+
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
@@ -295,10 +302,12 @@ export default function DealsManagement() {
             <CardTitle className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Deals</CardTitle>
             <p className="text-xl text-[#595959]">Dashboard &gt; Deals</p>
           </div>
+
           <Button
             className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[52px]"
             onClick={() => setIsAddModalOpen(true)}
           >
+
             <Plus className="mr-2 h-4 w-4" /> Add Deal
           </Button>
         </CardHeader>
@@ -312,6 +321,7 @@ export default function DealsManagement() {
                     <TableHead>Category</TableHead>
                     <TableHead>SKU</TableHead>
                     <TableHead>Location</TableHead>
+
                     <TableHead>Price</TableHead>
                     <TableHead>Activate</TableHead>
                     <TableHead>Actions</TableHead>
@@ -319,7 +329,9 @@ export default function DealsManagement() {
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
+
                     <TableSkeleton />
+
                   ) : deals.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-10">
@@ -341,10 +353,12 @@ export default function DealsManagement() {
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           {deal.location || "Lorem ipsum dolor sit amet."}
                         </TableCell>
+
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           ${deal.price.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-[#595959] text-base font-medium py-4">
+
                           <div className="relative">
                             <Switch
                               checked={deal.status === "activate"}
@@ -357,6 +371,7 @@ export default function DealsManagement() {
                               </div>
                             )}
                           </div>
+
                         </TableCell>
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           <div className="flex space-x-2">
@@ -404,7 +419,9 @@ export default function DealsManagement() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       <AddDealModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} categories={categories} />
+
     </Layout>
   )
 }

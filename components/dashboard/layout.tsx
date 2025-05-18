@@ -54,7 +54,7 @@ export default function Layout({ children }: LayoutProps) {
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-[250px]">
+        <SheetContent side="left" className="p-0 w-[108px]">
           <AppSidebar isMobile />
         </SheetContent>
       </Sheet>
@@ -76,7 +76,7 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </Link>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 pr-4">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-white">
                 {user?.name || "User"}
@@ -89,7 +89,7 @@ export default function Layout({ children }: LayoutProps) {
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={user?.image || "https://github.com/shadcn.png"}
+                        src={"https://github.com/shadcn.png"}
                       />
                       <AvatarFallback>
                         {user?.name

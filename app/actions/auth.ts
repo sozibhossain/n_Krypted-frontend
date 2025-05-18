@@ -1,24 +1,43 @@
-"use server"
+"use server";
+
+type User = {
+  _id: {
+    $oid: string;
+  };
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  isVerified: boolean;
+  role: "admin" | "user"; // Assuming there are only these two roles
+  createdAt: {
+    $date: string;
+  };
+  updatedAt: {
+    $date: string;
+  };
+  __v: number;
+};
 
 type LoginCredentials = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 type RegisterData = {
-  name: string
-  email: string
-  password: string
-  phoneNumber: string
-}
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+};
 
 type AuthResponse = {
-  success: boolean
-  message?: string
-  data?: any
-  accessToken?: string
-  refreshToken?: string
-}
+  success: boolean;
+  message?: string;
+  data?: User;
+  accessToken?: string;
+  refreshToken?: string;
+};
 
 export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
@@ -113,12 +132,12 @@ export async function forgotPassword(email: string): Promise<AuthResponse> {
   }
 }
 
-export async function verifyOTP(email: string, otp: string): Promise<AuthResponse> {
+export async function verifyOTP(email: string, verificationCode: string): Promise<AuthResponse> {
   try {
     const response = await fetch("http://localhost:5000/api/auth/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
+      body: JSON.stringify({ email, verificationCode }),
     })
 
     const data = await response.json()

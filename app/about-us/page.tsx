@@ -5,7 +5,6 @@ import OurVision from "./_components/OurVision";
 
 import { TestimonialSection } from "@/components/testimonial-section";
 import { PageHeader } from "@/Shared/PageHeader";
-import { useSession } from "next-auth/react";
 
 const page = () => {
 // const session = useSession();

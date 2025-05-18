@@ -3,12 +3,12 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Eye, EyeOff, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("")
@@ -18,46 +18,39 @@ export function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState<string | null>(null)
   const router = useRouter()
-  const { toast } = useToast()
+
+
+  const sharch = useSearchParams()
+
 
   useEffect(() => {
-    // Get email from session storage
-    const storedEmail = sessionStorage.getItem("resetEmail")
+    // Get email from URL search params
+    const storedEmail = sharch.get("email");
     if (!storedEmail) {
-      toast({
-        title: "Error",
-        description: "Reset session expired. Please restart the password reset process.",
-        variant: "destructive",
-      })
-      router.push("/forgot-password")
+      toast.error("Email not found in URL parameters");
     } else {
-      setEmail(storedEmail)
+      setEmail(storedEmail);
     }
-  }, [router, toast])
 
+    if (sharch.get("token") === null && sharch.get("email") === null) {
+      window.location.href = "/"; // or use your router's redirect method
+    }
+  }, [sharch, setEmail]); // Added all dependencies
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      })
+      toast.error("Passwords do not match")
       return
     }
 
     if (password.length < 8) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long",
-        variant: "destructive",
-      })
+      toast.error("Password must be at least 8 characters long")
       return
     }
 
     setIsLoading(true)
-    const resetToken = sessionStorage.getItem("resetToken")
+    const resetToken = sharch.get("token")
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/reset-password", {
@@ -73,29 +66,18 @@ export function ResetPasswordForm() {
       const data = await response.json()
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Password has been reset successfully",
-        })
+        toast.success("Password reset successfully!")
 
         // Clear session storage
         sessionStorage.removeItem("resetEmail")
         sessionStorage.removeItem("resetToken")
 
-        router.push("/signin")
+        router.push("/login")
       } else {
-        toast({
-          title: "Error",
-          description: data.message || "Failed to reset password",
-          variant: "destructive",
-        })
+        toast.success(data.message || "Failed to reset password")
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
     }

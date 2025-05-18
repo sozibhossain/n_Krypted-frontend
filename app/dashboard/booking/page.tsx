@@ -3,12 +3,9 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      
       <Layout>
-        d
+        <div>Booking</div>
       </Layout>
-    </div>
   )
 }
 

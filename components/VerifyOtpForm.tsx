@@ -4,26 +4,21 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
 import { verifyOTP, forgotPassword } from "@/app/actions/auth"
 import { CustomOtpInput } from "./custom-otp-input"
+import { toast } from "sonner"
 
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     const otpString = otp.join("")
     if (otpString.length !== 6) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid 6-character verification code",
-        variant: "destructive",
-      })
+      toast.error("Please enter all 6 digits")
       return
     }
 
@@ -31,11 +26,7 @@ export function VerifyOtpForm() {
     const email = sessionStorage.getItem("resetEmail")
 
     if (!email) {
-      toast({
-        title: "Error",
-        description: "Email not found. Please restart the process.",
-        variant: "destructive",
-      })
+      toast.error("Email not found. Please go back to the forgot password page.")
       router.push("/forgot-password")
       return
     }
@@ -44,30 +35,20 @@ export function VerifyOtpForm() {
       const result = await verifyOTP(email, otpString)
 
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "Verification code accepted",
-        })
+        toast.success("OTP verified successfully")
 
         // Store verification token if provided
-        if (result.data?.token) {
-          sessionStorage.setItem("resetToken", result.data.token)
+        const token = (result.data as { token?: string })?.token
+        if (token) {
+          sessionStorage.setItem("resetToken", token)
         }
 
         router.push("/reset-password")
       } else {
-        toast({
-          title: "Error",
-          description: result.message || "Invalid verification code",
-          variant: "destructive",
-        })
+        toast.error(result.message || "Failed to verify OTP")
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Failed to verify OTP")
     } finally {
       setIsLoading(false)
     }
@@ -77,11 +58,7 @@ export function VerifyOtpForm() {
     const email = sessionStorage.getItem("resetEmail")
 
     if (!email) {
-      toast({
-        title: "Error",
-        description: "Email not found. Please go back to the forgot password page.",
-        variant: "destructive",
-      })
+      toast.error("Email not found. Please go back to the forgot password page.")
       return
     }
 
@@ -89,23 +66,12 @@ export function VerifyOtpForm() {
       const result = await forgotPassword(email)
 
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "Verification code has been resent to your email",
-        })
+        toast.success("Verification code sent successfully")
       } else {
-        toast({
-          title: "Error",
-          description: result.message || "Failed to resend verification code",
-          variant: "destructive",
-        })
+        toast.error(result.message || "Failed to send verification code")
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Failed to send verification code")
     }
   }
 

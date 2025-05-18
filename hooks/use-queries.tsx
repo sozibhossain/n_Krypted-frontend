@@ -285,11 +285,11 @@ export function useAllBlogs() {
   return createQuery(["blogs", "all"], () => apiService.getAllBlogs());
 }
 
-export function useBlogDetails(id: string) {
-  return createQuery(["blogs", id], () => apiService.getBlogDetails(id), {
-    enabled: !!id,
-  });
-}
+// export function useBlogDetails(id: string) {
+//   return createQuery(["blogs", id], () => apiService.getBlogDetails(id), {
+//     enabled: !!id,
+//   });
+// }
 
 export function useCreateBlog() {
   return createMutation((data: FormData) => apiService.createBlog(data), {

@@ -5,14 +5,13 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { signIn } from "next-auth/react"
 import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/hooks/use-toast"
 import { registerUser } from "@/app/actions/auth"
+import { toast } from "sonner"
 
 export function RegisterForm() {
   const [name, setUsername] = useState("")
@@ -25,17 +24,13 @@ export function RegisterForm() {
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { toast } = useToast()
 
+  // In your RegisterForm component
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      })
+      toast.error("Passwords do not match")
       return
     }
 
@@ -50,26 +45,18 @@ export function RegisterForm() {
       })
 
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "Account created successfully. Please verify your email.",
-        })
+        toast.success("Account created successfully!")
 
-        // Instead of trying to sign in immediately, just redirect to verify-email
-        router.push("/verify-email")
+        // Store email in sessionStorage before redirecting
+        sessionStorage.setItem("registerEmail", email)
+
+        // Redirect to verify-email with the email as a query parameter
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`)
       } else {
-        toast({
-          title: "Error",
-          description: result.message || "Failed to create account",
-          variant: "destructive",
-        })
+        toast.error(result.message)
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
     }

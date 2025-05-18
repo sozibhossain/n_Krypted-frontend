@@ -88,6 +88,10 @@ export default function AccountsLayout({
         <LogOutModal
           isLogoutDialogOpen={isLogoutDialogOpen}
           setIsLogoutDialogOpen={setIsLogoutDialogOpen}
+          onConfirmLogout={() => {
+            // Add your logout logic here, e.g., redirect or clear auth
+            setIsLogoutDialogOpen(false);
+          }}
         />
 
         <div className="mt-6">{children}</div>

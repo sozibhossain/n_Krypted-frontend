@@ -2,21 +2,18 @@
 
 import { useState } from "react"
 import { getSession, signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function SignInForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +37,9 @@ export function SignInForm() {
 
       const role = session?.user?.role;
 
-      toast({
-        title: "Success",
-        description: "Login successful",
-      });
+      
+
+      toast.success("Login successful");
 
       if (role === "admin") {
         window.location.href = "/dashboard";
@@ -52,11 +48,7 @@ export function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast({
-        title: "Error",
-        description: "Login failed. Please check your credentials.",
-        variant: "destructive",
-      });
+      toast.error("Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -67,12 +59,8 @@ export function SignInForm() {
     try {
       setIsLoading(true)
       await signIn(provider, { callbackUrl: "/dashboard" })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to sign in with ${provider}`,
-        variant: "destructive",
-      })
+    } catch {
+      toast.error("Login failed")
     } finally {
       setIsLoading(false)
     }
