@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTransition } from "react"
 import { Edit, Trash, Plus } from "lucide-react"
-// import { useRouter } from "next/navigation"
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
@@ -24,12 +24,14 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
 
+
 interface Category {
   _id: string
   categoryName: string
   image: string
   createdAt: string
   updatedAt: string
+
 }
 
 interface Deal {
@@ -60,8 +62,16 @@ interface ApiResponse {
   pagination: PaginationInfo
 }
 
+interface CategoriesResponse {
+  success: boolean
+  data: Category[]
+  pagination: PaginationInfo
+}
+
 export default function DealsManagement() {
   const [page, setPage] = useState(1)
+  const queryClient = useQueryClient()
+
   const { data, isLoading } = useQuery<ApiResponse>({
     queryKey: ["deals", page],
     queryFn: async () => {
@@ -78,7 +88,26 @@ export default function DealsManagement() {
     },
   })
 
-  const queryClient = useQueryClient()
+
+  // Fetch categories from API
+  const { data: categoriesData } = useQuery<CategoriesResponse>({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories")
+        }
+        const data = await response.json()
+        return data
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        throw err
+      }
+    },
+  })
+
+  const categories = categoriesData?.data || []
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -106,6 +135,41 @@ export default function DealsManagement() {
     },
   })
 
+
+  const statusMutation = useMutation({
+    mutationFn: async ({ id, newStatus }: { id: string; newStatus: string }) => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update deal status")
+      }
+
+      return response.json()
+    },
+    onError: (error, variables) => {
+      console.error("Error updating deal status:", error)
+      toast.error("Failed to update deal status", { position: "top-right" })
+
+      // Revert the optimistic update on error
+      if (data) {
+        queryClient.setQueryData(["deals", page], {
+          ...data,
+          deals: data.deals.map((deal) =>
+            deal._id === variables.id
+              ? { ...deal, status: variables.newStatus === "activate" ? "deactivate" : "activate" }
+              : deal,
+          ),
+        })
+      }
+    },
+  })
+
   const deals = data?.deals || []
   const pagination = data?.pagination || {
     currentPage: 1,
@@ -115,7 +179,9 @@ export default function DealsManagement() {
   }
 
   const [isPending, startTransition] = useTransition()
-  // const router = useRouter()
+
+  const [updatingStatusIds, setUpdatingStatusIds] = useState<string[]>([])
+
 
   const handlePageChange = (page: number) => {
     startTransition(() => {
@@ -125,22 +191,47 @@ export default function DealsManagement() {
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
-      // In a real application, you would update the status via API
-      console.log(
-        `Toggling status for deal ${id} from ${currentStatus} to ${currentStatus === "activate" ? "deactivate" : "activate"}`,
-      )
 
-      // Optimistically update UI would be handled with a proper mutation
-      // For now, just refetch the data
-      queryClient.invalidateQueries({ queryKey: ["deals"] })
+      // Add the deal ID to the updating list
+      setUpdatingStatusIds((prev) => [...prev, id])
+
+      // Calculate the new status
+      const newStatus = currentStatus === "activate" ? "deactivate" : "activate"
+
+      // Optimistically update the UI
+      if (data) {
+        queryClient.setQueryData(["deals", page], {
+          ...data,
+          deals: data.deals.map((deal) => (deal._id === id ? { ...deal, status: newStatus } : deal)),
+        })
+      }
+
+      // Call the mutation
+      statusMutation.mutate(
+        { id, newStatus },
+        {
+          onSettled: () => {
+            // Remove the deal ID from the updating list when done (success or error)
+            setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id))
+          },
+          onSuccess: () => {
+            toast.success(`Deal ${newStatus === "activate" ? "activated" : "deactivated"} successfully`, {
+              position: "top-right",
+            })
+          },
+        },
+      )
     } catch (error) {
       console.error("Error updating deal status:", error)
+      // Make sure to remove from updating list in case of error
+      setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id))
+
     }
   }
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [dealToDelete, setDealToDelete] = useState<string | null>(null)
-  console.log("dealToDelete", dealToDelete)
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -162,6 +253,47 @@ export default function DealsManagement() {
     }
   }
 
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  // Skeleton component for loading state
+  const TableSkeleton = () => {
+    return (
+      <>
+        {Array(5)
+          .fill(0)
+          .map((_, index) => (
+            <TableRow key={index} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[180px]" />
+              </TableCell>
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[100px]" />
+              </TableCell>
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[80px]" />
+              </TableCell>
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[150px]" />
+              </TableCell>
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[60px]" />
+              </TableCell>
+              <TableCell className="py-4">
+                <Skeleton className="h-6 w-[40px] rounded-full" />
+              </TableCell>
+              <TableCell className="py-4">
+                <div className="flex space-x-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+      </>
+    )
+  }
+
   return (
     <Layout>
       <div className="">
@@ -170,7 +302,12 @@ export default function DealsManagement() {
             <CardTitle className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Deals</CardTitle>
             <p className="text-xl text-[#595959]">Dashboard &gt; Deals</p>
           </div>
-          <Button className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[52px]">
+
+          <Button
+            className="bg-[#212121] hover:bg-[#212121]/90 text-white h-[52px]"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+
             <Plus className="mr-2 h-4 w-4" /> Add Deal
           </Button>
         </CardHeader>
@@ -184,7 +321,7 @@ export default function DealsManagement() {
                     <TableHead>Category</TableHead>
                     <TableHead>SKU</TableHead>
                     <TableHead>Location</TableHead>
-                    {/* <TableHead>Place Name</TableHead> */}
+
                     <TableHead>Price</TableHead>
                     <TableHead>Activate</TableHead>
                     <TableHead>Actions</TableHead>
@@ -192,11 +329,9 @@ export default function DealsManagement() {
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-10">
-                        Loading...
-                      </TableCell>
-                    </TableRow>
+
+                    <TableSkeleton />
+
                   ) : deals.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-10">
@@ -218,15 +353,25 @@ export default function DealsManagement() {
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           {deal.location || "Lorem ipsum dolor sit amet."}
                         </TableCell>
-                        {/* <TableCell className="text-[#595959] text-base font-medium py-4">{deal.description?.substring(0, 20) || "consectetur efficitur."}</TableCell> */}
+
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           ${deal.price.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-[#595959] text-base font-medium py-4">
-                          <Switch
-                            checked={deal.status === "activate"}
-                            onCheckedChange={() => handleStatusToggle(deal._id, deal.status)}
-                          />
+
+                          <div className="relative">
+                            <Switch
+                              checked={deal.status === "activate"}
+                              onCheckedChange={() => handleStatusToggle(deal._id, deal.status)}
+                              disabled={updatingStatusIds.includes(deal._id)}
+                            />
+                            {updatingStatusIds.includes(deal._id) && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#212121] border-t-transparent"></div>
+                              </div>
+                            )}
+                          </div>
+
                         </TableCell>
                         <TableCell className="text-[#595959] text-base font-medium py-4">
                           <div className="flex space-x-2">
@@ -274,6 +419,9 @@ export default function DealsManagement() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AddDealModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} categories={categories} />
+
     </Layout>
   )
 }
