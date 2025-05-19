@@ -10,7 +10,7 @@ interface CategoryCardProps {
 export function CategoryCard({ title, icon,  }: CategoryCardProps) {
   return (
     <Link href={`/deals?category=${title}`}>
-      <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4 h-full transition-all hover:scale-105 hover:border-primary w-full md:w-[270px]">
+      <div className="flex flex-col items-center justify-center border-2 border-white rounded-md gap-4 h-full transition-all  hover:border-primary w-full md:w-[270px] group">
         <div className="flex justify-center">
           <Image
             src={icon || "/assets/category.png"}
@@ -21,7 +21,7 @@ export function CategoryCard({ title, icon,  }: CategoryCardProps) {
           />
         </div>
 
-        <div className="border-t-2 border-white w-full text-center py-2">
+        <div className="border-t-2 border-white w-full text-center py-2 group-hover:border-primary">
           <h1 className="text-[20px] font-bold text-white">{title || "Category"}</h1>
           {/* {auctions.length > 0 && <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1>} */}
         </div>
