@@ -134,13 +134,13 @@ export function CategoriesAndSearchBar() {
 
   return (
     <Hideon routes={HIDDEN_ROUTES}>
-      <div className="sticky top-[80px] z-50 bg-[#212121] w-full">
+      <div className="sticky top-[90px] z-50 bg-[#212121] w-full">
       <header className="container py-3 mt-20 ">
         
         <form onSubmit={handleSearchSubmit}>
           <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
             {/* Categories Dropdown */}
-            <div className="col-span-4 md:col-span-1 lg:col-span-1">
+            <div className="col-span-4 md:col-span-4 lg:col-span-1">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -177,7 +177,7 @@ export function CategoriesAndSearchBar() {
               </DropdownMenu>
             </div>
 
-            <div className="col-span-4 md:col-span-3 lg:col-span-3">
+            <div className="col-span-4 md:col-span-4 lg:col-span-3">
               {/* Search Input */}
               <div className="flex items-center border border-white justify-between rounded-lg">
                 <div className="relative flex-1 max-w-2xl">

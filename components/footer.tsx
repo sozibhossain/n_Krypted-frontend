@@ -29,7 +29,7 @@ export function Footer() {
                     className="h-[30px] w-[80px]"
                   />
                 </div>
-                <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-[#212121] drop-shadow-[0_0_5px_white]">
+                <h1 className="font-benedict text-[32px] font-medium mb-2 text-[#212121] mt-3">
                   Walk Throughz
                 </h1>
               </div>

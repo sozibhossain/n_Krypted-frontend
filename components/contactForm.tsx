@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function ContactForm() {
     const [formData, setFormData] = useState({
@@ -10,6 +11,11 @@ export default function ContactForm() {
         phone: "",
         message: ""
     })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitStatus, setSubmitStatus] = useState<{
+        success: boolean
+        message: string
+    } | null>(null)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -19,10 +25,74 @@ export default function ContactForm() {
         }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Form submitted:", formData)
-        // Add your form submission logic here
+
+        // Basic validation
+        if (!formData.fullName || !formData.email || !formData.message) {
+            setSubmitStatus({
+                success: false,
+                message: "Please fill in all required fields"
+            })
+            return
+        }
+
+        // Email validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            setSubmitStatus({
+                success: false,
+                message: "Please enter a valid email address"
+            })
+            return
+        }
+
+        setIsSubmitting(true)
+        setSubmitStatus(null)
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.fullName, // Maps to API's 'name' field
+                    email: formData.email,
+                    phoneNumber: formData.phone, // Maps to API's 'phoneNumber' field
+                    message: formData.message
+                }),
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to submit feedback')
+            }
+
+            // Reset form on successful submission
+            setFormData({
+                fullName: "",
+                email: "",
+                phone: "",
+                message: ""
+            })
+
+            setSubmitStatus({
+                success: true,
+                message: "Thank you for your message! We'll get back to you soon."
+            })
+
+            console.log("API Response:", data)
+        } catch (error) {
+            console.error("Submission error:", error)
+            setSubmitStatus({
+                success: false,
+                message: error instanceof Error ? error.message : "Something went wrong. Please try again."
+            })
+        } finally {
+            setIsSubmitting(false)
+            toast.success(submitStatus?.message || "Thank you for your message! We'll get back to you soon.")
+        }
     }
 
     return (
@@ -30,7 +100,7 @@ export default function ContactForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label htmlFor="fullName" className="block text-sm font-medium text-white pb-2">
-                        Name
+                        Name *
                     </label>
                     <input
                         type="text"
@@ -39,14 +109,14 @@ export default function ContactForm() {
                         onChange={handleChange}
                         placeholder="Enter your full name"
                         className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                        disabled={isSubmitting}
                         required
                     />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-white pb-2">
-                            Email
+                            Email *
                         </label>
                         <input
                             type="email"
@@ -55,6 +125,7 @@ export default function ContactForm() {
                             onChange={handleChange}
                             placeholder="Enter your Email Address"
                             className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                            disabled={isSubmitting}
                             required
                         />
                     </div>
@@ -70,14 +141,14 @@ export default function ContactForm() {
                             onChange={handleChange}
                             placeholder="Enter your Phone Number"
                             className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
-                            required
+                            disabled={isSubmitting}
                         />
                     </div>
                 </div>
 
                 <div className="lg:col-span-2">
                     <label htmlFor="message" className="block text-sm font-medium text-white pb-2">
-                        Message
+                        Message *
                     </label>
                     <textarea
                         name="message"
@@ -85,6 +156,7 @@ export default function ContactForm() {
                         onChange={handleChange}
                         placeholder="Enter your message"
                         className="w-full h-[150px] sm:h-[189px] lg:h-[189px] p-3 pb-8 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                        disabled={isSubmitting}
                         required
                     />
                 </div>
@@ -92,9 +164,10 @@ export default function ContactForm() {
                 <div className="flex justify-center mt-6">
                     <button
                         type="submit"
-                        className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base"
+                        className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
+                        disabled={isSubmitting}
                     >
-                        Submit
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
                     </button>
                 </div>
             </form>

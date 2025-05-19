@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Map, FilterIcon } from "lucide-react"
+import { FilterIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -55,6 +55,8 @@ export default function DealsPage() {
   const [currentPage, setCurrentPage] = useState<number>(Number.parseInt(searchParams.get("page") || "1"))
   const [showMap, setShowMap] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  console.log(setShowMap)
 
   // State for categories
   const [categories, setCategories] = useState<Category[]>([])
@@ -112,8 +114,6 @@ export default function DealsPage() {
     },
   })
 
-
-  console.log(searchQuery)
 
   // Memoize deals data
   const dealsData = useMemo(() => response?.deals || [], [response])
@@ -247,9 +247,9 @@ export default function DealsPage() {
   }
 
   // Toggle map view
-  const toggleMap = () => {
-    setShowMap(!showMap)
-  }
+  // const toggleMap = () => {
+  //   setShowMap(!showMap)
+  // }
 
   // Count active filters
   const getActiveFiltersCount = () => {
@@ -370,7 +370,7 @@ export default function DealsPage() {
     <Suspense fallback={<div>Loading...</div>}>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">
@@ -394,20 +394,20 @@ export default function DealsPage() {
             </Sheet>
           </div>
 
-          <Button variant="outline" className="flex items-center gap-2" onClick={toggleMap}>
+          {/* <Button variant="outline" className="flex items-center gap-2" onClick={toggleMap}>
             <Map className="h-4 w-4" />
             {showMap ? "Hide Map" : "Show Map"}
-          </Button>
+          </Button> */}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-6">
           {/* Sidebar with filters - hidden on mobile */}
-          <div className="hidden md:block md:col-span-1">
+          <div className="hidden lg:block col-span-6 md:col-span-6 lg:col-span-2">
             <FilterSidebar />
           </div>
 
           {/* Deals grid */}
-          <div className="md:col-span-3">
+          <div className="col-span-6 md:col-span-6 lg:col-span-4">
             {isLoadingDeals ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[1, 2, 3, 4].map((item) => (
@@ -425,7 +425,7 @@ export default function DealsPage() {
                     <p className="text-gray-500">Map View (Placeholder)</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 space-y-3 md:space-y-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-3 md:space-y-0">
                     {filteredDealsData.length > 0 ? (
                       filteredDealsData.map((deal: Deal) => (
                         <DealsCard
