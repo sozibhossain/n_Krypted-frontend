@@ -4,8 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { Menu, Settings, LogOut } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Menu, Settings, LogOut, CircleUserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSession, signOut } from "next-auth/react";
@@ -79,26 +78,15 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center gap-4 pr-4">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-white">
-                {user?.name || "User"}
+                {user?.name}
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
+                  <button
+                    className="relative h-8 w-8 rounded-full flex items-center justify-center bg-[#212121]"
                   >
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={"https://github.com/shadcn.png"}
-                      />
-                      <AvatarFallback>
-                        {user?.name
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("") || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
+                    <CircleUserRound  className="text-white w-[30px] h-[30px] !hover:text-black" />
+                  </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuItem
