@@ -1,20 +1,25 @@
-
-import { Poppins } from "next/font/google";  // Google Font (Poppins)
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
-// import { Toaster } from "";
 import { SocketProvider } from "@/Provider/SocketProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-// Import Poppins font from Google Fonts
+// Load Google Font
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-poppins",
 });
 
-// Root layout component with fonts and structure
+
+export const metadata = {
+  title: " Walk Throughz",
+  icons: {
+    icon: "/assets/profile_image.png", 
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +30,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} font-poppins antialiased bg-[#212121]`}>
         <AppProvider>
           <SocketProvider>
-            <Toaster position="top-right"/>
+            <Toaster position="top-right" />
             <LayoutShell>
               {children}
             </LayoutShell>
