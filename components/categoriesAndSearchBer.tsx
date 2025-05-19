@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
 import Hideon from "@/Provider/Hideon"
+import Link from "next/link"
 
 interface Category {
   _id: string
@@ -41,13 +42,14 @@ export function CategoriesAndSearchBar() {
     queryFn: async () => {
       try {
         const { data } = await axiosInstance.get("/api/categories")
-        return data.categories || []
+        return data.data || []
       } catch (error) {
         console.error("Error fetching categories:", error)
         return []
       }
     },
   })
+  console.log("categoriesData", categoriesData)
 
   // Fetch deals to get unique locations
   const { data: dealsData } = useQuery({
@@ -65,14 +67,17 @@ export function CategoriesAndSearchBar() {
 
   // Extract unique locations from deals
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const uniqueLocations: string[] = Array.from(new Set(dealsData?.map((deal: any) => deal.location) || [])).filter(Boolean) as string[]
+  const uniqueLocations: string[] = Array.from(new Set(dealsData?.map((deal: any) => deal.location) || [])).filter(
+    Boolean,
+  ) as string[]
 
   // Apply filters and search
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString())
 
     if (searchQuery) {
-      params.set("search", searchQuery)
+      // params.set("search", searchQuery)
+      router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
     } else {
       params.delete("search")
     }
@@ -85,6 +90,7 @@ export function CategoriesAndSearchBar() {
 
     if (selectedLocation && selectedLocation !== "all") {
       params.set("location", selectedLocation)
+      router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
     } else {
       params.delete("location")
     }
@@ -92,7 +98,7 @@ export function CategoriesAndSearchBar() {
     // Reset to page 1 when filters change
     params.set("page", "1")
 
-    router.push(`?${params.toString()}`, { scroll: false })
+    router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
   }
 
   // Handle category selection
@@ -114,6 +120,7 @@ export function CategoriesAndSearchBar() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     applyFilters()
+  
   }
 
   // Update filters when URL params change
@@ -123,19 +130,13 @@ export function CategoriesAndSearchBar() {
     setSelectedLocation(currentLocation)
   }, [currentSearchQuery, currentCategory, currentLocation])
 
-  const HIDDEN_ROUTES = [
-    "/dashboard",
-    "/login",
-    "/registration",
-    "/reset-password",
-    "/forgot-password",
-  ];
+  const HIDDEN_ROUTES = ["/dashboard", "/login", "/sign-up", "/reset-password", "/forgot-password"]
 
   return (
-    <Hideon
-      routes={HIDDEN_ROUTES}
-    >
-      <header className="container py-3 mt-20">
+    <Hideon routes={HIDDEN_ROUTES}>
+      <div className="sticky top-[80px] z-50 bg-[#212121] w-full">
+      <header className="container py-3 mt-20 ">
+        
         <form onSubmit={handleSearchSubmit}>
           <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
             {/* Categories Dropdown */}
@@ -161,13 +162,15 @@ export function CategoriesAndSearchBar() {
                     <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
                   ) : (
                     categoriesData?.map((category: Category) => (
-                      <DropdownMenuItem
-                        key={category._id}
-                        onClick={() => handleCategorySelect(category.categoryName)}
-                        className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
-                      >
-                        {category.categoryName}
-                      </DropdownMenuItem>
+                      <Link key={category._id}  href={`/deals?category=${category.categoryName}`}>
+                        <DropdownMenuItem
+                      
+                          onClick={() => handleCategorySelect(category.categoryName)}
+                          className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
+                        >
+                          {category.categoryName}
+                        </DropdownMenuItem>
+                      </Link>
                     ))
                   )}
                 </DropdownMenuContent>
@@ -206,28 +209,34 @@ export function CategoriesAndSearchBar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => handleLocationSelect("all")}
-                      className={selectedLocation === "all" ? "bg-gray-100" : ""}
-                    >
-                      All Locations
-                    </DropdownMenuItem>
-                    {uniqueLocations.map((location: string) => (
+                    <Link href={`/deals?location=all`}>
                       <DropdownMenuItem
-                        key={location}
-                        onClick={() => handleLocationSelect(location)}
-                        className={selectedLocation === location ? "bg-gray-100" : ""}
+                        onClick={() => handleLocationSelect("all")}
+                        className={selectedLocation === "all" ? "bg-gray-100" : ""}
                       >
-                        {location}
+                        All Locations
                       </DropdownMenuItem>
+                    </Link>
+
+                    {uniqueLocations.map((location: string) => (
+                      <Link href={`/deals?location=${location}`} key={location}>
+                        <DropdownMenuItem
+                          onClick={() => handleLocationSelect(location)}
+                          className={selectedLocation === location ? "bg-gray-100" : ""}
+                        >
+                          {location}
+                        </DropdownMenuItem>
+                      </Link>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
               </div>
             </div>
           </div>
         </form>
       </header>
+      </div>
     </Hideon>
   )
 }
