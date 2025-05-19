@@ -39,7 +39,7 @@ export function ChangePasswordForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/change-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/change-password`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session?.accessToken ?? (session)?.user?.accessToken ?? ""}`,
@@ -80,7 +80,7 @@ export function ChangePasswordForm() {
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
@@ -103,7 +103,7 @@ export function ChangePasswordForm() {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
@@ -126,7 +126,7 @@ export function ChangePasswordForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"

@@ -31,8 +31,8 @@ export function BlogsSection() {
       <div>
         <div className="flex items-center gap-4">
           <div className="w-5 h-9 bg-white rounded" />
-          <div>
-            <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">Blog</h1>
+          <div className="backdrop-blur-sm">
+            <h1 className="font-benedict text-[40px] font-normal mb-2 text-white ">Blog</h1>
           </div>
         </div>
         <p className="text-[40px] font-bold text-white">Our Latest Blogs</p>

@@ -184,7 +184,7 @@ class ApiService {
 
   // Blogs
   async getAllBlogs() {
-    return this.request("/api/blog");
+    return this.request("/api/blog?page=1&limit=10");
   }
 
   // async getBlogDetails(id: string) {

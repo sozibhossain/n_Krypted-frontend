@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 
 export default function NewsletterSubscription() {
@@ -17,19 +16,35 @@ export default function NewsletterSubscription() {
             return
         }
 
+        // Basic email validation
+        if (!email.includes('@') || !email.includes('.')) {
+            setMessage("Please enter a valid email address")
+            return
+        }
+
         setIsSubmitting(true)
         setMessage("")
 
-        // Simulate API call
         try {
-            // Replace with your actual newsletter subscription API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/newsletter/subscribe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Subscription failed')
+            }
+
             setMessage("Thanks for subscribing!")
             setEmail("")
         } catch (error) {
-            setMessage("Something went wrong. Please try again.",)
-            console.log(error);
-            
+            setMessage(error instanceof Error ? error.message : "Something went wrong. Please try again.")
+            console.error("Subscription error:", error)
         } finally {
             setIsSubmitting(false)
         }
@@ -45,8 +60,9 @@ export default function NewsletterSubscription() {
                         placeholder="Enter Your Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="flex-grow px-4 py-2 rounded-md bg-[#222222]  text-white placeholder-gray-400 focus:outline-none"
+                        className="flex-grow px-4 py-2 rounded-md bg-[#222222] text-white placeholder-gray-400 focus:outline-none"
                         aria-label="Email address"
+                        disabled={isSubmitting}
                     />
                     <button
                         type="submit"
@@ -58,7 +74,9 @@ export default function NewsletterSubscription() {
                 </div>
             </form>
             {message && (
-                <p className={`mt-2 text-sm ${message.includes("Thanks") ? "text-green-500" : "text-red-500"}`}>{message}</p>
+                <p className={`mt-2 text-sm ${message.includes("Thanks") ? "text-green-500" : "text-red-500"}`}>
+                    {message}
+                </p>
             )}
         </div>
     )

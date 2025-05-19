@@ -11,7 +11,7 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
-  const { image, title, _id, content } = article;
+  const { image, title, _id, description } = article;
   return (
     <Card className="overflow-hidden border-none text-white p-0 bg-[#645949] lg:w-[370px] lg:h-[371px]">
       <div className="relative aspect-video overflow-hidden">
@@ -34,7 +34,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
       <CardContent className="p-4">
         <h3 className="mb-2 font-medium text-xl line-clamp-1">{title}</h3>
-        <p className="line-clamp-1 sm:text-sm" dangerouslySetInnerHTML={{ __html: content ?? "Blog Description" }} />
+        <p className="line-clamp-1 sm:text-sm" dangerouslySetInnerHTML={{ __html: description ?? "Blog Description" }} />
       </CardContent>
 
       <Link href={`/blog/${_id}`} className="flex items-center p-4 gap-2">

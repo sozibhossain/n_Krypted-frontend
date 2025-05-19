@@ -44,8 +44,8 @@ export default function SignInPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 rounded-lg p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Welcome back</h1>
-            <p className="text-gray-400">Please enter your credentials to continue</p>
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Welcome back</h1>
+            <p className="text-white text-[14px] lg:text-[16px] font-normal">Please enter your credentials to continue</p>
           </div>
           <SignInForm />
         </div>

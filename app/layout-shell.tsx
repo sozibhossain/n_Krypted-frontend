@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SessionProvider } from "next-auth/react";
+import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer";
 // import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer";
 
 export default function LayoutShell({
@@ -30,7 +31,7 @@ export default function LayoutShell({
   return (
     <SessionProvider>
       {!shouldHideLayout && <Navbar />}
-      {/* <CategoriesAndSearchBar /> */}
+      <CategoriesAndSearchBar />
       {children}
       {!shouldHideLayout && <Footer />}
     </SessionProvider>

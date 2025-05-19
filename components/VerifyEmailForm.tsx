@@ -20,7 +20,7 @@ export function VerifyEmailForm() {
     mutationFn: async () => {
       const otpValue = otp.join("").toLowerCase()
 
-      const response = await fetch("http://localhost:5000/api/auth/verify", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

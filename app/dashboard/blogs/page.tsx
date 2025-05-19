@@ -21,6 +21,7 @@ import { useAllBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hook
 import Image from "next/image";
 import AddEditBlogs from "./_components/addEditBlogs";
 import DeleteModal from "./_components/detetemodal";
+import { Pagination } from "@/components/dashboard/pagination";
 
 interface Blog {
   _id: string;
@@ -43,7 +44,7 @@ export default function BlogsPage() {
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  // const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
 
@@ -254,16 +255,16 @@ export default function BlogsPage() {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {totalPages >= 1 && (
           <div className="px-6 py-4 border-t">
-            {/* <Pagination
+            <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
               isLoading={isLoading}
-              totalItems={blogsData?.totalItems || blogs.length}
-              itemsPerPage={blogsData?.itemsPerPage || 10}
-            /> */}
+              totalItems={blogs.length}
+              itemsPerPage={('itemsPerPage' in (blogsData ?? {}) ? (blogsData as { itemsPerPage?: number }).itemsPerPage ?? 10 : 10)}
+            />
           </div>
         )}
       </div>

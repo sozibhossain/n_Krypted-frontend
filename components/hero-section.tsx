@@ -28,7 +28,7 @@ export function HeroBanner() {
               Vivamus ut hendrerit neque. Nunc nec eleifend magna. Donec posuere nisi quis lorem pellentesque ornare.
             </p>
             <Button asChild variant="outline" className="bg-white text-black hover:bg-white/90 border-none group">
-              <Link href="/booking" className="flex items-center">
+              <Link href="/deals" className="flex items-center">
                 Book now!
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>

@@ -5,9 +5,7 @@ import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
 // import { Toaster } from "";
 import { SocketProvider } from "@/Provider/SocketProvider";
-import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
-import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer";
 
 // Import Poppins font from Google Fonts
 const poppins = Poppins({
@@ -29,8 +27,6 @@ export default function RootLayout({
           <SocketProvider>
             <Toaster position="top-right"/>
             <LayoutShell>
-              <Navbar />
-              <CategoriesAndSearchBar />
               {children}
             </LayoutShell>
           </SocketProvider>
