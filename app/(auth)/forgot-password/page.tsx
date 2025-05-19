@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { ForgotPasswordForm } from "@/components/ForgotPasswordForm"
+import { Suspense } from "react"
 
 export default function ForgotPasswordPage() {
   return (
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Enter Email</h1>
             <p className="text-white text-[14px] lg:text-[16px] font-normal">Enter your email to receive the link</p>
           </div>
-          <ForgotPasswordForm />
+          <Suspense fallback={<div>Loading...</div>}><ForgotPasswordForm /></Suspense>
         </div>
       </div>
     </div>

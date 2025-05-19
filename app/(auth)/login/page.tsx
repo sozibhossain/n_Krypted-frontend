@@ -1,6 +1,7 @@
 
 import { SignInForm } from "@/components/ui/LoginFrom"
 import Image from "next/image"
+import { Suspense } from "react"
 
 export default function SignInPage() {
   return (
@@ -47,7 +48,7 @@ export default function SignInPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Welcome back</h1>
             <p className="text-white text-[14px] lg:text-[16px] font-normal">Please enter your credentials to continue</p>
           </div>
-          <SignInForm />
+          <Suspense fallback={<div>Loading...</div>}><SignInForm /></Suspense>
         </div>
       </div>
     </div>
