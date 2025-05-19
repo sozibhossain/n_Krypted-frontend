@@ -1,5 +1,6 @@
 import { RegisterForm } from "@/components/RegistrationFrom"
 import Image from "next/image"
+import { Suspense } from "react"
 
 export default function SignUpPage() {
   return (
@@ -11,7 +12,9 @@ export default function SignUpPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Create Your Account</h1>
             <p className="text-white text-[14px] lg:text-[16px] font-normal">Join us and start shopping today</p>
           </div>
-          <RegisterForm />
+          <Suspense fallback={<div>Loading...</div>}>
+            <RegisterForm />
+          </Suspense>
         </div>
       </div>
       <div className="hidden w-1/2 bg-gray-900 lg:block">

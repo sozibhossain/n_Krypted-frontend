@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
-import DealDetails from "@/components/auctions/auction-details/deal-details"
+import DealDetails from "@/components/auctions/deals-details/deal-details"
 
 export default function AuctionPage({ params }: { params: { id: string } }) {
   return (
