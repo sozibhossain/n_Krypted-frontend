@@ -11,6 +11,7 @@ import {
   FileText,
   Settings,
   LogOut,
+  House,
 } from "lucide-react";
 import {
   Sidebar,
@@ -146,6 +147,19 @@ export function AppSidebar({ }: AppSidebarProps) {
                     <Settings className={`h-5 w-5 ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
                     <span className={`text-[12px] font-medium ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
                       Settings
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={pathname.startsWith("/dashboard/settings")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/" className="flex flex-col items-center">
+                    <House className={`h-5 w-5 ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${pathname.startsWith("/dashboard/settings") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Home
                     </span>
                   </Link>
                 </SidebarMenuButton>

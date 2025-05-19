@@ -65,7 +65,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="hidden md:block"></div> */}
           {/* Logo */}
           <div className="ml-[-50px] hidden lg:block">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center gap-2">
               <div className="text-center">
                 <div className="flex justify-center">
                   <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
