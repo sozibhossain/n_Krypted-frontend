@@ -1,0 +1,15 @@
+/* Custom Switch styles */
+[data-state="checked"] > span {
+    transform: translateX(calc(100% - var(--thumb-size) - var(--thumb-offset))) !important;
+  }
+  
+  [data-state="unchecked"] > span {
+    transform: translateX(var(--thumb-offset)) !important;
+  }
+  
+  [data-state] > span {
+    width: var(--thumb-size) !important;
+    height: var(--thumb-size) !important;
+    background-color: white !important;
+  }
+  

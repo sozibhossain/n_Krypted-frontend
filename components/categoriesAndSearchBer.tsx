@@ -161,7 +161,7 @@ export function CategoriesAndSearchBar() {
                   {isLoadingCategories ? (
                     <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
                   ) : (
-                    categoriesData?.map((category: Category) => (
+                    categoriesData?.data?.map((category: Category) => (
                       <Link key={category._id}  href={`/deals?category=${category.categoryName}`}>
                         <DropdownMenuItem
                       

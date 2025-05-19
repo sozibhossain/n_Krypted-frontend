@@ -91,7 +91,7 @@ export default function BookingHistoryTable() {
 
     // Format price function
     const formatPrice = (price: number) => {
-        return `$${price.toFixed(2)}`
+        return `$${price?.toFixed(2)}`
     }
 
     // Handle view button click
@@ -185,10 +185,10 @@ export default function BookingHistoryTable() {
                         <tbody className="divide-y divide-zinc-800">
                             {data?.data.map((booking) => (
                                 <tr key={booking._id}>
-                                    <td className="py-3 px-4 text-sm text-white">{booking.dealsId.title}</td>
-                                    <td className="py-3 px-4 text-sm text-white">#{booking.bookingId.slice(-3)}</td>
-                                    <td className="py-3 px-4 text-sm text-white">{formatDate(booking.createdAt)}</td>
-                                    <td className="py-3 px-4 text-sm text-white">{formatPrice(booking.dealsId.price)}</td>
+                                    <td className="py-3 px-4 text-sm text-white">{booking?.dealsId?.title}</td>
+                                    <td className="py-3 px-4 text-sm text-white">#{booking?.bookingId?.slice(-3)}</td>
+                                    <td className="py-3 px-4 text-sm text-white">{formatDate(booking?.createdAt)}</td>
+                                    <td className="py-3 px-4 text-sm text-white">{formatPrice(booking?.dealsId?.price)}</td>
                                     <td className="py-3 px-4 text-sm text-white">
                                         <button
                                             className="text-white hover:text-gray-300 transition-colors"
@@ -211,26 +211,26 @@ export default function BookingHistoryTable() {
                     <div key={booking._id} className="bg-zinc-900/60 rounded-lg p-4 space-y-2">
                         <div className="flex justify-between">
                             <span className="text-gray-400 text-xs">Deal Name</span>
-                            <span className="text-white text-sm">{booking.dealsId.title}</span>
+                            <span className="text-white text-sm">{booking?.dealsId?.title}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 text-xs">Booking ID</span>
-                            <span className="text-white text-sm">#{booking.bookingId.slice(-3)}</span>
+                            <span className="text-white text-sm">#{booking?.bookingId?.slice(-3)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 text-xs">Date</span>
-                            <span className="text-white text-sm">{formatDate(booking.createdAt)}</span>
+                            <span className="text-white text-sm">{formatDate(booking?.createdAt)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 text-xs">Amount</span>
-                            <span className="text-white text-sm">{formatPrice(booking.dealsId.price)}</span>
+                            <span className="text-white text-sm">{formatPrice(booking?.dealsId?.price)}</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-gray-400 text-xs">View</span>
                             <button
                                 className="text-white hover:text-gray-300 transition-colors"
                                 onClick={() => handleViewClick(booking._id)}
-                                aria-label={`View details for booking ${booking.bookingId}`}
+                                aria-label={`View details for booking ${booking?.bookingId}`}
                             >
                                 <Eye className="h-5 w-5" />
                             </button>
@@ -269,13 +269,13 @@ export default function BookingHistoryTable() {
                     ) : bookingDetails ? (
                         <div className="space-y-6 p-2">
                             <div className="space-y-2">
-                                <h3 className="text-lg font-medium">{bookingDetails.data.dealsId.title}</h3>
+                                <h3 className="text-lg font-medium">{bookingDetails?.data?.dealsId?.title}</h3>
                                 <div className="flex items-center gap-2">
                                     <Badge variant="outline" className="bg-zinc-800 text-white border-zinc-700">
-                                        #{bookingDetails.data.bookingId}
+                                        #{bookingDetails?.data?.bookingId}
                                     </Badge>
                                     <Badge
-                                        variant={bookingDetails.data.isBooked ? "default" : "secondary"}
+                                        variant={bookingDetails?.data?.isBooked ? "default" : "secondary"}
                                         className="bg-emerald-600 text-white"
                                     >
                                         {bookingDetails.data.isBooked ? "Booked" : "Pending"}
@@ -285,37 +285,37 @@ export default function BookingHistoryTable() {
 
                             <div className="space-y-1">
                                 <h4 className="text-sm font-medium text-gray-400">Description</h4>
-                                <p className="text-sm">{bookingDetails.data.dealsId.description}</p>
+                                <p className="text-sm">{bookingDetails?.data?.dealsId?.description}</p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Price</h4>
-                                    <p className="text-lg font-semibold">{formatPrice(bookingDetails.data.dealsId.price)}</p>
+                                    <p className="text-lg font-semibold">{formatPrice(bookingDetails?.data?.dealsId?.price)}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Location</h4>
-                                    <p className="text-sm">{bookingDetails.data.dealsId.location}</p>
+                                    <p className="text-sm">{bookingDetails?.data?.dealsId?.location}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Booking Date</h4>
-                                    <p className="text-sm">{formatDate(bookingDetails.data.createdAt)}</p>
+                                    <p className="text-sm">{formatDate(bookingDetails?.data?.createdAt)}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Status</h4>
-                                    <p className="text-sm capitalize">{bookingDetails.data.dealsId.status}</p>
+                                    <p className="text-sm capitalize">{bookingDetails?.data?.dealsId?.status}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Participations</h4>
-                                    <p className="text-sm">{bookingDetails.data.dealsId.participations}</p>
+                                    <p className="text-sm">{bookingDetails?.data.dealsId?.participations}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-sm font-medium text-gray-400">Notifications</h4>
-                                    <p className="text-sm">{bookingDetails.data.notifyMe ? "Enabled" : "Disabled"}</p>
+                                    <p className="text-sm">{bookingDetails?.data?.notifyMe ? "Enabled" : "Disabled"}</p>
                                 </div>
                             </div>
 
-                            {bookingDetails.data.dealsId.offers && bookingDetails.data.dealsId.offers.length > 0 && (
+                            {bookingDetails?.data?.dealsId?.offers && bookingDetails?.data?.dealsId?.offers?.length > 0 && (
                                 <div className="space-y-2">
                                     <h4 className="text-sm font-medium text-gray-400">Offers</h4>
                                     <div className="bg-zinc-800/50 rounded-md p-3">
@@ -323,7 +323,7 @@ export default function BookingHistoryTable() {
                                             {(() => {
                                                 try {
                                                     // Try to parse the offers if they're stored as a JSON string
-                                                    const parsedOffers = JSON.parse(bookingDetails.data.dealsId.offers[0])
+                                                    const parsedOffers = JSON.parse(bookingDetails?.data?.dealsId.offers[0])
                                                     return Array.isArray(parsedOffers) ? (
                                                         parsedOffers.map((offer, index) => (
                                                             <li key={index} className="text-sm">
@@ -349,7 +349,7 @@ export default function BookingHistoryTable() {
                                 <Button
                                     variant="outline"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="border-zinc-700 hover:bg-zinc-800 hover:text-white"
+                                    className="border-zinc-700 hover:bg-zinc-800 hover:text-white bg-white text-[black] rounded-md"
                                 >
                                     Close
                                 </Button>
