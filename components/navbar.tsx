@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useMobile } from "@/hooks/use-mobile-nav"
-import { BellRing, Heart, Menu, UserRound } from "lucide-react"
+import { BellRing, Menu, UserRound } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import { useQuery } from "@tanstack/react-query"
 import { useSocketContext } from "@/Provider/SocketProvider"
@@ -76,7 +76,6 @@ export function Navbar() {
   }
 
   const iconLinks = [
-    { icon: Heart, href: "/wishlist", count: wishlists?.length },
     { icon: BellRing, href: "/notifications", count: notificationCount },
     { icon: UserRound, href: "/profiles" },
   ]
@@ -171,7 +170,7 @@ export function Navbar() {
             {/* Icons when logged in */}
             {isLoggedIn && role === "user" && (
               <div className="flex items-center gap-2 sm:gap-4">
-                {iconLinks.map(({ icon: Icon, href, count }) =>
+                {iconLinks.map(({ icon: Icon, href }) =>
                   href === "/notifications" ? (
                     <button
                       key={href}
@@ -183,20 +182,10 @@ export function Navbar() {
                       className={getIconClasses(href)}
                     >
                       <Icon className={getIconColor(href)} size={20} />
-                      {count > 0 && (
-                        <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                          {count}
-                        </span>
-                      )}
                     </button>
                   ) : (
                     <Link key={href} href={href} className={getIconClasses(href)}>
                       <Icon className={getIconColor(href)} size={20} />
-                      {count > 0 && (
-                        <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                          {count}
-                        </span>
-                      )}
                     </Link>
                   ),
                 )}

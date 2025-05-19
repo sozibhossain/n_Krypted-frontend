@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SessionProvider } from "next-auth/react";
 import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer";
+import { Suspense } from "react";
 // import { CategoriesAndSearchBar } from "@/components/categoriesAndSearchBer";
 
 export default function LayoutShell({
@@ -31,7 +32,9 @@ export default function LayoutShell({
   return (
     <SessionProvider>
       {!shouldHideLayout && <Navbar />}
-      <CategoriesAndSearchBar />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CategoriesAndSearchBar />
+      </Suspense>
       {children}
       {!shouldHideLayout && <Footer />}
     </SessionProvider>

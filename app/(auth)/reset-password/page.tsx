@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { ResetPasswordForm } from "@/components/ResetPasswordForm"
+import { Suspense } from "react"
 
 export default function ResetPasswordPage() {
   return (
@@ -46,7 +47,9 @@ export default function ResetPasswordPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Reset password</h1>
             <p className="text-white text-[14px] lg:text-[16px] font-normal">Please set your new password.</p>
           </div>
-          <ResetPasswordForm />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ResetPasswordForm />
+          </Suspense>
         </div>
       </div>
     </div>
