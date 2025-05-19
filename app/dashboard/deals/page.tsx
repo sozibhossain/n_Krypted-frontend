@@ -23,6 +23,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
+import AddDealModal from "./_component/add-deal-modal"
+import { Skeleton } from "@/components/ui/skeleton"
 
 
 interface Category {

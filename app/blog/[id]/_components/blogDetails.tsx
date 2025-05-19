@@ -4,8 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
-import BlogComments from "./blogComments";
-import { Calendar, MessageSquareMore } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 interface BlogDetailsProps {
   id?: string;
@@ -102,15 +101,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
                 day: "numeric",
               })}
             </div>
-            <div className="flex items-center text-white gap-2">
-              <div>
-                <MessageSquareMore />
-
-              </div>
-              <div>
-                <p>120</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -132,10 +122,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
               __html: blog?.content ?? "Blog Description",
             }}
           />
-        </div>
-
-        <div className="mt-12">
-          {blogId && <BlogComments blogId={blogId} />}
         </div>
       </div>
     </div>
