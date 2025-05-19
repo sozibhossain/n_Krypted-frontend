@@ -39,66 +39,78 @@ export default function ContactUsForm() {
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
-            <div>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
-                required
-              />
-            </div>
+      <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className=" lg:col-span-1 space-y-4 sm:space-y-6">
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-white pb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                  required
+                />
+              </div>
 
-            <div>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your Email Address"
-                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
-                required
-              />
-            </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-white pb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your Email Address"
+                  className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                  required
+                />
+              </div>
 
-            <div>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-white pb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your Phone Number"
+                  className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                  required
+                />
+              </div>
+            </div>
+            <div className="lg:col-span-2">
+              <label htmlFor="message" className="block text-sm font-medium text-white pb-2"> Message </label>
+              <textarea
+                name="message"
+                value={formData.message}
                 onChange={handleChange}
-                placeholder="Enter your Phone Number"
-                className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                placeholder="Enter your message"
+                className="w-full h-[200px] lg:h-[255px] p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 required
               />
             </div>
           </div>
-          <div className="lg:col-span-2">
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              placeholder="Enter your message"
-              className="w-full h-[150px] sm:h-[200px] lg:h-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
-              required
-            />
-          </div>
-        </div>
 
-        <div className="flex justify-center mt-6">
-          <button
-            type="submit"
-            className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
+          <div className="flex justify-center pt-8">
+            <button
+              type="submit"
+              className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

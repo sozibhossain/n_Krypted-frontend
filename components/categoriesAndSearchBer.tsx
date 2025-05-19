@@ -126,7 +126,7 @@ export function CategoriesAndSearchBar() {
   const HIDDEN_ROUTES = [
     "/dashboard",
     "/login",
-    "/registration",
+    "/sign-up",
     "/reset-password",
     "/forgot-password",
   ];

@@ -58,7 +58,7 @@ export function BrowseOurDeals() {
           </div>
           <p className="text-[20px] lg:text-[40px] font-bold text-white">Browse Our Deals</p>
         </div>
-        <Link href={"/auctions"}>
+        <Link href={"/deals"}>
           <Button className="bg-white text-black">
             Explore All <MoveRight />
           </Button>

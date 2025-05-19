@@ -55,16 +55,16 @@ export function SignInForm() {
   };
 
 
-  const handleSocialSignIn = async (provider: string) => {
-    try {
-      setIsLoading(true)
-      await signIn(provider, { callbackUrl: "/dashboard" })
-    } catch {
-      toast.error("Login failed")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // const handleSocialSignIn = async (provider: string) => {
+  //   try {
+  //     setIsLoading(true)
+  //     await signIn(provider, { callbackUrl: "/dashboard" })
+  //   } catch {
+  //     toast.error("Login failed")
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -79,7 +79,7 @@ export function SignInForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -97,7 +97,7 @@ export function SignInForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
@@ -124,7 +124,7 @@ export function SignInForm() {
         <div className="h-px flex-1 bg-gray-600"></div>
       </div>
 
-      <div className="grid gap-3">
+      {/* <div className="grid gap-3">
         <Button
           type="button"
           variant="outline"
@@ -174,11 +174,11 @@ export function SignInForm() {
           </svg>
           Continue With Google
         </Button>
-      </div>
+      </div> */}
 
-      <div className="text-center text-sm">
+      <div className="text-center text-sm text-[#BABABA]">
         Don&apos;t have an account?{" "}
-        <Link href="/sign-up" className="text-blue-500 hover:text-blue-400">
+        <Link href="/sign-up" className="text-white hover:text-blue-400">
           Sign Up
         </Link>
       </div>

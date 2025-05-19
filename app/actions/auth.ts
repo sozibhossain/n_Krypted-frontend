@@ -41,7 +41,7 @@ type AuthResponse = {
 
 export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -73,7 +73,7 @@ export async function loginUser(credentials: LoginCredentials): Promise<AuthResp
 
 export async function registerUser(userData: RegisterData): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -104,7 +104,7 @@ export async function registerUser(userData: RegisterData): Promise<AuthResponse
 
 export async function forgotPassword(email: string): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -134,7 +134,7 @@ export async function forgotPassword(email: string): Promise<AuthResponse> {
 
 export async function verifyOTP(email: string, verificationCode: string): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/verify", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, verificationCode }),
@@ -165,7 +165,7 @@ export async function verifyOTP(email: string, verificationCode: string): Promis
 
 export async function resetPassword(email: string, password: string, token: string): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/reset-password", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, token }),
@@ -199,7 +199,7 @@ export async function changePassword(
   token: string,
 ): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/change-password", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/change-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -232,7 +232,7 @@ export async function changePassword(
 
 export async function resendVerificationOTP(token: string): Promise<AuthResponse> {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/verify", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

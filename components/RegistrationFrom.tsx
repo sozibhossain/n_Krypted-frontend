@@ -63,7 +63,7 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg">
       <div className="space-y-2">
         <Label htmlFor="username">Username</Label>
         <div className="relative">
@@ -74,7 +74,7 @@ export function RegisterForm() {
             value={name}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -90,7 +90,7 @@ export function RegisterForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -105,7 +105,7 @@ export function RegisterForm() {
             placeholder="Enter your Phone Number"
             value={phoneNumber}
             onChange={(e) => setPhone(e.target.value)}
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -121,7 +121,7 @@ export function RegisterForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
@@ -144,7 +144,7 @@ export function RegisterForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
@@ -170,9 +170,9 @@ export function RegisterForm() {
         {isLoading ? "Creating account..." : "Sign Up"}
       </Button>
 
-      <div className="text-center text-sm">
+      <div className="text-center text-sm text-[#BABABA]">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-500 hover:text-blue-400">
+        <Link href="/login" className="text-white hover:text-blue-400">
           Sign in
         </Link>
       </div>

@@ -51,13 +51,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     fetchBlog();
   }, [blogId]);
 
-  // const sanitizeContent = (html: string) => {
-  //   // Only sanitize in browser environment
-  //   if (typeof window !== "undefined") {
-  //     return DOMPurify.sanitize(html);
-  //   }
-  //   return html;
-  // };
+
 
   if (loading) {
     return (
@@ -119,7 +113,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           <div
             className="list-item list-none"
             dangerouslySetInnerHTML={{
-              __html: blog?.content ?? "Blog Description",
+              __html: blog?.description ?? "Blog Description",
             }}
           />
         </div>

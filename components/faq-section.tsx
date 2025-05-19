@@ -14,8 +14,7 @@ export function FaqSection() {
               <div className="flex items-center gap-4">
                 <div className="w-4 h-7 sm:w-5 sm:h-9 bg-white rounded" />
                 <h1
-                  className="font-benedict text-4xl sm:text-5xl lg:text-[60px] font-normal text-white"
-                  style={{ fontFamily: "cursive" }}
+                  className="font-benedict text-[40px] font-normal mb-2 text-white "
                 >
                   FAQS
                 </h1>

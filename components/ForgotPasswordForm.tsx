@@ -17,7 +17,7 @@ export function ForgotPasswordForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -64,7 +64,7 @@ export function ForgotPasswordForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
         </div>
       </div>

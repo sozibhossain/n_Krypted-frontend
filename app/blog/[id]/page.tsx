@@ -8,7 +8,8 @@ const Page = (props: { params: { id: string } }) => {
     return (
         <section>
             <PageHeader
-                title="Blog PDetails"
+                title="Blog Details"
+                imge="/assets/herobg.png"
                 items={[
                     {
                         label: "Home",

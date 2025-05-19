@@ -8,8 +8,8 @@ export default function SignUpPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 rounded-lg  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Create Your Account</h1>
-            <p className="text-gray-400">Join us and start shopping today</p>
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Create Your Account</h1>
+            <p className="text-white text-[14px] lg:text-[16px] font-normal">Join us and start shopping today</p>
           </div>
           <RegisterForm />
         </div>
