@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { VerifyEmailForm } from "@/components/VerifyEmailForm"
+import { Suspense } from "react"
 
 export default function VerifyEmailPage() {
   return (
@@ -48,7 +49,7 @@ export default function VerifyEmailPage() {
               Please verify it below
             </p>
           </div>
-          <VerifyEmailForm />
+          <Suspense fallback={<div>Loading...</div>}><VerifyEmailForm /></Suspense>
         </div>
       </div>
     </div>

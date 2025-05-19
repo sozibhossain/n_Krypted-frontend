@@ -10,24 +10,28 @@ const Notifications = () => {
 
   console.log("notifications", notifications);
   const session = useSession();
-  const token = session?.data?.user?.accessToken;
+  const userId = session?.data?.user?.id;
+
+
+
 
   useEffect(() => {
     const fetchInitialNotifications = async () => {
-      if (token) {
+      if (userId) {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=67ff7a693b8cb22538753372`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
+            `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=${userId}`,
+            // {
+            //   headers: {
+            //     Authorization: `Bearer ${token}`,
+            //   },
+            // }
           );
           const data = await response.json();
           if (data.status && data.data) {
             setNotifications(data.notifications);
-          
+
+
           } else {
             console.error(
               "Failed to fetch initial notifications:",
@@ -41,11 +45,13 @@ const Notifications = () => {
     };
 
     fetchInitialNotifications();
-  }, [token, setNotifications]);
+  }, [userId, setNotifications]);
 
+
+  console.log("ewgfvrebh", notifications)
   return (
     <div>
-      <h2 className="text-3xl font-semibold mb-4 text-center">Notifications</h2>
+      
       <ul className="space-y-4">
         {notifications.map((notification) => (
           <li
