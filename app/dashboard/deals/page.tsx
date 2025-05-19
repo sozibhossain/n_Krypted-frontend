@@ -315,7 +315,7 @@ export default function DealsManagement() {
         </CardHeader>
         <Card className="bg-[#FFFFFF] mt-10">
           <CardContent>
-            <div className="rounded-md border border-[#BABABA]">
+            <div className="rounded-md ">
               <Table>
                 <TableHeader>
                   <TableRow className="text-[#595959] text-base font-medium py-4 hover:bg-transparent">

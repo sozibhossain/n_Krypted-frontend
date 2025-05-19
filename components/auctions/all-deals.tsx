@@ -71,6 +71,11 @@ export default function DealsPage() {
   const currentMaxPrice = searchParams.get("maxPrice") || "1000"
   const currentDealType = searchParams.get("dealType") || ""
 
+  const category = searchParams.get('category');
+  const location = searchParams.get('location');
+  const search = searchParams.get('search');
+  
+
   // Local state for filters
   const [selectedCategory, setSelectedCategory] = useState<string>(currentCategory)
   const [selectedLocation, setSelectedLocation] = useState<string>(currentLocation)
@@ -79,6 +84,7 @@ export default function DealsPage() {
     Number.parseInt(currentMaxPrice) || 1000,
   ])
   const [selectedDealType, setSelectedDealType] = useState<string>(currentDealType)
+  const [searchQuery, setSearchQuery] = useState<string>(search || "")
 
   // Fetch deals with filters
   const {
@@ -96,11 +102,18 @@ export default function DealsPage() {
       if (selectedDealType) params.set("dealType", selectedDealType)
       params.set("page", currentPage.toString())
       params.set("limit", "10")
+      if (searchQuery) params.set("title", searchQuery)
+      if (selectedLocation && selectedLocation !== "all") {
+        params.set("location", selectedLocation)
+      }
 
       const { data } = await axiosInstance.get(`/api/deals?${params.toString()}`)
       return data
     },
   })
+
+
+  console.log(searchQuery)
 
   // Memoize deals data
   const dealsData = useMemo(() => response?.deals || [], [response])
@@ -132,12 +145,12 @@ export default function DealsPage() {
 
         const data = await response.json()
 
-        if (data.success && Array.isArray(data.categories)) {
-          setCategories(data.categories)
+        if (data.success && Array.isArray(data.data)) {
+          setCategories(data.data)
 
           // Extract all unique locations from categories for the dropdown
           const allLocations = Array.from(
-            new Set(data.categories.map((cat: Category) => cat.location).filter(Boolean)),
+            new Set(data.data.map((cat: Category) => cat.location).filter(Boolean)),
           ) as string[]
           setAllLocations(allLocations)
         } else {
@@ -195,6 +208,19 @@ export default function DealsPage() {
     }
     setIsFilterOpen(false) // Close the Sheet on mobile
   }
+  useEffect(() =>{
+    if(category){
+      setSelectedCategory(category)
+    }
+    if (search) { 
+      setSearchQuery(search)
+    }
+  }, [category, search])
+  useEffect(() =>{
+    if(location){
+      setSelectedLocation(location)
+    }
+  }, [location])
 
   const handleDealTypeChange = (dealType: string, checked: boolean | "indeterminate") => {
     const isChecked = checked === true
