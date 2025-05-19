@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useMobile } from "@/hooks/use-mobile-nav"
 import { BellRing, Menu, UserRound } from "lucide-react"
-import { signOut, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { useQuery } from "@tanstack/react-query"
 import { useSocketContext } from "@/Provider/SocketProvider"
 import * as React from "react"
@@ -92,13 +92,7 @@ export function Navbar() {
     return pathname.startsWith(href)
   }
 
-  const handleLogout = async () => {
-    try {
-      await signOut({ callbackUrl: "/" });
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
+
 
   const role = session?.data?.user?.role
 
@@ -162,9 +156,11 @@ export function Navbar() {
               </Link>
             )}
             {role === "admin" && (
-              <Button onClick={handleLogout} variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
-                Logout
-              </Button>
+              <Link href="/dashboard">
+                <Button variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
+                  Dashboard
+                </Button>
+              </Link>
             )}
 
             {/* Icons when logged in */}
