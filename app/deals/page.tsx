@@ -7,7 +7,7 @@ export default function page() {
     <div className="">
       <PageHeader
         title="Our All Deals"
-        imge="/assets/deals-banner.png"
+        imge="/assets/herobg.png"
         items={[
           {
             label: "Home",

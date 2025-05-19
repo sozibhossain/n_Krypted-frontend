@@ -2,14 +2,23 @@
 
 import type React from "react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function ContactUsForm() {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "", // Changed from fullName to match API
     email: "",
-    phone: "",
+    phoneNumber: "", // Changed from phone to match API
     message: ""
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<{
+    success: boolean
+    message: string
+  } | null>(null)
+
+  console.log(submitStatus)
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -19,10 +28,75 @@ export default function ContactUsForm() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Add your form submission logic here
+    
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.message) {
+      setSubmitStatus({
+        success: false,
+        message: "Please fill in all required fields"
+      })
+      return
+    }
+
+    // Email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setSubmitStatus({
+        success: false,
+        message: "Please enter a valid email address"
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          message: formData.message
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit feedback')
+      }
+
+      // Reset form on successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        message: ""
+      })
+      
+      setSubmitStatus({
+        success: true,
+        message: "Thank you for your feedback! We'll get back to you soon."
+      })
+      
+      // Log the full response for debugging
+      console.log("Feedback submitted successfully:", data)
+    } catch (error) {
+      console.error("Feedback submission error:", error)
+      setSubmitStatus({
+        success: false,
+        message: error instanceof Error ? error.message : "Something went wrong. Please try again."
+      })
+    } finally {
+      setIsSubmitting(false)
+      toast.success("Feedback submitted successfully! We'll get back to you soon.")
+    }
   }
 
   return (
@@ -42,25 +116,26 @@ export default function ContactUsForm() {
       <div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div className=" lg:col-span-1 space-y-4 sm:space-y-6">
+            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-white pb-2">
-                  Name
+                <label htmlFor="name" className="block text-sm font-medium text-white pb-2">
+                  Name *
                 </label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                  disabled={isSubmitting}
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white pb-2">
-                  Email
+                  Email *
                 </label>
                 <input
                   type="email"
@@ -69,44 +144,56 @@ export default function ContactUsForm() {
                   onChange={handleChange}
                   placeholder="Enter your Email Address"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                  disabled={isSubmitting}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-white pb-2">
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-white pb-2">
                   Phone Number
                 </label>
                 <input
                   type="tel"
-                  name="phone"
-                  value={formData.phone}
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   placeholder="Enter your Phone Number"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
-                  required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
             <div className="lg:col-span-2">
-              <label htmlFor="message" className="block text-sm font-medium text-white pb-2"> Message </label>
+              <label htmlFor="message" className="block text-sm font-medium text-white pb-2">
+                Message *
+              </label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Enter your message"
                 className="w-full h-[200px] lg:h-[255px] p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
+                disabled={isSubmitting}
                 required
               />
             </div>
           </div>
 
+          {/* Status message */}
+          {/* {submitStatus && (
+            <div className={`text-center ${submitStatus.success ? 'text-green-400' : 'text-red-400'}`}>
+              {submitStatus.message}
+            </div>
+          )} */}
+
           <div className="flex justify-center pt-8">
             <button
               type="submit"
-              className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base"
+              className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
+              disabled={isSubmitting}
             >
-              Submit
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </form>

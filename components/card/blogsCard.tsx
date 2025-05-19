@@ -13,9 +13,9 @@ function BlogsCard({ blog }: { blog: Blog }) {
                     <Image
                         src={blog?.image || '/assets/manCard.png'}
                         alt="Blog Image"
-                        width={400}
-                        height={225}
-                        className="h-full w-full"
+                        width={1000}
+                        height={1000}
+                        className="h-[205px] lg:h-[305px] w-full"
                     />
                 </div>
 
@@ -38,7 +38,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                                 </div>
                             </div>
                         </div>
-                        <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title}</h3>
+                        <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title?.slice(0, 25)}...</h3>
                     </CardContent>
                 </div>
             </Card>
