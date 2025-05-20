@@ -11,6 +11,7 @@
   "dependencies": {
     "@chakra-ui/breadcrumb": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@radix-ui/react-accordion": "^1.2.7",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-avatar": "^1.1.7",
@@ -31,6 +32,7 @@
     "@radix-ui/react-tooltip": "^1.2.4",
     "@tanstack/react-query": "^5.74.7",
     "axios": "^1.8.4",
+    "braintree-web-drop-in-react": "^1.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
@@ -58,6 +60,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@types/braintree-web-drop-in": "^1.39.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

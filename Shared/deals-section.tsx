@@ -151,6 +151,7 @@ export function DealsSection() {
                     <div className="p-1">
                       <DealsCard
                         id={deal._id}
+                        status={deal.status}
                         title={deal.title}
                         image={deal.images[0] || "/assets/deals.png"}
                         description={deal.description}
