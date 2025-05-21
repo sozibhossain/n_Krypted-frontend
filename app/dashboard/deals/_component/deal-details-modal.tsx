@@ -9,6 +9,7 @@ import Image from "next/image"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode } from "react"
 
+
 interface Category {
     _id: string
     categoryName: string
@@ -129,8 +130,14 @@ export default function DealDetailsModal({ open, onOpenChange, dealId }: DealDet
                         )}
 
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold">Description</h3>
-                            <p className="text-gray-700">{deal.description}</p>
+                                    <h3 className="text-lg font-semibold">Description</h3>
+                                    <div
+                                        className="list-item list-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: deal?.description ?? "deal Description",
+                                        }}
+                                    />
+                           
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
