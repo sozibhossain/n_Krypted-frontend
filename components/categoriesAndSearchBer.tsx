@@ -49,7 +49,6 @@ export function CategoriesAndSearchBar() {
       }
     },
   })
-  console.log("categoriesData", categoriesData)
 
   // Fetch deals to get unique locations
   const { data: dealsData } = useQuery({
@@ -134,8 +133,8 @@ export function CategoriesAndSearchBar() {
 
   return (
     <Hideon routes={HIDDEN_ROUTES}>
-      <div className="sticky top-[90px] z-50 bg-[#212121] w-full">
-      <header className="container py-3 mt-20 ">
+      <div className="sticky z-50 bg-[#212121] w-full">
+      <header className="container py-3 ">
         
         <form onSubmit={handleSearchSubmit}>
           <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
@@ -161,7 +160,7 @@ export function CategoriesAndSearchBar() {
                   {isLoadingCategories ? (
                     <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
                   ) : (
-                    categoriesData?.data?.map((category: Category) => (
+                    categoriesData?.map((category: Category) => (
                       <Link key={category._id}  href={`/deals?category=${category.categoryName}`}>
                         <DropdownMenuItem
                       
