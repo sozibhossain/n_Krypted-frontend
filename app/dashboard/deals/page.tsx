@@ -351,20 +351,20 @@ export default function DealsManagement() {
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           {deal.title || "Lorem ipsum is a dummy or text."}
                         </TableCell>
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           {deal.category?.categoryName || "Restaurants"}
                         </TableCell>
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           {`#${deal._id.substring(0, 3)}-${deal._id.substring(3, 6)}` || "#212-121"}
                         </TableCell>
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           {deal.location || "Lorem ipsum dolor sit amet."}
                         </TableCell>
 
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           ${deal.price.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           <div className="relative">
                             <Switch
                               checked={deal.status === "activate"}
@@ -378,7 +378,7 @@ export default function DealsManagement() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="text-[#595959] text-base font-medium py-4">
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
                           <div className="flex space-x-2">
                             <Button variant="ghost" size="icon" onClick={() => handleViewDetails(deal._id)}>
                               <Eye className="h-4 w-4" />

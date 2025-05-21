@@ -97,7 +97,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="mt-5 flex flex-wrap md:flex-nowrap gap-y-5 justify-between  ">
+          <div className="mt-4 flex flex-wrap md:flex-nowrap gap-y-5 justify-between  ">
             <Card className="px-6 py-6 bg-[#FFFFFF] shadow-lg rounded-[8px] w-full md:w-[73%] min-h-[450px]">
               <CardHeader>
                 <CardTitle>
