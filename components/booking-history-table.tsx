@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useSession } from "next-auth/react"
 
 // Define the types for our API response
 interface Deal {
@@ -45,32 +46,52 @@ interface SingleBookingResponse {
     data: Booking
 }
 
-// Function to fetch bookings
-const fetchBookings = async (): Promise<ApiResponse> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`)
-    if (!response.ok) {
-        throw new Error("Failed to fetch bookings")
-    }
-    return response.json()
-}
-
-// Function to fetch a single booking
-const fetchBookingById = async (id: string): Promise<SingleBookingResponse> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${id}`)
-    if (!response.ok) {
-        throw new Error("Failed to fetch booking details")
-    }
-    return response.json()
-}
-
 export default function BookingHistoryTable() {
     const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const { data: session } = useSession()
+    const accessToken = session?.user?.accessToken
+    const userId = session?.user?.id
+
+    const fetchBookings = async (): Promise<ApiResponse> => {
+        if (!userId || !accessToken) {
+            throw new Error("User not authenticated")
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/user/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        
+        if (!response.ok) {
+            throw new Error("Failed to fetch bookings")
+        }
+        return response.json()
+    }
+
+    const fetchBookingById = async (id: string): Promise<SingleBookingResponse> => {
+        if (!accessToken) {
+            throw new Error("User not authenticated")
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        
+        if (!response.ok) {
+            throw new Error("Failed to fetch booking details")
+        }
+        return response.json()
+    }
 
     // Use TanStack Query to fetch all bookings
     const { data, isLoading, error } = useQuery<ApiResponse>({
-        queryKey: ["bookings"],
+        queryKey: ["bookings", userId],
         queryFn: fetchBookings,
+        enabled: !!userId && !!accessToken
     })
 
     // Use TanStack Query to fetch a single booking
@@ -81,7 +102,7 @@ export default function BookingHistoryTable() {
     } = useQuery<SingleBookingResponse>({
         queryKey: ["booking", selectedBookingId],
         queryFn: () => fetchBookingById(selectedBookingId!),
-        enabled: !!selectedBookingId && isModalOpen,
+        enabled: !!selectedBookingId && isModalOpen && !!accessToken
     })
 
     // Format date function
@@ -245,7 +266,6 @@ export default function BookingHistoryTable() {
                     <DialogHeader>
                         <DialogTitle className="text-xl font-semibold">Booking Details</DialogTitle>
                         <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                         
                             <span className="sr-only">Close</span>
                         </DialogClose>
                     </DialogHeader>
@@ -322,7 +342,6 @@ export default function BookingHistoryTable() {
                                         <ul className="list-disc list-inside space-y-1">
                                             {(() => {
                                                 try {
-                                                    // Try to parse the offers if they're stored as a JSON string
                                                     const parsedOffers = JSON.parse(bookingDetails?.data?.dealsId.offers[0])
                                                     return Array.isArray(parsedOffers) ? (
                                                         parsedOffers.map((offer, index) => (
@@ -333,10 +352,7 @@ export default function BookingHistoryTable() {
                                                     ) : (
                                                         <li className="text-sm">{bookingDetails.data.dealsId.offers[0]}</li>
                                                     )
-                                                } catch (e) {
-                                                    // If parsing fails, just display the raw string
-                                                    console.log(e);
-                                                    
+                                                } catch {
                                                     return <li className="text-sm">{bookingDetails.data.dealsId.offers[0]}</li>
                                                 }
                                             })()}

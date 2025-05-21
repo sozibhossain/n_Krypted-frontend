@@ -1,49 +1,188 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { User, Lock, Calendar, Bell, LogOut } from "lucide-react"
+import { User, Lock, Calendar, Bell, LogOut, Edit } from "lucide-react"
 import PersonalInfoForm from "@/components/personal-info-form"
-import { ChangePasswordForm } from "@/components/ChangePasswordForm"
 import BookingHistoryTable from "@/components/booking-history-table"
 import NotifyMeList from "@/components/notify-me-list"
 import { PageHeader } from "@/Shared/PageHeader"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useSession, signOut } from "next-auth/react"
+import { toast } from "sonner"
+import ProfileChangepassword from "@/components/profileChangepassword"
+
+
+interface UserData {
+  id?: string;
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  country?: string;
+  cityState?: string;
+  roadArea?: string;
+  avatar?: string;
+  // Add any other fields you expect from the API
+}
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState("personal-info")
     const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+    const [isUploading, setIsUploading] = useState(false)
+    const [userData, setUserData] = useState<UserData | null>(null)
 
-    const session = useSession();
-    const user = session.data?.user
-    console.log(user)
+    
 
-    const userData = {
-        name: "Bessie Edwards",
-        email: "darrelsteward@gmail.com",
-        profileImage: "/profile-image.jpg",
-        personalInfo: {
-            firstName: "Bessie",
-            lastName: "Edwards",
-            email: "darrelsteward@gmail.com",
-            phone: "(307) 555-0133",
-            country: "USA",
-            cityState: "Alabama",
-            roadArea: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
-        },
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const { data: session, update } = useSession()
+
+    const userId = session?.user?.id
+    const accessToken = session?.user?.accessToken
+
+    // Fetch user from the API using session user ID
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (!userId) return
+
+            try {
+                const res = await fetch(`https://n-krypted-backend-0g0t.onrender.com/api/auth/single-user/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                })
+
+                if (!res.ok) {
+                    throw new Error("Failed to fetch user")
+                }
+
+                const data = await res.json()
+                setUserData(data.data)
+                console.log(data.data.name) // adjust depending on API response
+            } catch (error) {
+                console.error("Error fetching user:", error)
+                toast.error("Failed to load user data")
+            }
+        }
+
+        fetchUserData()
+    }, [userId, accessToken])
+
+
+
+    const handleImageClick = () => {
+        fileInputRef.current?.click()
+    }
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        // Validate file type and size
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+        if (!validTypes.includes(file.type)) {
+            toast.error('Please upload a JPEG, PNG, or WebP image')
+            return
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error('Image size should be less than 2MB')
+            return
+        }
+
+        try {
+            setIsUploading(true)
+            const accessToken = session?.user?.accessToken
+            const userId = session?.user?.id
+
+            if (!userId) {
+                throw new Error("User session is invalid - missing ID")
+            }
+
+            const formData = new FormData()
+            formData.append('avatar', file)
+            formData.append('userId', userId) // Add user ID to the form data
+
+            // First request - upload the avatar
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                body: formData
+            })
+
+            // Check response content type
+            const contentType = response.headers.get('content-type')
+            if (!contentType?.includes('application/json')) {
+                const text = await response.text()
+                throw new Error(text.includes('<html') ?
+                    'Server error' :
+                    `Unexpected response: ${text.slice(0, 100)}`
+                )
+            }
+
+            const data = await response.json()
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Profile update failed')
+            }
+
+            // Update session with new avatar
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    avatar: data.avatarUrl || data.imageUrl || data.url
+                }
+            })
+
+            // Second request - fetch updated user data
+            const userResponse = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/auth/single-user/${userId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                }
+            )
+
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch updated profile')
+            }
+
+            const userData = await userResponse.json()
+            setUserData(userData.user || userData) // Adjust based on your API response structure
+
+            toast.success('Profile image updated successfully')
+        } catch (error) {
+            console.error('Upload error:', error)
+            toast.error(
+                error instanceof Error ?
+                    error.message :
+                    'An error occurred during upload'
+            )
+        } finally {
+            setIsUploading(false)
+            if (fileInputRef.current) fileInputRef.current.value = ''
+        }
     }
 
     const handleLogout = async () => {
         try {
-            await signOut({ callbackUrl: '/' }); // Redirect to home page after logout
+            await signOut({ callbackUrl: '/' })
+            toast.success('Logged out successfully')
         } catch (error) {
-            console.error('Error during logout:', error);
+            console.error('Error during logout:', error)
+            toast.error('Failed to log out')
         } finally {
-            setShowLogoutDialog(false);
+            setShowLogoutDialog(false)
         }
     }
+
+    const avatar = userData?.avatar || "/assets/default-avatar.png"
+    const name = userData?.name || "N/A"
+    const email = userData?.email || "N/A"
 
     return (
         <div>
@@ -51,102 +190,82 @@ export default function Dashboard() {
                 title="My Profile"
                 imge="/assets/herobg.png"
                 items={[
-                    {
-                        label: "Home",
-                        href: "/",
-                    },
-                    {
-                        label: "My Profile",
-                        href: "/profiles",
-                    },
+                    { label: "Home", href: "/" },
+                    { label: "My Profile", href: "/profiles" },
                 ]}
             />
             <div className="flex flex-col md:flex-row min-h-screen text-white container pt-[80px]">
-                {/* Static Left Sidebar */}
                 <div className="w-full md:w-80 p-6 flex flex-col items-center md:sticky md:top-0 md:h-screen">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="relative w-32 h-32 mb-2">
-                            <Image src="/assets/profile_image.png" alt="Profile" fill className="rounded-full object-cover" />
-                            <div className="absolute bottom-1 right-1 bg-white rounded-full p-1">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M9 7H6C4.89543 7 4 7.89543 4 9V18C4 19.1046 4.89543 20 6 20H15C16.1046 20 17 19.1046 17 18V15"
-                                        stroke="black"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                    <path
-                                        d="M9 15H12L20.5 6.5C21.3284 5.67157 21.3284 4.32843 20.5 3.5C19.6716 2.67157 18.3284 2.67157 17.5 3.5L9 12V15Z"
-                                        stroke="black"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                    <path d="M16 5L19 8" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                        <div className="relative w-32 h-32 mb-2 group">
+                            <div className="relative w-full h-full rounded-full overflow-hidden cursor-pointer" onClick={handleImageClick}>
+                                <Image src={avatar} alt="Profile" fill className="object-cover" priority />
+                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Edit className="h-6 w-6 text-white" />
+                                </div>
                             </div>
+                            {isUploading && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                                    <div className="h-8 w-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImageUpload}
+                                accept="image/jpeg, image/png, image/webp"
+                                className="hidden"
+                                disabled={isUploading}
+                            />
                         </div>
-                        <h2 className="text-xl font-bold">{user?.name}</h2>
-                        <p className="text-sm text-gray-400">{user?.email}</p>
+                        <h2 className="text-xl font-bold">{name}</h2>
+                        <p className="text-sm text-gray-400">{email}</p>
                     </div>
 
                     <nav className="w-full space-y-2">
-                        <button
-                            onClick={() => setActiveTab("personal-info")}
-                            className={`flex items-center w-full p-3 rounded-md ${activeTab === "personal-info" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}
-                        >
+                        <button onClick={() => setActiveTab("personal-info")} className={`flex items-center w-full p-3 rounded-md ${activeTab === "personal-info" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}>
                             <User className="mr-3 h-5 w-5" />
                             <span>Personal Information</span>
                         </button>
-
-                        <button
-                            onClick={() => setActiveTab("change-password")}
-                            className={`flex items-center w-full p-3 rounded-md ${activeTab === "change-password" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}
-                        >
+                        <button onClick={() => setActiveTab("change-password")} className={`flex items-center w-full p-3 rounded-md ${activeTab === "change-password" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}>
                             <Lock className="mr-3 h-5 w-5" />
                             <span>Change Password</span>
                         </button>
-
-                        <button
-                            onClick={() => setActiveTab("booking-history")}
-                            className={`flex items-center w-full p-3 rounded-md ${activeTab === "booking-history" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}
-                        >
+                        <button onClick={() => setActiveTab("booking-history")} className={`flex items-center w-full p-3 rounded-md ${activeTab === "booking-history" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}>
                             <Calendar className="mr-3 h-5 w-5" />
                             <span>Booking History</span>
                         </button>
-
-                        <button
-                            onClick={() => setActiveTab("notify-me")}
-                            className={`flex items-center w-full p-3 rounded-md ${activeTab === "notify-me" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}
-                        >
+                        <button onClick={() => setActiveTab("notify-me")} className={`flex items-center w-full p-3 rounded-md ${activeTab === "notify-me" ? "bg-zinc-800" : "hover:bg-zinc-800"}`}>
                             <Bell className="mr-3 h-5 w-5" />
                             <span>Notify Me List</span>
                         </button>
-
-                        <button
-                            onClick={() => setShowLogoutDialog(true)}
-                            className="flex items-center w-full p-3 text-red-500 hover:bg-zinc-800 rounded-md mt-auto"
-                        >
+                        <button onClick={() => setShowLogoutDialog(true)} className="flex items-center w-full p-3 text-red-500 hover:bg-zinc-800 rounded-md mt-auto">
                             <LogOut className="mr-3 h-5 w-5" />
                             <span>Log out</span>
                         </button>
                     </nav>
                 </div>
 
-                {/* Dynamic Right Content */}
                 <div className="flex-1 p-6 md:p-10 container">
-                    {activeTab === "personal-info" && <PersonalInfoForm initialData={userData.personalInfo} />}
-
-                    {activeTab === "change-password" && <ChangePasswordForm />}
-
+                    {activeTab === "personal-info" && userData && (
+                        <PersonalInfoForm
+                            initialData={{
+                                name: userData.name || '',
+                                email: userData.email || '',
+                                phoneNumber: userData.phoneNumber || '',
+                                country: userData.country || '',
+                                cityState: userData.cityState || '',
+                                roadArea: userData.roadArea || ''
+                            }}
+                        />
+                    )}
+                    {activeTab === "change-password" && <ProfileChangepassword />}
                     {activeTab === "booking-history" && <BookingHistoryTable />}
-
                     {activeTab === "notify-me" && <NotifyMeList />}
                 </div>
             </div>
 
-            {/* Logout Confirmation Dialog */}
+            {/* Logout Dialog */}
             <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
                 <DialogContent className="sm:max-w-md bg-zinc-900 border-zinc-800 text-white">
                     <DialogHeader>
@@ -156,14 +275,10 @@ export default function Dashboard() {
                         <DialogTitle className="text-center">Are You Sure To Log Out?</DialogTitle>
                     </DialogHeader>
                     <DialogFooter className="flex flex-row justify-center gap-4 sm:justify-center mt-4">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowLogoutDialog(false)}
-                            className="w-full sm:w-24 bg-zinc-800 border-zinc-700 hover:bg-zinc-700 text-white"
-                        >
+                        <Button variant="outline" onClick={() => setShowLogoutDialog(false)} className="w-full sm:w-24 bg-zinc-800 border-zinc-700 hover:bg-zinc-700 text-white">
                             No
                         </Button>
-                        <Button onClick={handleLogout} className="w-full sm:w-24 bg-zinc-800 hover:bg-zinc-700 text-white">
+                        <Button onClick={handleLogout} className="w-full sm:w-24 bg-zinc-800 hover:bg-zinc-700 text-white" disabled={isUploading}>
                             Yes
                         </Button>
                     </DialogFooter>
