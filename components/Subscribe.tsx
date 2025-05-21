@@ -51,23 +51,23 @@ export default function NewsletterSubscription() {
     }
 
     return (
-        <div className="">
+        <div className="max-w-md w-full">
             <h2 className="text-xl font-bold mb-4 text-black">Subscribe for the latest deals</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 ">
-                <div className="bg-[#222222] flex items-center p-2 rounded-lg">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 w-full">
+                <div className="bg-[#222222] flex items-center p-2 rounded-lg w-full">
                     <input
                         type="email"
                         placeholder="Enter Your Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="flex-grow px-4 py-2 rounded-md bg-[#222222] text-white placeholder-gray-400 focus:outline-none"
+                        className="flex-grow px-4 py-2 rounded-md bg-[#222222] text-white placeholder-gray-400 focus:outline-none w-full"
                         aria-label="Email address"
                         disabled={isSubmitting}
                     />
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-4 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition-colors disabled:opacity-70"
+                        className="px-4 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition-colors disabled:opacity-70 whitespace-nowrap"
                     >
                         {isSubmitting ? "Subscribing..." : "Subscribe"}
                     </button>

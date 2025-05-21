@@ -19,7 +19,7 @@ export default function page() {
           },
         ]}
       />
-      <div className="mt-28 container">
+      <div className="lg:mt-28 container">
         <Suspense fallback={<div>Loading...</div>}>
           <AllAuction />
         </Suspense>
