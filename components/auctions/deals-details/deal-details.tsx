@@ -81,7 +81,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     }
 
     if (isLoadingAuction) {
-        return <div className="text-center py-10">Loading auction details...</div>
+        return <div className="text-center py-10 text-white">Loading auction details...</div>
     }
 
     if (errorAuction) {
@@ -118,15 +118,26 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                     <div className="space-y-4">
                         <h1 className="text-[40px] font-semibold text-[#FFFFFF]">{auction?.title || "Property Title"}</h1>
                         <p className="text-xl text-[#E0E0E0] font-normal leading-[150%]">
-                            {auction?.description ||
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut tincidunt porta faucet. Praesent a leo et leo amet mollis quis quis erat. Integer aliquam dapibus justo at dapibus."}
+                            <div
+                                className="text-white truncate max-w-full"
+                                style={{
+                                    display: "-webkit-box",
+                                    WebkitBoxOrient: "vertical",
+                                    WebkitLineClamp: 4, // Adjust for number of lines
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis"
+                                }}
+                                dangerouslySetInnerHTML={{
+                                    __html: auction?.description ?? "Deals Description",
+                                }}
+                            />
                         </p>
                         <div className="flex items-center gap-2 text-gray-500">
                             <MapPin className="w-4 h-4 text-white" />
                             <span className="text-xl text-[#E0E0E0] font-medium">Lorem ipsum dolor sit amet.</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-500">
-                            <Calendar className="w-4 h-4" />
+                            <Calendar className="w-4 h-4 text-white" />
                             <span className="text-xl text-[#E0E0E0] font-medium">consectetur efficitur.</span>
                         </div>
                         <div>
@@ -145,38 +156,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </div>
 
             {/* Description Section */}
-            <div className="space-y-6">
-                <h2 className="text-[32px] text-[#FFFFFF] font-normal">What will you get?</h2>
-                <p className="text-xl text-[#E0E0E0] font-medium leading-[150%]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis dolor urna. Sed sed felis dui. Suspendisse
-                    nec ligula vel nulla ullamcorper volutpat. Integer luctus facilisis nunc, sit amet mattis odio vestibulum sit
-                    amet vestibulum sed egestas augue. Nullam ac cursus felis. Vivamus mattis quam ut leo finibus finibus.
-                    Pellentesque vehicula lorem vitae vehicula ultrices. Quisque sit amet dui ex. Sed vitae maximus odio, et
-                    pretium diam. Vestibulum consequat egestas massa, at aliquet justo eu.
-                </p>
-                <h4 className="text-[24px] text-[#FFFFFF] font-semibold">Lorem ipsum dolor sit amet.</h4>
-                <ul className="space-y-2 list-disc pl-5 text-gray-500">
-                    <li className="text-xl text-[#E0E0E0] font-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Morbi varius sapien in mauris rutrum, non commodo arcu egestas.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Integer vel nulla placerat, convallis risus eget, condimentum ligula.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Nulla sit amet felis id urna ultrices condimentum et vitae odio.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Nam sed risus feugiat, dapibus turpis nec, pharetra turpis.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Sed mattis quam non elit tristique, non rutrum dui finibus.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Nullam laoreet tortor at dolor ultrices, a blandit lectus tristique.</li>
-                    <li className="text-xl text-[#E0E0E0] font-normal">Morbi in sapien non nulla feugiat dapibus.</li>
-                </ul>
-            </div>
-
-            {/* Second Description Section */}
-            <div className="space-y-6">
-                <p className="text-xl text-[#E0E0E0] font-medium leading-[150%]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis dolor urna. Sed sed felis dui. Suspendisse
-                    nec ligula vel nulla ullamcorper volutpat. Integer luctus facilisis nunc, sit amet mattis odio vestibulum sit
-                    amet vestibulum sed egestas augue. Nullam ac cursus felis. Vivamus mattis quam ut leo finibus finibus.
-                    Pellentesque vehicula lorem vitae vehicula ultrices. Quisque sit amet dui ex. Sed vitae maximus odio, et
-                    pretium diam. Vestibulum consequat egestas massa, at aliquet justo eu.
-                </p>
-            </div>
+            <div
+                className="list-item list-none text-white"
+                dangerouslySetInnerHTML={{
+                    __html: auction?.description ?? "Deals Description",
+                }}
+            />
 
             {/* Review Section */}
             <div className="space-y-6 pb-[120px]">
