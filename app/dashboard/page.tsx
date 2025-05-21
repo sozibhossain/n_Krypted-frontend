@@ -4,7 +4,19 @@
 import Layout from "@/components/dashboard/layout";
 // import { apiService } from "@/lib/api-service";
 
-
+interface Booking {
+  totalRevenue: string
+  totalDeals: string
+  totalCustomers: string
+  totalBookings: string
+  data: {
+    totalRevenue: string
+    totalDeals: string
+    totalCustomers: string
+    totalBookings: string
+  }
+ 
+}
 
 
 
@@ -14,27 +26,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StatCard } from "@/components/stat-card"
 import { RevenueChart } from "@/components/revenue-chart"
 import { BookingDonut } from "@/components/king-donut";
+import { useQuery } from "@tanstack/react-query";
 
 
 
 
-// interface Auction {
-//   _id: string;
-//   title: string;
-//   currentBid: number;
-//   status: string;
-//   endsIn?: string;
-//   bidCount: number; // Added bidCount property
-// }
 
-// interface TopBidder {
-//   _id: string;
-//   username: string;
-//   auctionsWon: number;
-//   totalAmount: number;
-// }
+
 
 export default function Dashboard() {
+
+  const { data,  } = useQuery<Booking>({
+    queryKey: ["matrix"],
+    queryFn: async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/stats`)
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookings")
+      }
+      return response.json()
+    },
+  })
+  console.log("data", data);
+  // const Data=data?.data
+  
 
 
   return (
@@ -47,7 +61,7 @@ export default function Dashboard() {
           <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
               title="Total Revenue"
-              value="$51,250"
+              value={data?.data.totalRevenue ?? ""}
               percentageChange={10}
               trend="up"
               description="last 100 today"
@@ -56,7 +70,7 @@ export default function Dashboard() {
             />
             <StatCard
               title="Total Booking"
-              value="$51,250"
+              value={data?.data.totalBookings ?? ""}
               percentageChange={10}
               trend="up"
               description="last 100 today"
@@ -65,7 +79,7 @@ export default function Dashboard() {
             />
             <StatCard
               title="Total Customers"
-              value="51,250"
+              value={data?.data.totalCustomers ?? ""}
               percentageChange={10}
               trend="up"
               description="last 100 today"
@@ -74,7 +88,7 @@ export default function Dashboard() {
             />
             <StatCard
               title="Total Deals"
-              value="250"
+              value={data?.data.totalDeals ?? ""}
               percentageChange={10}
               trend="up"
               description="last 100 today"

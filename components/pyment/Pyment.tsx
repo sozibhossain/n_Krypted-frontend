@@ -33,7 +33,7 @@ const Payment = ({ amount, bookingId, userId, }: PaymentProps) => {
         };
         fetchClientToken();
     }, []);
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handlePaymentMethodSelect = (method: any) => {
         setPaymentMethod(method);
         setErrors("");
@@ -66,7 +66,7 @@ const Payment = ({ amount, bookingId, userId, }: PaymentProps) => {
                 setErrors(data.error || 'Payment failed');
             }
         } catch (err) {
-            setErrors('Payment processing error',);
+            setErrors(err instanceof Error ? err.message : String(err));
         } finally {
             setLoading(false);
         }
@@ -116,19 +116,21 @@ const Payment = ({ amount, bookingId, userId, }: PaymentProps) => {
                         }}
                     >
                         <PayPalButtons
-                            createOrder={(data, actions) => {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            createOrder={(data, actions: any) => {
                                 return actions.order.create({
                                     purchase_units: [
                                         {
                                             amount: {
-                                                
+                                                currency_code: "USD",
                                                 value: amount.toString(),
-                                            },
+                                            }
                                         },
                                     ],
                                 });
                             }}
-                            onApprove={async (data, actions) => {
+                            onApprove={async () => {
+
                                 setLoading(true);
                                 try {
                                     // const details = await actions.order.capture();
@@ -155,7 +157,7 @@ const Payment = ({ amount, bookingId, userId, }: PaymentProps) => {
                                         setErrors(result.error || 'Payment failed');
                                     }
                                 } catch (err) {
-                                    setErrors('Payment processing error');
+                                    setErrors(err instanceof Error ? err.message : String(err));
                                 } finally {
                                     setLoading(false);
                                 }
