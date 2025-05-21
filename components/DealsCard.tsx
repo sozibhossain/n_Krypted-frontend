@@ -41,9 +41,9 @@ export function DealsCard({
   const [bookingId, setBookingId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
- 
 
   
+
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
@@ -109,7 +109,7 @@ export function DealsCard({
 
   return (
     <>
-      <Card className="overflow-hidden border-none bg-white p-2 w-full hover:shadow-[0px_0px_10px_2px_#FFFFFF] transition-shadow duration-300 h-full">
+      <Card className="overflow-hidden border-none bg-white p-2 max-w-[370px] hover:shadow-[0px_0px_10px_2px_#FFFFFF] transition-shadow duration-300 h-full">
         <div
           className="relative overflow-hidden rounded-lg"
           onMouseEnter={() => setIsHovered(true)}
@@ -120,7 +120,7 @@ export function DealsCard({
             alt={title || "Deal Image"}
             width={600}
             height={400}
-            className={`w-full h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
+            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
               } transition-transform duration-300`}
           />
 
@@ -133,7 +133,21 @@ export function DealsCard({
 
         <CardContent className="space-y-2 pt-4">
           <h3 className="font-bold text-[18px] my-1 line-clamp-1">{title}</h3>
-          <p className="text-[16px] font-normal text-[#737373] line-clamp-2">{description}</p>
+          <p className="text-[16px] font-normal text-[#737373]">
+            <div
+              className="text-[#737373] truncate max-w-full"
+              style={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 1, // Adjust for number of lines
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}
+              dangerouslySetInnerHTML={{
+                __html: description ?? "Deals Description",
+              }}
+            />
+          </p>
           <Link href={`/deals/${id}`}>
             <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
               <span>Read More</span>
@@ -159,7 +173,7 @@ export function DealsCard({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="p-10">
           {/* Replace this with your existing component */}
-          <Payment amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""}  />
+          <Payment amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
         </DialogContent>
       </Dialog>
     </>
