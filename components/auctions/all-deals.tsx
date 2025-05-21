@@ -430,6 +430,7 @@ export default function DealsPage() {
                       filteredDealsData.map((deal: Deal) => (
                         <DealsCard
                           key={deal._id}
+                          status={deal.status}
                           id={deal._id}
                           title={deal.title}
                           image={deal.images[0] || "/assets/deals.png"}

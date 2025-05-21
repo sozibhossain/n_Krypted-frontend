@@ -187,3 +187,53 @@
 }
 
 
+/* Payment.css */
+.payment-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.payment-method-selector {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.payment-method-selector button {
+  padding: 10px 15px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.payment-method-selector button.active {
+  background: #0070ba;
+  color: white;
+  border-color: #0070ba;
+}
+
+.paypal-container, .dropin-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.error-message {
+  color: #d00;
+  margin: 10px 0;
+}
+
+.payment-success {
+  text-align: center;
+  padding: 20px;
+  background: #e8f5e9;
+  border-radius: 4px;
+  color: #2e7d32;
+}

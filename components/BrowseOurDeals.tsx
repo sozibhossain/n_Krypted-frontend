@@ -74,6 +74,7 @@ export function BrowseOurDeals() {
                 <DealsCard
                   id={deal._id}
                   title={deal.title}
+                  status={deal.status}
                   image={deal.images[0] || "/assets/deals.png"}
                   description={deal.description}
                   price={deal.price}
