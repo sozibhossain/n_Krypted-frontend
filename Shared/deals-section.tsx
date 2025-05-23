@@ -3,18 +3,15 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import { DealsCard } from "@/components/DealsCard"
+import { DealsSkeleton } from "@/components/delas_skleton"
+
 
 interface Deal {
+  participationsLimit: number | undefined
   _id: string
   title: string
   description: string
@@ -66,6 +63,9 @@ export function DealsSection() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
+  // Create an array of skeleton items based on itemsPerView
+  const skeletonItems = Array.from({ length: itemsPerView }, (_, index) => index)
+
   return (
     <section className="">
       <div className="container">
@@ -105,48 +105,55 @@ export function DealsSection() {
           </div>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40 sm:h-64">
-            <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-white"></div>
-          </div>
-        ) : dealsData.length === 0 ? (
-          <div className="flex justify-center items-center h-40 sm:h-64">
-            <p className="text-white text-center text-sm sm:text-base">No deals available at the moment.</p>
-          </div>
-        ) : (
-          <div className="relative px-0 sm:px-4">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: false,
-              }}
-              className="w-full"
-              setApi={(api) => {
-                if (api) {
-                  const prevButton = document.getElementById("carousel-prev-button")
-                  const nextButton = document.getElementById("carousel-next-button")
-                  
-                  if (prevButton) {
-                    prevButton.addEventListener("click", () => api.scrollPrev())
-                  }
-                  
-                  if (nextButton) {
-                    nextButton.addEventListener("click", () => api.scrollNext())
-                  }
+        <div className="relative px-0 sm:px-4">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+            className="w-full"
+            setApi={(api) => {
+              if (api) {
+                const prevButton = document.getElementById("carousel-prev-button")
+                const nextButton = document.getElementById("carousel-next-button")
+
+                if (prevButton) {
+                  prevButton.addEventListener("click", () => api.scrollPrev())
                 }
-              }}
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {dealsData.map((deal: Deal) => (
-                  <CarouselItem 
-                    key={deal._id} 
-                    className={`pl-2 md:pl-4 ${
-                      itemsPerView === 1 
-                        ? 'basis-full' 
-                        : itemsPerView === 2 
-                          ? 'basis-1/2' 
-                          : 'basis-1/3'
-                    }`}
+
+                if (nextButton) {
+                  nextButton.addEventListener("click", () => api.scrollNext())
+                }
+              }
+            }}
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {isLoading ? (
+                // Skeleton loading state
+                skeletonItems.map((index) => (
+                  <CarouselItem
+                    key={`skeleton-${index}`}
+                    className={`pl-2 md:pl-4 ${itemsPerView === 1 ? "basis-full" : itemsPerView === 2 ? "basis-1/2" : "basis-1/3"
+                      }`}
+                  >
+                    <div className="p-1">
+                      <DealsSkeleton />
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : dealsData.length === 0 ? (
+                <CarouselItem className="basis-full pl-2 md:pl-4">
+                  <div className="flex justify-center items-center h-40 sm:h-64">
+                    <p className="text-white text-center text-sm sm:text-base">No deals available at the moment.</p>
+                  </div>
+                </CarouselItem>
+              ) : (
+                // Actual data
+                dealsData.map((deal: Deal) => (
+                  <CarouselItem
+                    key={deal._id}
+                    className={`pl-2 md:pl-4 ${itemsPerView === 1 ? "basis-full" : itemsPerView === 2 ? "basis-1/2" : "basis-1/3"
+                      }`}
                   >
                     <div className="p-1">
                       <DealsCard
@@ -157,19 +164,19 @@ export function DealsSection() {
                         description={deal.description}
                         price={deal.price}
                         participations={deal.participations}
-                        maxParticipants={deal.participations}
+                        maxParticipants={deal.participationsLimit}
                       />
                     </div>
                   </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="hidden">
-                <CarouselPrevious />
-                <CarouselNext />
-              </div>
-            </Carousel>
-          </div>
-        )}
+                ))
+              )}
+            </CarouselContent>
+            <div className="hidden">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
+          </Carousel>
+        </div>
       </div>
     </section>
   )

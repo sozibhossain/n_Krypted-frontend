@@ -9,7 +9,8 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import Payment from "./pyment/Pyment"
+import { PaymentForm } from "./pyment/Pyment"
+
 
 // Import your existing component that you want to show in the modal
 // For example: import BookingSuccessComponent from "./booking-success-component"
@@ -40,9 +41,10 @@ export function DealsCard({
   const { data: session } = useSession()
   const [bookingId, setBookingId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  console.log(participations, maxParticipants);
 
 
-  
+
 
 
   const handleBooking = async (notifyMe: boolean) => {
@@ -68,7 +70,7 @@ export function DealsCard({
 
       if (response.ok) {
         const data = await response.json()
-        setBookingId(data.booking.bookingId)
+        setBookingId(data.booking._id)
 
         // Open the modal instead of showing a toast
         setIsModalOpen(true)
@@ -126,7 +128,7 @@ export function DealsCard({
 
           <div className="absolute left-2 top-2 flex flex-wrap gap-1">
             <Badge variant="secondary" className="bg-black/50 text-white flex gap-1 items-center">
-              <p>Maximum {maxParticipants} participants</p>
+              <p>Maximum {maxParticipants} participants </p>
             </Badge>
           </div>
         </div>
@@ -173,7 +175,7 @@ export function DealsCard({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="p-10">
           {/* Replace this with your existing component */}
-          <Payment amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
+          <PaymentForm amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
         </DialogContent>
       </Dialog>
     </>

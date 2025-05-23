@@ -1,197 +1,150 @@
-// Payment.jsx
-import React, { useState, useEffect } from 'react';
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import DropIn from "braintree-web-drop-in-react";
+"use client"
 
-interface PaymentProps {
-    amount: number; // Total amount to charge
-    bookingId: string; // Current booking ID
-    userId: string; // Current user ID
-    seasonId?: string; // Optional season ID
-}
-interface Dropin {
-    requestPaymentMethod: () => Promise<{ nonce: string }>;
-}
-const Payment = ({ amount, bookingId, userId, }: PaymentProps) => {
-    const [clientToken, setClientToken] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState(null); // 'paypal' or 'dropin'
-    const [instance, setInstance] = useState<Dropin | null>(null); 
-    const [loading, setLoading] = useState(false);
-    const [error, setErrors] = useState("");
-    const [success, setSuccess] = useState(false);
+import { useEffect, useRef, useState } from "react"
+import dropin from "braintree-web-drop-in"
+import { getClientToken, makePayment } from "./payment.api"
+import { useRouter } from "next/navigation"
+import { formatCurrency } from "@/lib/payment_utils"
 
-    // Fetch client token from your backend
-    useEffect(() => {
-        const fetchClientToken = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/client-token`);
-                const data = await response.json();
-                setClientToken(data.clientToken);
-            } catch (err) {
-                setErrors("Failed to load payment options" + (err ? `: ${err}` : ""));
-            }
-        };
-        fetchClientToken();
-    }, []);
+
+type Props = {
+    amount: number
+    userId: string
+    bookingId: string
+    seasonId?: string
+    successUrl?: string
+    failureUrl?: string
+}
+
+export const PaymentForm = ({
+    amount,
+    userId,
+    bookingId,
+    seasonId,
+    successUrl = "/success",
+    failureUrl = "/payment-failed",
+}: Props) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handlePaymentMethodSelect = (method: any) => {
-        setPaymentMethod(method);
-        setErrors("");
-    };
+    const dropinInstance = useRef<any>(null)
+    const dropinContainer = useRef<HTMLDivElement>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
+    const router = useRouter()
 
-    const handleDropInPayment = async () => {
-        setLoading(true);
-        try {
-            // const { nonce } = await instance.requestPaymentMethod();
+    useEffect(() => {
+        const init = async () => {
+            try {
+                const token = await getClientToken()
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/checkout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    amount,
-                    paymentMethodNonce: clientToken,
-                    bookingId,
-                    userId,
-                    
-                }),
-            });
+                if (dropinInstance.current) {
+                    await dropinInstance.current.teardown()
+                    dropinInstance.current = null
+                }
 
-            const data = await response.json();
+                if (dropinContainer.current) {
+                    dropinContainer.current.innerHTML = ""
+                }
 
-            if (data.success) {
-                setSuccess(true);
-            } else {
-                setErrors(data.error || 'Payment failed');
+                dropin.create(
+                    {
+                        authorization: token,
+                        container: dropinContainer.current!,
+                        paypal: {
+                            flow: "checkout",
+                            amount: amount,
+                            currency: "USD",
+                        },
+                        paypalCredit: {
+                            flow: "checkout",
+                            amount: amount,
+                            currency: "USD",
+                        },
+                    },
+                    (err, instance) => {
+                        if (err) {
+                            console.error("Drop-in error:", err)
+                            setError(err instanceof Error ? err.message : "Drop-in error")
+                        } else {
+                            dropinInstance.current = instance
+                        }
+                    },
+                )
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message)
+                } else {
+                    setError("Payment failed")
+                }
             }
-        } catch (err) {
-            setErrors(err instanceof Error ? err.message : String(err));
-        } finally {
-            setLoading(false);
         }
-    };
 
-    if (success) {
-        return (
-            <div className="payment-success">
-                <h2>Payment Successful!</h2>
-                <p>Thank you for your payment.</p>
-            </div>
-        );
+        init()
+    }, [amount])
+
+    const handlePayment = async () => {
+        setLoading(true)
+        setError("")
+        setSuccess("")
+
+        try {
+            const instance = dropinInstance.current
+            if (!instance) throw new Error("Drop-in instance not ready")
+
+            const { nonce } = await instance.requestPaymentMethod()
+            const result = await makePayment({
+                amount: amount.toString(),
+                paymentMethodNonce: nonce,
+                userId,
+                bookingId,
+                seasonId,
+            })
+
+            setSuccess(`Payment successful! Transaction ID: ${result.transactionId}`)
+
+            await instance.teardown()
+
+            setTimeout(() => {
+                router.push(`${successUrl}?transactionId=${result.transactionId}`)
+            }, 1000)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(err)
+            const errorMessage = err?.response?.data?.message || err.message || "Payment failed"
+            setError(errorMessage)
+
+            setTimeout(() => {
+                router.push(`${failureUrl}?error=${encodeURIComponent(errorMessage)}`)
+            }, 1500)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
-        <div className="payment-container">
-            <h2>Payment Options</h2>
-            <p>Total Amount: ${amount}</p>
+        <div className="space-y-4 max-w-md mx-auto">
+            <div className="bg-slate-50 p-6 rounded-lg shadow-sm border border-slate-200">
+                <div className="text-center mb-6">
+                    <h2 className="text-xl font-bold">Payment Details</h2>
+                    <div className="mt-4 mb-6">
+                        <span className="text-sm text-slate-500">Amount to pay:</span>
+                        <p className="text-3xl font-bold text-slate-900">{formatCurrency(amount)}</p>
+                    </div>
+                </div>
 
-            <div className="payment-method-selector">
+                <div ref={dropinContainer}></div>
+
+                {error && <p className="text-red-500 mt-4">{error}</p>}
+                {success && <p className="text-green-500 mt-4">{success}</p>}
+
                 <button
-                    onClick={() => handlePaymentMethodSelect('paypal')}
-                    className={paymentMethod === 'paypal' ? 'active' : ''}
+                    onClick={handlePayment}
+                    disabled={loading}
+                    className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md font-medium transition-colors disabled:opacity-50"
                 >
-                    PayPal
-                </button>
-                <button
-                    onClick={() => handlePaymentMethodSelect('dropin')}
-                    className={paymentMethod === 'dropin' ? 'active' : ''}
-                >
-                    Credit/Debit Card
+                    {loading ? `Processing ${formatCurrency(amount)}...` : `Pay ${formatCurrency(amount)}`}
                 </button>
             </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            {paymentMethod === 'paypal' && clientToken && (
-                <div className="paypal-container">
-                    <PayPalScriptProvider
-                        options={{
-                            clientId: "YOUR_CLIENT_ID", 
-                            "data-client-token": clientToken,
-                            components: "buttons",
-                            currency_code: "USD",
-                            intent: "capture",
-                            vault: false,
-                        }}
-                    >
-                        <PayPalButtons
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            createOrder={(data, actions: any) => {
-                                return actions.order.create({
-                                    purchase_units: [
-                                        {
-                                            amount: {
-                                                currency_code: "USD",
-                                                value: amount.toString(),
-                                            }
-                                        },
-                                    ],
-                                });
-                            }}
-                            onApprove={async () => {
-
-                                setLoading(true);
-                                try {
-                                    // const details = await actions.order.capture();
-
-                                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/checkout`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            amount,
-                                            paymentMethodNonce: clientToken,
-                                            bookingId,
-                                            userId,
-                                          
-                                        }),
-                                    });
-
-                                    const result = await response.json();
-
-                                    if (result.success) {
-                                        setSuccess(true);
-                                    } else {
-                                        setErrors(result.error || 'Payment failed');
-                                    }
-                                } catch (err) {
-                                    setErrors(err instanceof Error ? err.message : String(err));
-                                } finally {
-                                    setLoading(false);
-                                }
-                            }}
-                            onError={(err) => {
-                                setErrors(err.toString());
-                            }}
-                        />
-                    </PayPalScriptProvider>
-                </div>
-            )}
-
-            {paymentMethod === 'dropin' && clientToken && (
-                <div className="dropin-container">
-                    <DropIn
-                        options={{
-                            authorization: clientToken,
-                            paypal: {
-                                flow: 'vault'
-                            },
-                            venmo: true, // if you want to support Venmo
-                        }}
-                        onInstance={(instance) => setInstance(instance)}
-                    />
-                    <button
-                        onClick={handleDropInPayment}
-                        disabled={!instance || loading}
-                    >
-                        {loading ? 'Processing...' : 'Pay Now'}
-                    </button>
-                </div>
-            )}
         </div>
-    );
-};
-
-export default Payment;
+    )
+}

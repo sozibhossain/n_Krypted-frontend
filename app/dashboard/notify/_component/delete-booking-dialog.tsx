@@ -72,10 +72,10 @@ export default function DeleteBookingDialog({ open, booking, onClose, onConfirm 
                                 <strong>Booking ID:</strong> {booking?.bookingId}
                             </p>
                             <p>
-                                <strong>User:</strong> {booking?.userId.name}
+                                <strong>User:</strong> {booking?.userId?.name}
                             </p>
                             <p>
-                                <strong>Deal:</strong> {booking?.dealsId.title}
+                                <strong>Deal:</strong> {booking?.dealsId?.title}
                             </p>
                         </div>
                     </AlertDialogDescription>

@@ -225,15 +225,15 @@ export default function BookingsTable() {
       {isLoading ? (
         renderTableSkeleton()
       ) : (
-          <div>
-            <div className="flex flex-row items-center justify-between">
-              <div>
-                <div className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Notify Me List</div>
-                <p className="text-xl text-[#595959]">Dashboard &gt; Notify Me List</p>
-              </div>
+        <div>
+          <div className="flex flex-row items-center justify-between">
+            <div>
+              <div className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Notify Me List</div>
+              <p className="text-xl text-[#595959]">Dashboard &gt; Notify Me List</p>
             </div>
-          <div className="rounded-md bg-white shadow-lg mt-10">
-            <Table>
+          </div>
+          <div className=" mt-10">
+            <Table className="rounded-md bg-[#FFFFFF] shadow-2xl">
               <TableHeader>
                 <TableRow className="text-[#595959] text-base font-medium py-4 hover:bg-transparent">
                   <TableHead>Booker</TableHead>
