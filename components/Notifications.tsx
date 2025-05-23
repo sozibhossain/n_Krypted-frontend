@@ -1,16 +1,16 @@
 "use client";
 import { useEffect } from "react";
-import { formatDistanceToNow } from "date-fns";
+// import { formatDistanceToNow } from "date-fns";
 import { useSocketContext } from "@/Provider/SocketProvider";
 import { useSession } from "next-auth/react";
 
 
 const Notifications = () => {
   const { notifications, setNotifications } = useSocketContext();
-
   console.log("notifications", notifications);
   const session = useSession();
   const userId = session?.data?.user?.id;
+
 
 
 
@@ -21,14 +21,11 @@ const Notifications = () => {
         try {
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=${userId}`,
-            // {
-            //   headers: {
-            //     Authorization: `Bearer ${token}`,
-            //   },
-            // }
+
           );
           const data = await response.json();
-          if (data.status && data.data) {
+          console.log(data)
+          if (data.notifications && data.notifications) {
             setNotifications(data.notifications);
 
 
@@ -48,30 +45,34 @@ const Notifications = () => {
   }, [userId, setNotifications]);
 
 
-  console.log("ewgfvrebh", notifications)
+
+
   return (
     <div>
-      
+
       <ul className="space-y-4">
         {notifications.map((notification) => (
           <li
             key={notification._id}
-            className="p-4  space-x-4 border-b border-[#dfc5a2]"
+            className="p-4  space-x-4 border-b border-[#595959]"
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
+              <p className="text-xl text-white">
                 {notification.message}
                 {notification.auction && (
-                  <span className="font-semibold">
+                  <span className="text-[#FFFFFF] text-xl font-semibold">
                     {" "}
                     ({notification.auction.title})
                   </span>
                 )}
               </p>
               <p className="text-xs text-gray-400">
-                {formatDistanceToNow(new Date(notification.createdAt), {
-                  addSuffix: true,
-                })}
+                {notification.createdAt && !isNaN(Number(new Date(notification.createdAt)))
+                  ? new Date(notification.createdAt).toLocaleString("en-US", {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                  })
+                  : "Unknown date"}
               </p>
             </div>
           </li>

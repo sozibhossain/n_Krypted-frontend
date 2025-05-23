@@ -9,6 +9,7 @@ import { DealsCardSkeleton } from "./skeleton/dealsSkeleton"
 
 
 interface Deal {
+  participationsLimit: number | undefined
   _id: string
   title: string
   description: string
@@ -79,7 +80,7 @@ export function BrowseOurDeals() {
                   description={deal.description}
                   price={deal.price}
                   participations={deal.participations}
-                  maxParticipants={deal.participations}
+                  maxParticipants={deal.participationsLimit}
                 />
               </div>
             </div>

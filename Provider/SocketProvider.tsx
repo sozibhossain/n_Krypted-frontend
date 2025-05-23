@@ -6,6 +6,7 @@ import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
 
 interface NotificationData {
+  updatedAt: string | number | Date;
   _id: string;
   message: string;
   type: string;
@@ -41,10 +42,17 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notificationCount, setNotificationCount] = useState(() => {
     // Read from localStorage during first render
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("notificationCount");
-      return stored ? JSON.parse(stored) : { notificationCount: 0 };
-    }
+  const stored = localStorage.getItem("notificationCount");
+  try {
+    return stored ? JSON.parse(stored) : { notificationCount: 0 };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    // If JSON.parse fails, fallback to default
     return { notificationCount: 0 };
+  }
+}
+return { notificationCount: 0 };
+
   });
 
   useEffect(() => {
@@ -56,20 +64,24 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (token && !socket) {
       const socket = io("http://localhost:5000", {
-        // extraHeaders: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+       
       });
       setSocket(socket);
     }
 
     if (socket) {
-      socket.emit('joinUser', userID);
-      socket.on("notification", (data: NotificationData) => {
+      socket.emit('authenticate', userID);
+      socket.on("deal_status_change", (data: NotificationData) => {
+        console.log("deal_status_change:", data);
+        setNotifications((prevNotifications) => [data, ...prevNotifications]);
+        setNotificationCount(data?.message);
+        toast.success(data?.message)
+      });
+      socket.on("new_deal", (data: NotificationData) => {
+        console.log("deal_status_change:", data);
         setNotifications((prevNotifications) => [data, ...prevNotifications]);
         setNotificationCount(data?.notificationCount);
-        console.log("notification:", data);
-        toast.success(data.message)
+        toast.success(data?.message)
       });
       setListenerSet(true);
       return () => {
@@ -84,33 +96,35 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // useEffect(() => {
   //   if (!token || socket || listenerSet) return;
-  
+
   //   const newSocket = io("http://localhost:5100", {
   //     extraHeaders: {
   //       Authorization: `Bearer ${token}`,
   //     },
   //   });
-  
+
   //   newSocket.emit("joinUser", userID);
-  
+
   //   newSocket.on("notification", (data: NotificationData) => {
   //     setNotifications((prev) => [data, ...prev]);
   //     console.log("notification:", data);
   //     toast.success(data.message);
   //   });
-  
+
   //   setSocket(newSocket);
   //   setListenerSet(true);
-  
+
   //   return () => {
   //     newSocket.disconnect();
   //     setSocket(null)
   //   };
   // }, [token, socket, listenerSet, userID]);
-  
+
 
   return (
-    <SocketContext.Provider value={{ socket, notifications, setNotifications, notificationCount, setNotificationCount }}>
+    <SocketContext.Provider 
+    value={{ socket, notifications, setNotifications, notificationCount, setNotificationCount }}
+    >
       {children}
     </SocketContext.Provider>
   );
