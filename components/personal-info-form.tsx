@@ -29,8 +29,6 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  console.log(initialData)
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))

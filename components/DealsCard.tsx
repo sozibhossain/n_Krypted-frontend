@@ -150,10 +150,25 @@ export function DealsCard({
   }
 
   const renderActionButton = () => {
+    // If time has expired
     if (timeLeft.isExpired) {
       return <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Notify me</Button>
     }
 
+    // If deal is fully booked (participations reached max)
+    if (maxParticipants && participations >= maxParticipants) {
+      return (
+        <Button
+          className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
+          onClick={() => handleBooking(true)}
+          disabled={isLoading}
+        >
+          {isLoading ? "Processing..." : "Notify me"}
+        </Button>
+      )
+    }
+
+    // Regular status-based rendering
     if (status === "activate") {
       return (
         <Button
@@ -190,9 +205,8 @@ export function DealsCard({
             alt={title || "Deal Image"}
             width={600}
             height={400}
-            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${
-              isHovered ? "scale-105" : "scale-100"
-            } transition-transform duration-300`}
+            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
+              } transition-transform duration-300`}
           />
 
           {/* Timer - Only show if deal has time and isn't expired */}
