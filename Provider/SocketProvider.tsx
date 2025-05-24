@@ -6,6 +6,7 @@ import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
 
 interface NotificationData {
+  dealId: any;
   updatedAt: string | number | Date;
   _id: string;
   message: string;

@@ -40,7 +40,6 @@ interface PaginationData {
 export default function NotifyMeList() {
     const { data: session } = useSession()
     const [bookings, setBookings] = useState<Booking[]>([])
-    console.log("bookings", bookings)
     const [pagination, setPagination] = useState<PaginationData>({
         currentPage: 1,
         totalPages: 0,
