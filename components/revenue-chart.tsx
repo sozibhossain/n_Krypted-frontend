@@ -2,47 +2,34 @@
 
 import { useState } from "react"
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { useRevenueData } from "./user_revenue_data"
 
-// Generate dummy data for the chart
-const generateMonthlyData = () => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-    return months.map((month) => {
-        // Generate random values between 200 and 1200 for revenue
-        const revenue = Math.floor(Math.random() * (1200 - 200) + 200)
-        // Generate random values between 200 and 1200 for booking
-        const booking = Math.floor(Math.random() * (1200 - 200) + 200)
-
-        return {
-            month,
-            revenue,
-            booking,
-        }
-    })
-}
 
 export function RevenueChart() {
-    const [data, setData] = useState(generateMonthlyData())
-    console.log(setData);
-    
+    const { data, isLoading, error, refetch } = useRevenueData()
     const [hoveredData, setHoveredData] = useState<{ revenue: number; booking: number } | null>(null)
 
     const formatYAxis = (value: number) => {
         if (value === 0) return "0"
-        if (value === 200) return "$200"
-        if (value === 400) return "$400"
-        if (value === 600) return "$600"
-        if (value === 800) return "$800"
-        if (value === 1000) return "$1k"
-        if (value === 1200) return "$1.2k"
-        return `$${value}`
+        if (value < 1000) return `$${value}`
+        if (value < 1000000) return `$${(value / 1000).toFixed(1)}k`
+        return `$${(value / 1000000).toFixed(1)}M`
     }
 
-   /* eslint-disable @typescript-eslint/no-explicit-any */
+    const getMaxValue = () => {
+        if (!data) return 1200
+        const maxRevenue = Math.max(...data.map((d) => d.revenue))
+        const maxBooking = Math.max(...data.map((d) => d.booking))
+        const max = Math.max(maxRevenue, maxBooking)
+        // Round up to nearest 200
+        return Math.ceil(max / 200) * 200 || 1200
+    }
+
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="rounded-lg border bg-[#BABABA] p-2 shadow-sm ">
+                <div className="rounded-lg border bg-[#BABABA] p-2 shadow-sm">
                     <div className="grid grid-cols-2 gap-2">
                         <div className="flex items-center">
                             <div className="mr-2 h-2 w-2 rounded-full bg-[#10B981]"></div>
@@ -52,7 +39,7 @@ export function RevenueChart() {
                         <div className="flex items-center">
                             <div className="mr-2 h-2 w-2 rounded-full bg-[#3B82F6]"></div>
                             <span className="text-xs">Booking:</span>
-                            <span className="ml-1 font-bold text-xs">${payload[1].value}%</span>
+                            <span className="ml-1 font-bold text-xs">{payload[1].value}</span>
                         </div>
                     </div>
                 </div>
@@ -61,17 +48,54 @@ export function RevenueChart() {
         return null
     }
 
+    if (isLoading) {
+        return (
+            <div className="h-[400px] w-full flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#10B981] mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-600">Loading chart data...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="h-[400px] w-full flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-sm text-red-600 mb-2">Failed to load chart data</p>
+                    <button
+                        onClick={() => refetch()}
+                        className="px-4 py-2 bg-[#10B981] text-white rounded-md text-sm hover:bg-[#059669] transition-colors"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    if (!data || data.length === 0) {
+        return (
+            <div className="h-[400px] w-full flex items-center justify-center">
+                <p className="text-sm text-gray-600">No data available</p>
+            </div>
+        )
+    }
+
+    const maxValue = getMaxValue()
+
     return (
         <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                     data={data}
                     margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-                    onMouseMove={(data) => {
-                        if (data.activePayload) {
+                    onMouseMove={(chartData) => {
+                        if (chartData.activePayload) {
                             setHoveredData({
-                                revenue: data.activePayload[0].value,
-                                booking: data.activePayload[1].value,
+                                revenue: chartData.activePayload[0].value,
+                                booking: chartData.activePayload[1].value,
                             })
                         }
                     }}
@@ -94,8 +118,7 @@ export function RevenueChart() {
                         tickLine={false}
                         tick={{ fontSize: 12, fill: "#6B7280" }}
                         tickFormatter={formatYAxis}
-                        domain={[0, 1200]}
-                        ticks={[0, 200, 400, 600, 800, 1000, 1200]}
+                        domain={[0, maxValue]}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <Area
@@ -122,11 +145,11 @@ export function RevenueChart() {
                 <div className="mt-2 flex items-center justify-center space-x-4">
                     <div className="flex items-center">
                         <div className="mr-2 h-3 w-3 rounded-full bg-[#10B981]"></div>
-                        <span className="text-sm ">Revenue: ${hoveredData.revenue}</span>
+                        <span className="text-sm">Revenue: ${hoveredData.revenue}</span>
                     </div>
                     <div className="flex items-center">
                         <div className="mr-2 h-3 w-3 rounded-full bg-[#3B82F6]"></div>
-                        <span className="text-sm">Booking: ${hoveredData.booking}</span>
+                        <span className="text-sm">Booking: {hoveredData.booking}</span>
                     </div>
                 </div>
             )}

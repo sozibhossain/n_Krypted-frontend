@@ -41,7 +41,7 @@ export function DealsCard({
   const { data: session } = useSession()
   const [bookingId, setBookingId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  console.log(participations, maxParticipants);
+
 
 
 
@@ -134,7 +134,7 @@ export function DealsCard({
         </div>
 
         <CardContent className="space-y-2 pt-4">
-          <h3 className="font-bold text-[18px] my-1 line-clamp-1">{title}</h3>
+          <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
           <p className="text-[16px] font-normal text-[#737373]">
             <div
               className="text-[#737373] truncate max-w-full"

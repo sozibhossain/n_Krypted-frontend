@@ -15,15 +15,15 @@ import ProfileChangepassword from "@/components/profileChangepassword"
 
 
 interface UserData {
-  id?: string;
-  name?: string;
-  email?: string;
-  phoneNumber?: string;
-  country?: string;
-  cityState?: string;
-  roadArea?: string;
-  avatar?: string;
-  // Add any other fields you expect from the API
+    id?: string;
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    country?: string;
+    cityState?: string;
+    roadArea?: string;
+    avatar?: string;
+    // Add any other fields you expect from the API
 }
 
 export default function Dashboard() {
@@ -32,7 +32,7 @@ export default function Dashboard() {
     const [isUploading, setIsUploading] = useState(false)
     const [userData, setUserData] = useState<UserData | null>(null)
 
-    
+
 
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { data: session, update } = useSession()
@@ -46,7 +46,7 @@ export default function Dashboard() {
             if (!userId) return
 
             try {
-                const res = await fetch(`https://n-krypted-backend-0g0t.onrender.com/api/auth/single-user/${userId}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/single-user/${userId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
