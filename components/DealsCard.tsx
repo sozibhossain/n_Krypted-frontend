@@ -20,6 +20,8 @@ interface DealsCardProps {
   image?: string
   status?: string
   time?: number // in minutes
+  createdAt?: string | Date
+  updatedAt?: string | Date
 }
 
 interface TimeLeft {
@@ -36,9 +38,11 @@ export function DealsCard({
   price,
   participations,
   maxParticipants,
+  createdAt,
+  updatedAt,
   image,
   status,
-  time = 0, // Default to 0 if not provided
+  time = 0,
 }: DealsCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,51 +53,65 @@ export function DealsCard({
     hours: 0,
     minutes: 0,
     seconds: 0,
-    isExpired: false
+    isExpired: false,
   })
 
   useEffect(() => {
-    if (time <= 0) {
+    if (time <= 0 || (!createdAt && !updatedAt)) {
       setTimeLeft({
         hours: 0,
         minutes: 0,
         seconds: 0,
-        isExpired: true
+        isExpired: true,
       })
       return
     }
 
-    // Calculate total seconds from the time prop (minutes)
-    let totalSeconds = time * 60
-
     const timer = setInterval(() => {
-      if (totalSeconds <= 0) {
+      // Use updatedAt if available, otherwise fall back to createdAt
+      const startTime = updatedAt || createdAt
+
+      // Additional safety check to ensure startTime is not undefined
+      if (!startTime) {
         clearInterval(timer)
         setTimeLeft({
           hours: 0,
           minutes: 0,
           seconds: 0,
-          isExpired: true
+          isExpired: true,
         })
         return
       }
 
-      totalSeconds -= 1
+      const endTime = new Date(new Date(startTime).getTime() + time * 60000)
+      const now = new Date()
+      const difference = endTime.getTime() - now.getTime()
 
-      const hours = Math.floor(totalSeconds / 3600)
-      const minutes = Math.floor((totalSeconds % 3600) / 60)
-      const seconds = totalSeconds % 60
+      if (difference <= 0) {
+        clearInterval(timer)
+        setTimeLeft({
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isExpired: true,
+        })
+        return
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60))
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
 
       setTimeLeft({
         hours,
         minutes,
         seconds,
-        isExpired: false
+        isExpired: false,
       })
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [time])
+  }, [time, createdAt, updatedAt])
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
@@ -133,13 +151,7 @@ export function DealsCard({
 
   const renderActionButton = () => {
     if (timeLeft.isExpired) {
-      return (
-        <Button
-          className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-        >
-          Notify me
-        </Button>
-      )
+      return <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Notify me</Button>
     }
 
     if (status === "activate") {
@@ -184,7 +196,7 @@ export function DealsCard({
           />
 
           {/* Timer - Only show if deal has time and isn't expired */}
-          {time > 0 && !timeLeft.isExpired && (
+          {time > 0 && !timeLeft.isExpired && (createdAt || updatedAt) && (
             <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
               <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
                 <div className="text-center">
@@ -222,7 +234,7 @@ export function DealsCard({
                 WebkitBoxOrient: "vertical",
                 WebkitLineClamp: 1,
                 overflow: "hidden",
-                textOverflow: "ellipsis"
+                textOverflow: "ellipsis",
               }}
               dangerouslySetInnerHTML={{
                 __html: description ?? "Deals Description",

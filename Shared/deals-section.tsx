@@ -168,6 +168,8 @@ export function DealsSection() {
                         description={deal.description}
                         price={deal.price}
                         time ={deal.time}
+                        createdAt={deal.createdAt}
+                        updatedAt={deal.updatedAt}
                         participations={deal.bookingCount}
                         maxParticipants={deal.participationsLimit}
                       />
