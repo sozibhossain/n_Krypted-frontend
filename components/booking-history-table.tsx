@@ -58,12 +58,12 @@ export default function BookingHistoryTable() {
             throw new Error("User not authenticated")
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/user/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/notify-false?user=${userId}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         })
-        
+
         if (!response.ok) {
             throw new Error("Failed to fetch bookings")
         }
@@ -80,7 +80,7 @@ export default function BookingHistoryTable() {
                 'Authorization': `Bearer ${accessToken}`
             }
         })
-        
+
         if (!response.ok) {
             throw new Error("Failed to fetch booking details")
         }
@@ -305,7 +305,13 @@ export default function BookingHistoryTable() {
 
                             <div className="space-y-1">
                                 <h4 className="text-sm font-medium text-gray-400">Description</h4>
-                                <p className="text-sm">{bookingDetails?.data?.dealsId?.description}</p>
+                                {/* <p className="text-sm">{bookingDetails?.data?.dealsId?.description}</p> */}
+                                <div
+                                    className="list-item list-none"
+                                    dangerouslySetInnerHTML={{
+                                        __html: bookingDetails?.data?.dealsId?.description ?? "Blog Description",
+                                    }}
+                                />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
