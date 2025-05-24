@@ -11,6 +11,7 @@ import { DealsSkeleton } from "@/components/delas_skleton"
 
 
 interface Deal {
+  time: number | undefined
   bookingCount: number
   participationsLimit: number | undefined
   _id: string
@@ -39,6 +40,8 @@ export function DealsSection() {
   })
 
   const dealsData = response?.deals || []
+
+  
 
   // Determine number of items to show based on screen size
   const [itemsPerView, setItemsPerView] = useState(3)
@@ -164,6 +167,9 @@ export function DealsSection() {
                         image={deal.images[0] || "/assets/deals.png"}
                         description={deal.description}
                         price={deal.price}
+                        time ={deal.time}
+                        createdAt={deal.createdAt}
+                        updatedAt={deal.updatedAt}
                         participations={deal.bookingCount}
                         maxParticipants={deal.participationsLimit}
                       />

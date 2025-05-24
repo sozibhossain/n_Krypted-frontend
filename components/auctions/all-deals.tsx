@@ -25,6 +25,7 @@ interface Category {
 }
 
 interface Deal {
+  time: number | undefined
   bookingCount: number
   participationsLimit: number | undefined
   _id: string
@@ -41,12 +42,12 @@ interface Deal {
   updatedAt: string
 }
 
-const DEAL_TYPES = [
-  { id: "popular", name: "Popular" },
-  { id: "latest", name: "Latest" },
-  { id: "ends-soon", name: "Ends Soon" },
-  { id: "upcoming", name: "Upcoming" },
-]
+// const DEAL_TYPES = [
+//   { id: "popular", name: "Popular" },
+//   { id: "latest", name: "Latest" },
+//   { id: "ends-soon", name: "Ends Soon" },
+//   { id: "upcoming", name: "Upcoming" },
+// ]
 
 export default function DealsPage() {
   const router = useRouter()
@@ -89,6 +90,8 @@ export default function DealsPage() {
   ])
   const [selectedDealType, setSelectedDealType] = useState<string>(currentDealType)
   const [searchQuery, setSearchQuery] = useState<string>(search || "")
+
+  console.log(setSelectedDealType)
 
   // Fetch deals with filters
   const {
@@ -224,15 +227,7 @@ export default function DealsPage() {
     }
   }, [location])
 
-  const handleDealTypeChange = (dealType: string, checked: boolean | "indeterminate") => {
-    const isChecked = checked === true
-    if (isChecked) {
-      setSelectedDealType(dealType)
-    } else if (selectedDealType === dealType) {
-      setSelectedDealType("")
-    }
-    setIsFilterOpen(false) // Close the Sheet on mobile
-  }
+
 
   const handlePriceChange = (value: number[]) => {
     setPriceRange([value[0], value[1]])
@@ -328,7 +323,7 @@ export default function DealsPage() {
       </div>
 
       {/* Deal Types */}
-      <div>
+      {/* <div>
         <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">Type Of Deals</h3>
         <div className="space-y-2">
           {DEAL_TYPES.map((dealType) => (
@@ -344,7 +339,7 @@ export default function DealsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Price Range Slider */}
       <div>
@@ -438,6 +433,7 @@ export default function DealsPage() {
                           image={deal.images[0] || "/assets/deals.png"}
                           description={deal.description}
                           price={deal.price}
+                          time = {deal.time}
                           participations={deal.bookingCount}
                           maxParticipants={deal.participationsLimit}
                         />

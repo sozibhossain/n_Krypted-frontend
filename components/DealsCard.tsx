@@ -2,18 +2,13 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { ChevronRight, Users } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { PaymentForm } from "./pyment/Pyment"
-
-
-// Import your existing component that you want to show in the modal
-// For example: import BookingSuccessComponent from "./booking-success-component"
 
 interface DealsCardProps {
   id: string
@@ -24,6 +19,16 @@ interface DealsCardProps {
   maxParticipants?: number
   image?: string
   status?: string
+  time?: number // in minutes
+  createdAt?: string | Date
+  updatedAt?: string | Date
+}
+
+interface TimeLeft {
+  hours: number
+  minutes: number
+  seconds: number
+  isExpired: boolean
 }
 
 export function DealsCard({
@@ -33,19 +38,80 @@ export function DealsCard({
   price,
   participations,
   maxParticipants,
+  createdAt,
+  updatedAt,
   image,
   status,
+  time = 0,
 }: DealsCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { data: session } = useSession()
   const [bookingId, setBookingId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    isExpired: false,
+  })
 
+  useEffect(() => {
+    if (time <= 0 || (!createdAt && !updatedAt)) {
+      setTimeLeft({
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        isExpired: true,
+      })
+      return
+    }
 
+    const timer = setInterval(() => {
+      // Use updatedAt if available, otherwise fall back to createdAt
+      const startTime = updatedAt || createdAt
 
+      // Additional safety check to ensure startTime is not undefined
+      if (!startTime) {
+        clearInterval(timer)
+        setTimeLeft({
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isExpired: true,
+        })
+        return
+      }
 
+      const endTime = new Date(new Date(startTime).getTime() + time * 60000)
+      const now = new Date()
+      const difference = endTime.getTime() - now.getTime()
 
+      if (difference <= 0) {
+        clearInterval(timer)
+        setTimeLeft({
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isExpired: true,
+        })
+        return
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60))
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+
+      setTimeLeft({
+        hours,
+        minutes,
+        seconds,
+        isExpired: false,
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [time, createdAt, updatedAt])
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
@@ -71,8 +137,6 @@ export function DealsCard({
       if (response.ok) {
         const data = await response.json()
         setBookingId(data.booking._id)
-
-        // Open the modal instead of showing a toast
         setIsModalOpen(true)
       } else {
         const error = await response.json()
@@ -86,6 +150,10 @@ export function DealsCard({
   }
 
   const renderActionButton = () => {
+    if (timeLeft.isExpired) {
+      return <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Notify me</Button>
+    }
+
     if (status === "activate") {
       return (
         <Button
@@ -122,15 +190,38 @@ export function DealsCard({
             alt={title || "Deal Image"}
             width={600}
             height={400}
-            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
-              } transition-transform duration-300`}
+            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${
+              isHovered ? "scale-105" : "scale-100"
+            } transition-transform duration-300`}
           />
 
-          <div className="absolute left-2 top-2 flex flex-wrap gap-1">
-            <Badge variant="secondary" className="bg-black/50 text-white flex gap-1 items-center">
-              <p>Maximum {maxParticipants} participants </p>
-            </Badge>
-          </div>
+          {/* Timer - Only show if deal has time and isn't expired */}
+          {time > 0 && !timeLeft.isExpired && (createdAt || updatedAt) && (
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
+              <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
+                <div className="text-center">
+                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                    {String(timeLeft.hours).padStart(2, "0")}
+                  </div>
+                  <h1 className="text-xs">HR</h1>
+                </div>
+                :
+                <div className="text-center">
+                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                    {String(timeLeft.minutes).padStart(2, "0")}
+                  </div>
+                  <h1 className="text-xs">MIN</h1>
+                </div>
+                :
+                <div className="text-center">
+                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                    {String(timeLeft.seconds).padStart(2, "0")}
+                  </div>
+                  <h1 className="text-xs">SEC</h1>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <CardContent className="space-y-2 pt-4">
@@ -141,9 +232,9 @@ export function DealsCard({
               style={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 1, // Adjust for number of lines
+                WebkitLineClamp: 1,
                 overflow: "hidden",
-                textOverflow: "ellipsis"
+                textOverflow: "ellipsis",
               }}
               dangerouslySetInnerHTML={{
                 __html: description ?? "Deals Description",
@@ -174,7 +265,6 @@ export function DealsCard({
       {/* Success Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="p-10">
-          {/* Replace this with your existing component */}
           <PaymentForm amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
         </DialogContent>
       </Dialog>
