@@ -461,7 +461,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </div>
             <div>
               <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">
-                {auction?.participations} of {auction?.participationsLimit} participants
+                {auction?.bookingCount} of {auction?.participationsLimit} participants
               </span>
             </div>
             {renderActionButton()}

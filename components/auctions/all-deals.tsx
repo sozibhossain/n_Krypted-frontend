@@ -25,6 +25,7 @@ interface Category {
 }
 
 interface Deal {
+  bookingCount: number
   participationsLimit: number | undefined
   _id: string
   title: string
@@ -437,7 +438,7 @@ export default function DealsPage() {
                           image={deal.images[0] || "/assets/deals.png"}
                           description={deal.description}
                           price={deal.price}
-                          participations={deal.participations}
+                          participations={deal.bookingCount}
                           maxParticipants={deal.participationsLimit}
                         />
                       ))

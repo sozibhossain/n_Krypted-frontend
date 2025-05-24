@@ -11,6 +11,7 @@ import { DealsSkeleton } from "@/components/delas_skleton"
 
 
 interface Deal {
+  bookingCount: number
   participationsLimit: number | undefined
   _id: string
   title: string
@@ -163,7 +164,7 @@ export function DealsSection() {
                         image={deal.images[0] || "/assets/deals.png"}
                         description={deal.description}
                         price={deal.price}
-                        participations={deal.participations}
+                        participations={deal.bookingCount}
                         maxParticipants={deal.participationsLimit}
                       />
                     </div>
