@@ -106,7 +106,7 @@ export function Footer() {
       <div className="flex flex-col md:flex-row justify-between text-xs text-[#595959] max-w-7xl mx-auto px-6 md:px-16">
         <p>© 2025 Agency All rights reserved.</p>
         <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
-          <Link href="/privacypolicy">Support</Link>
+          <Link href="/suport">Support</Link>
           <Link href="/report">Report Infringement</Link>
           <Link href="/refund-policies">Refund Policies</Link>
         </div>

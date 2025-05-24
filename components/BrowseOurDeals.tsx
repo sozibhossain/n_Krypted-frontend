@@ -80,7 +80,9 @@ export function BrowseOurDeals() {
                   status={deal.status}
                   image={deal.images[0] || "/assets/deals.png"}
                   description={deal.description}
-                  time= {deal.time}
+                  time={deal.time}
+                  createdAt={deal.createdAt}
+                  updatedAt={deal.updatedAt}
                   price={deal.price}
                   participations={deal.bookingCount}
                   maxParticipants={deal.participationsLimit}
