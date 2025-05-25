@@ -6,12 +6,11 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown, MapPin, Search } from "lucide-react"
+import { ChevronDown, MapPin, Search, X } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
 import Hideon from "@/Provider/Hideon"
-import Link from "next/link"
 
 interface Category {
   _id: string
@@ -50,7 +49,6 @@ export function CategoriesAndSearchBar() {
     },
   })
 
-
   // Fetch deals to get unique locations
   const { data: dealsData } = useQuery({
     queryKey: ["deals-locations"],
@@ -73,42 +71,47 @@ export function CategoriesAndSearchBar() {
 
   // Apply filters and search
   const applyFilters = () => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams()
 
-    if (searchQuery) {
-      // params.set("search", searchQuery)
-      router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
-    } else {
-      params.delete("search")
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim())
     }
 
     if (selectedCategory) {
       params.set("categoryName", selectedCategory)
-    } else {
-      params.delete("categoryName")
     }
 
     if (selectedLocation && selectedLocation !== "all") {
       params.set("location", selectedLocation)
-      router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
-    } else {
-      params.delete("location")
     }
 
     // Reset to page 1 when filters change
     params.set("page", "1")
 
-    router.push(`/deals?search=${encodeURIComponent(searchQuery)}`)
+    // Navigate to deals page with all parameters
+    const queryString = params.toString()
+    router.push(`/deals${queryString ? `?${queryString}` : ""}`)
   }
 
   // Handle category selection
   const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category === selectedCategory ? "" : category)
+    const newCategory = category === selectedCategory ? "" : category
+    setSelectedCategory(newCategory)
+
+    // Apply filters immediately
+    setTimeout(() => {
+      applyFilters()
+    }, 0)
   }
 
   // Handle location selection
   const handleLocationSelect = (location: string) => {
     setSelectedLocation(location)
+
+    // Apply filters immediately
+    setTimeout(() => {
+      applyFilters()
+    }, 0)
   }
 
   // Handle search input change
@@ -120,7 +123,17 @@ export function CategoriesAndSearchBar() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     applyFilters()
+  }
 
+  // Handle clearing search and reload the page
+  const handleClearSearch = () => {
+    // Navigate to deals page without parameters first
+    router.push("/deals")
+
+    // Then reload the page
+    setTimeout(() => {
+      window.location.reload()
+    }, 100)
   }
 
   // Update filters when URL params change
@@ -134,10 +147,9 @@ export function CategoriesAndSearchBar() {
 
   return (
     <div className="sticky top-[80px] z-50 bg-[#212121] w-full">
-      <Hideon routes={HIDDEN_ROUTES} >
+      <Hideon routes={HIDDEN_ROUTES}>
         <div className="">
           <header className="container py-3 ">
-
             <form onSubmit={handleSearchSubmit}>
               <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
                 {/* Categories Dropdown */}
@@ -163,15 +175,13 @@ export function CategoriesAndSearchBar() {
                         <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
                       ) : (
                         categoriesData?.data?.map((category: Category) => (
-                          <Link key={category._id} href={`/deals?category=${category.categoryName}`}>
-                            <DropdownMenuItem
-
-                              onClick={() => handleCategorySelect(category.categoryName)}
-                              className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
-                            >
-                              {category.categoryName}
-                            </DropdownMenuItem>
-                          </Link>
+                          <DropdownMenuItem
+                            key={category._id}
+                            onClick={() => handleCategorySelect(category.categoryName)}
+                            className={selectedCategory === category.categoryName ? "bg-gray-100" : ""}
+                          >
+                            {category.categoryName}
+                          </DropdownMenuItem>
                         ))
                       )}
                     </DropdownMenuContent>
@@ -184,9 +194,9 @@ export function CategoriesAndSearchBar() {
                     <div className="relative flex-1 max-w-2xl">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
-                        type="search"
-                        placeholder="Walk Through: Durchsuchen"
-                        className="pl-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                        type="text"
+                        placeholder="Search by title..."
+                        className="pl-10 pr-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
                         value={searchQuery}
                         onChange={handleSearchChange}
                         onKeyDown={(e) => {
@@ -196,6 +206,16 @@ export function CategoriesAndSearchBar() {
                           }
                         }}
                       />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={handleClearSearch}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 transition-colors duration-200 p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
+                          aria-label="Clear search and reload page"
+                        >
+                          <X className="h-4 w-4 stroke-2" />
+                        </button>
+                      )}
                     </div>
                     {/* Location Dropdown */}
                     <DropdownMenu>
@@ -210,28 +230,23 @@ export function CategoriesAndSearchBar() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`/deals?location=all`}>
-                          <DropdownMenuItem
-                            onClick={() => handleLocationSelect("all")}
-                            className={selectedLocation === "all" ? "bg-gray-100" : ""}
-                          >
-                            All Locations
-                          </DropdownMenuItem>
-                        </Link>
-
+                        <DropdownMenuItem
+                          onClick={() => handleLocationSelect("all")}
+                          className={selectedLocation === "all" ? "bg-gray-100" : ""}
+                        >
+                          All Locations
+                        </DropdownMenuItem>
                         {uniqueLocations.map((location: string) => (
-                          <Link href={`/deals?location=${location}`} key={location}>
-                            <DropdownMenuItem
-                              onClick={() => handleLocationSelect(location)}
-                              className={selectedLocation === location ? "bg-gray-100" : ""}
-                            >
-                              {location}
-                            </DropdownMenuItem>
-                          </Link>
+                          <DropdownMenuItem
+                            key={location}
+                            onClick={() => handleLocationSelect(location)}
+                            className={selectedLocation === location ? "bg-gray-100" : ""}
+                          >
+                            {location}
+                          </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-
                   </div>
                 </div>
               </div>

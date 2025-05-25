@@ -76,10 +76,9 @@ export default function DealsPage() {
   const currentMaxPrice = searchParams.get("maxPrice") || "1000"
   const currentDealType = searchParams.get("dealType") || ""
 
-  const category = searchParams.get('category');
-  const location = searchParams.get('location');
-  const search = searchParams.get('search');
-  
+  const category = searchParams.get("category")
+  const location = searchParams.get("location")
+  const search = searchParams.get("search")
 
   // Local state for filters
   const [selectedCategory, setSelectedCategory] = useState<string>(currentCategory)
@@ -90,8 +89,23 @@ export default function DealsPage() {
   ])
   const [selectedDealType, setSelectedDealType] = useState<string>(currentDealType)
   const [searchQuery, setSearchQuery] = useState<string>(search || "")
+  // const [participantsRange, setParticipantsRange] = useState<[number, number]>([0, 100])
 
   console.log(setSelectedDealType)
+
+  // Fetch all deals to get all available locations (without filters)
+  const { data: allDealsData } = useQuery({
+    queryKey: ["all-deals-locations"],
+    queryFn: async () => {
+      try {
+        const { data } = await axiosInstance.get("/api/deals")
+        return data.deals || []
+      } catch (error) {
+        console.error("Error fetching all deals:", error)
+        return []
+      }
+    },
+  })
 
   // Fetch deals with filters
   const {
@@ -99,29 +113,41 @@ export default function DealsPage() {
     isLoading: isLoadingDeals,
     error: dealsError,
   } = useQuery({
-    queryKey: ["deals", selectedCategory, priceRange, selectedDealType, currentPage],
+    queryKey: [
+      "deals",
+      selectedCategory,
+      selectedLocation,
+      priceRange,
+      // participantsRange,
+      selectedDealType,
+      currentPage,
+      searchQuery,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams()
       if (selectedCategory) params.set("categoryName", selectedCategory)
-      // Remove the location filter from the API call
+      if (selectedLocation && selectedLocation !== "all") {
+        params.set("location", selectedLocation)
+      }
       params.set("minPrice", priceRange[0].toString())
       params.set("maxPrice", priceRange[1].toString())
       if (selectedDealType) params.set("dealType", selectedDealType)
       params.set("page", currentPage.toString())
       params.set("limit", "10")
-      if (searchQuery) params.set("title", searchQuery)
-      if (selectedLocation && selectedLocation !== "all") {
-        params.set("location", selectedLocation)
-      }
+      if (searchQuery.trim()) params.set("title", searchQuery.trim())
+
+      // if (participantsRange[0] > 0 || participantsRange[1] < 100) {
+      //   params.set("minParticipants", participantsRange[0].toString())
+      //   params.set("maxParticipants", participantsRange[1].toString())
+      // }
 
       const { data } = await axiosInstance.get(`/api/deals?${params.toString()}`)
       return data
     },
   })
 
-
   // Memoize deals data
-  const dealsData = useMemo(() => response?.deals || [], [response])
+  // const dealsData = useMemo(() => response?.deals || [], [response])
   const totalPages: number = response?.pagination?.totalPages || 5
 
   // Filter deals by location on the client side if needed
@@ -137,7 +163,7 @@ export default function DealsPage() {
     return deals.filter((deal: Deal) => deal.location === selectedLocation)
   }, [response?.deals, selectedLocation])
 
-  // Fetch categories and all locations
+  // Fetch categories and extract locations from all deals
   useEffect(() => {
     const fetchCategoriesAndLocations = async () => {
       try {
@@ -152,12 +178,6 @@ export default function DealsPage() {
 
         if (data.success && Array.isArray(data.data)) {
           setCategories(data.data)
-
-          // Extract all unique locations from categories for the dropdown
-          const allLocations = Array.from(
-            new Set(data.data.map((cat: Category) => cat.location).filter(Boolean)),
-          ) as string[]
-          setAllLocations(allLocations)
         } else {
           throw new Error("Invalid data format received from API")
         }
@@ -172,21 +192,30 @@ export default function DealsPage() {
     fetchCategoriesAndLocations()
   }, [])
 
+  // Extract all unique locations from all deals (not filtered deals)
+  useEffect(() => {
+    if (allDealsData && allDealsData.length > 0) {
+      const uniqueLocations = Array.from(
+        new Set(allDealsData.map((deal: Deal) => deal.location).filter(Boolean)),
+      ) as string[]
+      setAllLocations(uniqueLocations)
+    }
+  }, [allDealsData])
+
   // Update URL when filters or page change
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams()
 
     if (selectedCategory) {
       params.set("categoryName", selectedCategory)
-    } else {
-      params.delete("categoryName")
     }
 
-    // Keep the location in the URL for UI state
     if (selectedLocation && selectedLocation !== "all") {
       params.set("location", selectedLocation)
-    } else {
-      params.delete("location")
+    }
+
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim())
     }
 
     params.set("minPrice", priceRange[0].toString())
@@ -194,14 +223,13 @@ export default function DealsPage() {
 
     if (selectedDealType) {
       params.set("dealType", selectedDealType)
-    } else {
-      params.delete("dealType")
     }
 
     params.set("page", currentPage.toString())
 
-    router.push(`?${params.toString()}`, { scroll: false })
-  }, [selectedCategory, selectedLocation, priceRange, selectedDealType, currentPage, router, searchParams])
+    const queryString = params.toString()
+    router.push(`?${queryString}`, { scroll: false })
+  }, [selectedCategory, selectedLocation, searchQuery, priceRange, selectedDealType, currentPage, router])
 
   // Handle filter changes
   const handleCategoryChange = (categoryName: string, checked: boolean | "indeterminate") => {
@@ -213,21 +241,17 @@ export default function DealsPage() {
     }
     setIsFilterOpen(false) // Close the Sheet on mobile
   }
-  useEffect(() =>{
-    if(category){
+  useEffect(() => {
+    if (category) {
       setSelectedCategory(category)
     }
-    if (search) { 
+    if (search) {
       setSearchQuery(search)
     }
-  }, [category, search])
-  useEffect(() =>{
-    if(location){
+    if (location) {
       setSelectedLocation(location)
     }
-  }, [location])
-
-
+  }, [category, search, location])
 
   const handlePriceChange = (value: number[]) => {
     setPriceRange([value[0], value[1]])
@@ -260,11 +284,6 @@ export default function DealsPage() {
 
   const activeFiltersCount = getActiveFiltersCount()
 
-  // Use allLocations instead of deriving from filtered deals
-  const locationsForDropdown = useMemo(() => {
-    return allLocations.length > 0 ? allLocations : Array.from(new Set(dealsData.map((deal: Deal) => deal.location)))
-  }, [allLocations, dealsData])
-
   // Filter Sidebar Component
   const FilterSidebar = () => (
     <div className="space-y-6 bg-white p-4 sm:p-5 rounded-lg shadow-sm w-full max-w-full lg:max-w-[300px]">
@@ -275,6 +294,8 @@ export default function DealsPage() {
           <div className="py-2 text-sm sm:text-base">Loading categories...</div>
         ) : categoryError ? (
           <div className="text-red-500 py-2 text-sm sm:text-base">Error: {categoryError}</div>
+        ) : categories.length === 0 ? (
+          <div className="py-2 text-sm sm:text-base text-gray-500">No categories available</div>
         ) : (
           <div className="space-y-2 sm:space-y-3">
             {categories.map((category) => (
@@ -301,10 +322,8 @@ export default function DealsPage() {
       {/* Locations */}
       <div>
         <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">Locations</h3>
-        {isLoadingDeals ? (
-          <div className="py-2 text-sm sm:text-base">Loading locations...</div>
-        ) : dealsError ? (
-          <div className="text-red-500 py-2 text-sm sm:text-base">Error loading locations</div>
+        {allLocations.length === 0 ? (
+          <div className="py-2 text-sm sm:text-base text-gray-500">Loading locations...</div>
         ) : (
           <Select value={selectedLocation} onValueChange={handleLocationChange}>
             <SelectTrigger className="w-full border border-[#4E4E4E] text-sm sm:text-base">
@@ -312,7 +331,7 @@ export default function DealsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Locations</SelectItem>
-              {locationsForDropdown.map((location) => (
+              {allLocations.map((location) => (
                 <SelectItem key={String(location)} value={String(location)}>
                   {String(location)}
                 </SelectItem>
@@ -343,8 +362,44 @@ export default function DealsPage() {
 
       {/* Price Range Slider */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">Price</h3>
+        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">Price Range</h3>
         <div className="space-y-4 sm:space-y-6">
+          {/* Price Input Fields */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <label className="text-sm text-gray-600 mb-1 block">Min Price</label>
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                value={priceRange[0]}
+                onChange={(e) => {
+                  const newMin = Math.max(0, Math.min(Number(e.target.value), priceRange[1] - 10))
+                  setPriceRange([newMin, priceRange[1]])
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
+              />
+            </div>
+            <span className="text-gray-400 mt-6">-</span>
+            <div className="flex-1">
+              <label className="text-sm text-gray-600 mb-1 block">Max Price</label>
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                value={priceRange[1]}
+                onChange={(e) => {
+                  const newMax = Math.min(1000, Math.max(Number(e.target.value), priceRange[0] + 10))
+                  setPriceRange([priceRange[0], newMax])
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="1000"
+              />
+            </div>
+          </div>
+
+          {/* Price Range Slider */}
           <Slider
             defaultValue={priceRange}
             min={0}
@@ -354,12 +409,70 @@ export default function DealsPage() {
             onValueChange={handlePriceChange}
             className="mt-4 sm:mt-6"
           />
+
+          {/* Price Display */}
           <div className="flex justify-between items-center text-xs sm:text-sm text-gray-600">
             <span>${priceRange[0]}</span>
             <span>${priceRange[1]}</span>
           </div>
+
+          {/* Quick Price Presets */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setPriceRange([0, 100])}
+              className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              $0 - $100
+            </button>
+            <button
+              onClick={() => setPriceRange([100, 300])}
+              className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              $100 - $300
+            </button>
+            <button
+              onClick={() => setPriceRange([300, 500])}
+              className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              $300 - $500
+            </button>
+            <button
+              onClick={() => setPriceRange([500, 1000])}
+              className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              $500+
+            </button>
+          </div>
+
+          {/* Clear Price Filter */}
+          <button
+            onClick={() => setPriceRange([0, 1000])}
+            className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            Clear Price Filter
+          </button>
         </div>
       </div>
+
+      {/* Participants Range Filter */}
+      {/* <div>
+        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">Participants</h3>
+        <div className="space-y-4 sm:space-y-6">
+          <Slider
+            defaultValue={[0, 100]}
+            min={0}
+            max={100}
+            step={5}
+            value={participantsRange}
+            onValueChange={(value) => setParticipantsRange([value[0], value[1]])}
+            className="mt-4 sm:mt-6"
+          />
+          <div className="flex justify-between items-center text-xs sm:text-sm text-gray-600">
+            <span>{participantsRange[0]} people</span>
+            <span>{participantsRange[1]} people</span>
+          </div>
+        </div>
+      </div> */}
     </div>
   )
 
@@ -433,7 +546,7 @@ export default function DealsPage() {
                           image={deal.images[0] || "/assets/deals.png"}
                           description={deal.description}
                           price={deal.price}
-                          time = {deal.time}
+                          time={deal.time}
                           participations={deal.bookingCount}
                           maxParticipants={deal.participationsLimit}
                         />
@@ -446,9 +559,17 @@ export default function DealsPage() {
                   </div>
                 )}
 
-                <div className="mt-8">
-                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalItems={0} itemsPerPage={0} />
-                </div>
+                {filteredDealsData.length > 0 && (
+                  <div className="mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      totalItems={0}
+                      itemsPerPage={0}
+                    />
+                  </div>
+                )}
               </>
             )}
           </div>
