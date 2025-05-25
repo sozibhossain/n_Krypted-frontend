@@ -114,11 +114,11 @@ export function DealsCard({
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Please log in to book this deal")
-      return
+      toast.success("Please log in to book this deal");
+      return false;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
@@ -130,34 +130,42 @@ export function DealsCard({
           userId: session.user.id,
           dealsId: id,
           notifyMe: notifyMe,
+          isBooked: !notifyMe // Explicitly set opposites
         }),
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setBookingId(data.booking._id)
-        setIsModalOpen(true)
+        const data = await response.json();
+
+        // Handle API inconsistency
+        const isActualBooking = notifyMe ? false : data.booking.isBooked;
+
+        setBookingId(data.booking._id);
+
+        if (notifyMe) {
+          toast.success("You'll be notified when this deal becomes available!");
+          return false;
+        }
+
+        return isActualBooking; // Only open modal if it's a real booking
       } else {
-        const error = await response.json()
-        throw new Error(error.message || "Something went wrong")
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Something went wrong" + (error as Error).message)
+      toast.error("Something went wrong: " + (error as Error).message);
+      return false;
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Helper functions for better readability
   const isDealExpired = timeLeft.isExpired
   const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false
   const hasTimeLimit = time > 0
   const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true
-  // const shouldShowTimer = hasTimeLimit && !isDealExpired && (createdAt || updatedAt)
-
-  // Updated participant display logic with all three conditions
   const shouldShowParticipants = hasTimeLimit && !isDealExpired && maxParticipants && hasAvailableSpots
-  // const shouldShowFullCapacityWarning = hasTimeLimit && !isDealExpired && maxParticipants && !hasAvailableSpots
 
   const renderActionButton = () => {
     // Priority 1: If time has expired
@@ -165,7 +173,9 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={() => handleBooking(true)}
+          onClick={async () => {
+            await handleBooking(true)
+          }}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
@@ -178,7 +188,9 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={() => handleBooking(true)}
+          onClick={async () => {
+            await handleBooking(true)
+          }}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
@@ -191,7 +203,10 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={() => handleBooking(false)}
+          onClick={async () => {
+            const shouldOpenModal = await handleBooking(false)
+            if (shouldOpenModal) setIsModalOpen(true)
+          }}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Book now"}
@@ -201,7 +216,9 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={() => handleBooking(true)}
+          onClick={async () => {
+            await handleBooking(true)
+          }}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
@@ -231,12 +248,10 @@ export function DealsCard({
               alt={title || "Deal Image"}
               width={600}
               height={400}
-              className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${
-                isHovered ? "scale-105" : "scale-100"
-              } transition-transform duration-300`}
+              className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
+                } transition-transform duration-300`}
             />
 
-            {/* Timer - Only show if deal has time and isn't expired */}
             {shouldShowParticipants && (
               <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
                 <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
@@ -289,27 +304,18 @@ export function DealsCard({
               </div>
             </Link>
 
-            {/* Price and Participants Display */}
             <div className="flex items-center justify-between">
               <span className="font-semibold">${price?.toFixed(2)}</span>
 
-              {/* Show participants when all conditions are met:
-                  1. time > 0 (hasTimeLimit)
-                  2. !timeLeft.isExpired 
-                  3. maxParticipants exists
-                  4. participations < maxParticipants (hasAvailableSpots)
-              */}
               {shouldShowParticipants && (
                 <div className="flex gap-2 items-center text-black">
                   <Users className="w-4 h-4" />
                   <span>
                     {participations}/{maxParticipants} Participants
                   </span>
-                </div>  
+                </div>
               )}
 
-
-              {/* Show participants for deals without time limits but with capacity */}
               {!hasTimeLimit && maxParticipants && (
                 <div className="flex gap-2 items-center text-gray-600">
                   <Users className="w-4 h-4" />
@@ -325,7 +331,6 @@ export function DealsCard({
         <CardFooter>{renderActionButton()}</CardFooter>
       </Card>
 
-      {/* Success Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="p-10">
           <PaymentForm amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
