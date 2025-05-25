@@ -9,6 +9,7 @@ import { DealsCardSkeleton } from "./skeleton/dealsSkeleton"
 
 
 interface Deal {
+  time: number | undefined
   bookingCount: number
   participationsLimit: number | undefined
   _id: string
@@ -70,7 +71,7 @@ export function BrowseOurDeals() {
       <div className="grid grid-cols-1 space-y-5 md:space-y-0 gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
         {isLoading
           ? skeletonItems
-          : dealsData.map((deal: Deal) => (
+          : dealsData.slice(0, 9).map((deal: Deal) => (
             <div key={deal._id}>
               <div className="mx-auto w-full md:max-[32%]">
                 <DealsCard
@@ -79,6 +80,9 @@ export function BrowseOurDeals() {
                   status={deal.status}
                   image={deal.images[0] || "/assets/deals.png"}
                   description={deal.description}
+                  time={deal.time}
+                  createdAt={deal.createdAt}
+                  updatedAt={deal.updatedAt}
                   price={deal.price}
                   participations={deal.bookingCount}
                   maxParticipants={deal.participationsLimit}

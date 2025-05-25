@@ -58,7 +58,6 @@ export default function Dashboard() {
 
                 const data = await res.json()
                 setUserData(data.data)
-                console.log(data.data.name) // adjust depending on API response
             } catch (error) {
                 console.error("Error fetching user:", error)
                 toast.error("Failed to load user data")

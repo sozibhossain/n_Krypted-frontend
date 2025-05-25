@@ -16,7 +16,7 @@ const poppins = Poppins({
 export const metadata = {
   title: " Walk Throughz",
   icons: {
-    icon: "/assets/profile_image.png", 
+    icon: "/assets/favicon.ico", 
   },
 };
 

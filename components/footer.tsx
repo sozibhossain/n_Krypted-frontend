@@ -1,8 +1,4 @@
 import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
   Mail,
   MapPin,
   Phone,
@@ -40,30 +36,6 @@ export function Footer() {
             Join us on social media for exclusive updates, auction previews, and
             special offers!
           </p>
-          <div className="flex space-x-4">
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Facebook className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Instagram className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Twitter className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-
-              <Link href="">
-                <Linkedin className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-          </div>
-
         </div>
 
         <div>
@@ -73,7 +45,7 @@ export function Footer() {
 
             <li><Link href="/about-us">About Us</Link></li>
             <li><Link href="/deals">Deals</Link></li>
-            <li><Link href="/blogs">Blogs</Link></li>
+            <li><Link href="/blog">Blogs</Link></li>
             <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>
@@ -106,7 +78,7 @@ export function Footer() {
       <div className="flex flex-col md:flex-row justify-between text-xs text-[#595959] max-w-7xl mx-auto px-6 md:px-16">
         <p>© 2025 Agency All rights reserved.</p>
         <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
-          <Link href="/privacypolicy">Support</Link>
+          <Link href="/suport">Support</Link>
           <Link href="/report">Report Infringement</Link>
           <Link href="/refund-policies">Refund Policies</Link>
         </div>
