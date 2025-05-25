@@ -246,7 +246,7 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="time">Deal Time</Label>
+              <Label htmlFor="time">Deal Time (minutes)</Label>
               <Input
                 id="time"
                 type="text"
