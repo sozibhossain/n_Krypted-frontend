@@ -56,6 +56,7 @@ export function DealsCard({
     isExpired: false,
   })
 
+  // Timer logic
   useEffect(() => {
     if (time <= 0 || (!createdAt && !updatedAt)) {
       setTimeLeft({
@@ -68,10 +69,8 @@ export function DealsCard({
     }
 
     const timer = setInterval(() => {
-      // Use updatedAt if available, otherwise fall back to createdAt
       const startTime = updatedAt || createdAt
 
-      // Additional safety check to ensure startTime is not undefined
       if (!startTime) {
         clearInterval(timer)
         setTimeLeft({
@@ -149,14 +148,20 @@ export function DealsCard({
     }
   }
 
-  const renderActionButton = () => {
-    // If time has expired
-    if (timeLeft.isExpired) {
-      return <Button className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80">Notify me</Button>
-    }
+  // Helper functions for better readability
+  const isDealExpired = timeLeft.isExpired
+  const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false
+  const hasTimeLimit = time > 0
+  const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true
+  // const shouldShowTimer = hasTimeLimit && !isDealExpired && (createdAt || updatedAt)
 
-    // If deal is fully booked (participations reached max)
-    if (maxParticipants && participations >= maxParticipants) {
+  // Updated participant display logic with all three conditions
+  const shouldShowParticipants = hasTimeLimit && !isDealExpired && maxParticipants && hasAvailableSpots
+  // const shouldShowFullCapacityWarning = hasTimeLimit && !isDealExpired && maxParticipants && !hasAvailableSpots
+
+  const renderActionButton = () => {
+    // Priority 1: If time has expired
+    if (isDealExpired) {
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
@@ -168,7 +173,20 @@ export function DealsCard({
       )
     }
 
-    // Regular status-based rendering
+    // Priority 2: If deal is fully booked (participations reached max)
+    if (isDealAtCapacity) {
+      return (
+        <Button
+          className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
+          onClick={() => handleBooking(true)}
+          disabled={isLoading}
+        >
+          {isLoading ? "Processing..." : "Notify me"}
+        </Button>
+      )
+    }
+
+    // Priority 3: Regular status-based rendering
     if (status === "activate") {
       return (
         <Button
@@ -190,88 +208,119 @@ export function DealsCard({
         </Button>
       )
     }
+
+    // Default fallback
+    return (
+      <Button className="w-full bg-gray-400 text-white font-semibold mt-2" disabled>
+        Unavailable
+      </Button>
+    )
   }
 
   return (
     <>
       <Card className="overflow-hidden border-none bg-white p-2 max-w-[370px] hover:shadow-[0px_0px_10px_2px_#FFFFFF] transition-shadow duration-300 h-full">
-        <div
-          className="relative overflow-hidden rounded-lg"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <Image
-            src={image || "/placeholder.svg"}
-            alt={title || "Deal Image"}
-            width={600}
-            height={400}
-            className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
+        <Link href={`/deals/${id}`} className="no-underline">
+          <div
+            className="relative overflow-hidden rounded-lg"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <Image
+              src={image || "/placeholder.svg?height=222&width=370&query=deal image"}
+              alt={title || "Deal Image"}
+              width={600}
+              height={400}
+              className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${
+                isHovered ? "scale-105" : "scale-100"
               } transition-transform duration-300`}
-          />
+            />
 
-          {/* Timer - Only show if deal has time and isn't expired */}
-          {time > 0 && !timeLeft.isExpired && (createdAt || updatedAt) && (
-            <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
-              <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
-                <div className="text-center">
-                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
-                    {String(timeLeft.hours).padStart(2, "0")}
+            {/* Timer - Only show if deal has time and isn't expired */}
+            {shouldShowParticipants && (
+              <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
+                <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
+                  <div className="text-center">
+                    <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                      {String(timeLeft.hours).padStart(2, "0")}
+                    </div>
+                    <h1 className="text-xs">HR</h1>
                   </div>
-                  <h1 className="text-xs">HR</h1>
-                </div>
-                :
-                <div className="text-center">
-                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
-                    {String(timeLeft.minutes).padStart(2, "0")}
+                  :
+                  <div className="text-center">
+                    <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                      {String(timeLeft.minutes).padStart(2, "0")}
+                    </div>
+                    <h1 className="text-xs">MIN</h1>
                   </div>
-                  <h1 className="text-xs">MIN</h1>
-                </div>
-                :
-                <div className="text-center">
-                  <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
-                    {String(timeLeft.seconds).padStart(2, "0")}
+                  :
+                  <div className="text-center">
+                    <div className="w-[35px] h-[35px] rounded-sm flex items-center justify-center">
+                      {String(timeLeft.seconds).padStart(2, "0")}
+                    </div>
+                    <h1 className="text-xs">SEC</h1>
                   </div>
-                  <h1 className="text-xs">SEC</h1>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-
-        <CardContent className="space-y-2 pt-4">
-          <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
-          <p className="text-[16px] font-normal text-[#737373]">
-            <div
-              className="text-[#737373] truncate max-w-full"
-              style={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 1,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-              dangerouslySetInnerHTML={{
-                __html: description ?? "Deals Description",
-              }}
-            />
-          </p>
-          <Link href={`/deals/${id}`}>
-            <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
-              <span>Read More</span>
-              <ChevronRight className="w-4 h-4" />
-            </div>
-          </Link>
-
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">${price?.toFixed(2)}</span>
-            <div className="flex gap-2 items-center">
-              <Users className="w-4 h-4" />
-              <span>
-                {participations}/{maxParticipants} participants
-              </span>
-            </div>
+            )}
           </div>
-        </CardContent>
+
+          <CardContent className="space-y-2 pt-4">
+            <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
+            <p className="text-[16px] font-normal text-[#737373]">
+              <div
+                className="text-[#737373] truncate max-w-full"
+                style={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 1,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: description ?? "Deals Description",
+                }}
+              />
+            </p>
+            <Link href={`/deals/${id}`}>
+              <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
+                <span>Read More</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            </Link>
+
+            {/* Price and Participants Display */}
+            <div className="flex items-center justify-between">
+              <span className="font-semibold">${price?.toFixed(2)}</span>
+
+              {/* Show participants when all conditions are met:
+                  1. time > 0 (hasTimeLimit)
+                  2. !timeLeft.isExpired 
+                  3. maxParticipants exists
+                  4. participations < maxParticipants (hasAvailableSpots)
+              */}
+              {shouldShowParticipants && (
+                <div className="flex gap-2 items-center text-black">
+                  <Users className="w-4 h-4" />
+                  <span>
+                    {participations}/{maxParticipants} Participants
+                  </span>
+                </div>  
+              )}
+
+
+              {/* Show participants for deals without time limits but with capacity */}
+              {!hasTimeLimit && maxParticipants && (
+                <div className="flex gap-2 items-center text-gray-600">
+                  <Users className="w-4 h-4" />
+                  <span>
+                    {participations}/{maxParticipants} participants
+                  </span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Link>
 
         <CardFooter>{renderActionButton()}</CardFooter>
       </Card>

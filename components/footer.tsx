@@ -1,8 +1,4 @@
 import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
   Mail,
   MapPin,
   Phone,
@@ -40,30 +36,6 @@ export function Footer() {
             Join us on social media for exclusive updates, auction previews, and
             special offers!
           </p>
-          <div className="flex space-x-4">
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Facebook className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Instagram className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Link href="">
-                <Twitter className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-            <div className="border border-[#1E1E1E] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-
-              <Link href="">
-                <Linkedin className="w-4 h-4 text-black" />
-              </Link>
-            </div>
-          </div>
-
         </div>
 
         <div>
@@ -73,7 +45,7 @@ export function Footer() {
 
             <li><Link href="/about-us">About Us</Link></li>
             <li><Link href="/deals">Deals</Link></li>
-            <li><Link href="/blogs">Blogs</Link></li>
+            <li><Link href="/blog">Blogs</Link></li>
             <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>
