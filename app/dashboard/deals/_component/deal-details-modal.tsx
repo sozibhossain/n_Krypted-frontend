@@ -130,14 +130,14 @@ export default function DealDetailsModal({ open, onOpenChange, dealId }: DealDet
                         )}
 
                         <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold">Description</h3>
-                                    <div
-                                        className="list-item list-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: deal?.description ?? "deal Description",
-                                        }}
-                                    />
-                           
+                            <h3 className="text-lg font-semibold">Description</h3>
+                            <div
+                                className="list-item list-none"
+                                dangerouslySetInnerHTML={{
+                                    __html: deal?.description ?? "deal Description",
+                                }}
+                            />
+
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -146,28 +146,28 @@ export default function DealDetailsModal({ open, onOpenChange, dealId }: DealDet
                                     <h3 className="text-lg font-semibold mb-2">Deal Information</h3>
                                     <div className="space-y-2">
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Price:</span>
+                                            <span className="text-[#212121 ]">Price:</span>
                                             <span className="font-medium">${deal.price.toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Location:</span>
+                                            <span className="text-[#212121 ]">Location:</span>
                                             <span className="font-medium">{deal.location}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Category:</span>
+                                            <span className="text-[#212121 ]">Category:</span>
                                             <span className="font-medium">{deal.category?.categoryName || "Uncategorized"}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Participations:</span>
+                                            <span className="text-[#212121 ]">Participations:</span>
                                             <span className="font-medium">{deal.participations}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Participations Limit:</span>
+                                            <span className="text-[#212121 ]">Participations Limit:</span>
                                             <span className="font-medium">{deal.participationsLimit}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Time (hours):</span>
-                                            <span className="font-medium">{deal.time}</span>
+                                            <span className="text-[#212121 ]">Time (minutes):</span>
+                                            <span className="font-medium">{deal.time} minutes</span>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -178,11 +178,11 @@ export default function DealDetailsModal({ open, onOpenChange, dealId }: DealDet
                                     <h3 className="text-lg font-semibold mb-2">Dates</h3>
                                     <div className="space-y-2">
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Created:</span>
+                                            <span className="text-[#212121 ]">Created:</span>
                                             <span className="font-medium">{formatDate(deal.createdAt)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Last Updated:</span>
+                                            <span className="text-[#212121 ]">Last Updated:</span>
                                             <span className="font-medium">{formatDate(deal.updatedAt)}</span>
                                         </div>
                                     </div>
@@ -228,7 +228,7 @@ export default function DealDetailsModal({ open, onOpenChange, dealId }: DealDet
                                         } catch (e) {
                                             parsedOffers = [offerStr]
                                             console.log(e);
-                                            
+
                                         }
                                         /* eslint-disable @typescript-eslint/no-explicit-any */
                                         return parsedOffers.map((offer: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined, i: any) => (
