@@ -19,7 +19,7 @@ const page = () => {
           },
         ]}
       />
-      <div className=" mt-28 container">
+      <div className="py-28 container">
         <Notifications />
       </div>
     </div>

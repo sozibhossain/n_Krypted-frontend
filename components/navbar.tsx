@@ -21,8 +21,6 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ]
 
-
-
 export function Navbar() {
   const router = useRouter()
   const [open, setOpen] = React.useState(false)
@@ -33,14 +31,15 @@ export function Navbar() {
   const token = sessionData?.user?.accessToken
   const role = sessionData?.user?.role
 
+  const session = useSession()
+  const userId = session?.data?.user?.id
 
-
-  const { notificationCount, setNotificationCount } = useSocketContext()
+  const { notificationCount, setNotificationCount, isConnected } = useSocketContext()
 
   const markNotificationsAsRead = async () => {
     if (!token) return
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notifications/read-all?userId=${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +47,7 @@ export function Navbar() {
         },
       })
       localStorage.removeItem("notificationCount")
-      setNotificationCount(null)
+      setNotificationCount(0)
     } catch (error) {
       console.error(error)
     }
@@ -85,7 +84,13 @@ export function Navbar() {
             <Link href="/" className="flex items-center gap-2">
               <div className="text-center">
                 <div className="flex justify-center">
-                  <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
+                  <Image
+                    src="/assets/logoheader.png"
+                    alt="Logo"
+                    width={100}
+                    height={100}
+                    className="h-[30px] w-[80px]"
+                  />
                 </div>
                 <h1 className="font-benedict text-[32px] font-normal mb-2 text-white">Walk Throughz</h1>
               </div>
@@ -141,14 +146,20 @@ export function Navbar() {
                         router.push(href)
                       }}
                       className={getIconClasses(href)}
+                      title={`${isConnected ? "Connected" : "Disconnected"} - ${notificationCount} notifications`}
                     >
                       <Icon className={getIconColor(href)} size={20} />
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
+                          {notificationCount}
+                        </span>
+                      )}
                     </button>
                   ) : (
                     <Link key={href} href={href} className={getIconClasses(href)}>
                       <Icon className={getIconColor(href)} size={20} />
                     </Link>
-                  )
+                  ),
                 )}
               </div>
             )}
@@ -209,9 +220,9 @@ export function Navbar() {
                                 isActive("/notifications") ? "text-foreground" : "text-muted-foreground"
                               }`}
                             >
-                              Notifications
-                              {typeof notificationCount === "number" && notificationCount > 0 && (
-                                <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                              Notifications {!isConnected && "(Offline)"}
+                              {notificationCount > 0 && (
+                                <span className="ml-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
                                   {notificationCount}
                                 </span>
                               )}
