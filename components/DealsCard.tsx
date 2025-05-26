@@ -165,7 +165,13 @@ export function DealsCard({
   const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false
   const hasTimeLimit = time > 0
   const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true
-  const shouldShowParticipants = hasTimeLimit && !isDealExpired && maxParticipants && hasAvailableSpots
+  const shouldShowParticipants =
+    hasTimeLimit &&
+    !isDealExpired &&
+    maxParticipants &&
+    hasAvailableSpots &&
+    status === "activate"
+
 
   const renderActionButton = () => {
     // Priority 1: If time has expired
