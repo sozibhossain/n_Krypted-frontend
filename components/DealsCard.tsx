@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { PaymentForm } from "./pyment/Pyment"
+import { useRouter } from "next/navigation"
+
 
 interface DealsCardProps {
   id: string
@@ -55,6 +57,9 @@ export function DealsCard({
     seconds: 0,
     isExpired: false,
   })
+
+
+  const router = useRouter();
 
 
  
@@ -118,8 +123,7 @@ export function DealsCard({
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Please log in to book this deal");
-      window.location.href = "/login";
+      router.push("/login");
       return false;
     }
 

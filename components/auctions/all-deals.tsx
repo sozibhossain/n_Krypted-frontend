@@ -539,14 +539,16 @@ export default function DealsPage() {
                     {filteredDealsData.length > 0 ? (
                       filteredDealsData.map((deal: Deal) => (
                         <DealsCard
+                          id={deal._id}
                           key={deal._id}
                           status={deal.status}
-                          id={deal._id}
                           title={deal.title}
                           image={deal.images[0] || "/assets/deals.png"}
                           description={deal.description}
                           price={deal.price}
                           time={deal.time}
+                          createdAt={deal.createdAt}
+                          updatedAt={deal.updatedAt}
                           participations={deal.bookingCount}
                           maxParticipants={deal.participationsLimit}
                         />
