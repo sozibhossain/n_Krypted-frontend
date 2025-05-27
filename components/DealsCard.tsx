@@ -56,6 +56,10 @@ export function DealsCard({
     isExpired: false,
   })
 
+
+ 
+
+
   // Timer logic
   useEffect(() => {
     if (time <= 0 || (!createdAt && !updatedAt)) {
@@ -115,6 +119,7 @@ export function DealsCard({
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
       toast.success("Please log in to book this deal");
+      window.location.href = "/login";
       return false;
     }
 
