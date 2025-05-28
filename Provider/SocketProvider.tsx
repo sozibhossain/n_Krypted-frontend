@@ -1,229 +1,60 @@
 "use client"
 
-import { useSession } from "next-auth/react"
 import type React from "react"
-import { createContext, useState, useEffect, useContext, useCallback } from "react"
-import { io, type Socket } from "socket.io-client"
-import { toast } from "sonner"
 
-interface NotificationData {
-  dealId: any
-  updatedAt: string | number | Date
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { io, type Socket } from "socket.io-client"
+import { useSession } from "next-auth/react"
+
+export interface Deal {
+  _id: string
+  title: string
+  description: string
+  participationsLimit: number
+  price: number
+  location?: string
+  images?: string[]
+  offers?: string[]
+  status?: string
+  category?:
+    | string
+    | {
+        _id: string
+        categoryName: string
+        image: string
+        createdAt: string
+        updatedAt: string
+      }
+  time?: number
+  createdAt?: string
+  updatedAt?: string
+  __v?: number
+}
+
+export interface Notification {
   _id: string
   message: string
-  type: string
-  auction?: {
-    _id: string
-    title: string
-    sku: string
-  }
-  isRead: boolean
   createdAt: string
-  notificationCount?: number
-  userId?: string
+  updatedAt: string
+  userId: string
+  isRead: boolean
+  type: string
+  dealId?: Deal | string
+  auction?: {
+    title: string
+  }
 }
 
 interface SocketContextType {
   socket: Socket | null
-  notifications: NotificationData[]
-  setNotifications: React.Dispatch<React.SetStateAction<NotificationData[]>>
+  isConnected: boolean
+  notifications: Notification[]
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
   notificationCount: number
   setNotificationCount: React.Dispatch<React.SetStateAction<number>>
-  isConnected: boolean
-  connectionError: string | null
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined)
-
-export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [socket, setSocket] = useState<Socket | null>(null)
-  const [notifications, setNotifications] = useState<NotificationData[]>([])
-  const [isConnected, setIsConnected] = useState(false)
-  const [connectionError, setConnectionError] = useState<string | null>(null)
-  const session = useSession()
-  const token = session?.data?.user?.accessToken
-  const userID = session?.data?.user?.id
-
-  const [notificationCount, setNotificationCount] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("notificationCount")
-      try {
-        return stored ? Number.parseInt(stored, 10) : 0
-      } catch (error) {
-        console.error("Failed to parse notification count from localStorage:", error)
-        return 0
-      }
-    }
-    return 0
-  })
-
-  // Save notification count to localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("notificationCount", notificationCount.toString())
-    }
-  }, [notificationCount])
-
-  const handleDealStatusChange = useCallback(
-    (data: any) => {
-      console.log("deal_status_change received:", data)
-
-      const notificationData: NotificationData = {
-        _id: `temp_${Date.now()}`, // Temporary ID since backend doesn't send one
-        message: data.message,
-        type: "deal_status_change",
-        dealId: data.dealsId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        isRead: false,
-        userId: userID || "",
-      }
-
-      setNotifications((prevNotifications) => {
-        // Avoid duplicates based on message and dealId
-        const exists = prevNotifications.some(
-          (notif) => notif.message === data.message && notif.dealId === data.dealsId,
-        )
-        if (exists) return prevNotifications
-        return [notificationData, ...prevNotifications]
-      })
-
-      setNotificationCount((prev) => prev + 1)
-      toast.success(data.message)
-    },
-    [userID],
-  )
-
-  const handleNewDeal = useCallback(
-    (data: any) => {
-      console.log("new_deal received:", data)
-
-      const notificationData: NotificationData = {
-        _id: `temp_${Date.now()}`, // Temporary ID since backend doesn't send one
-        message: data.message,
-        type: "new_deal",
-        dealId: data.deal?._id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        isRead: false,
-        userId: userID || "",
-      }
-
-      setNotifications((prevNotifications) => {
-        const exists = prevNotifications.some(
-          (notif) => notif.message === data.message && notif.dealId === data.deal?._id,
-        )
-        if (exists) return prevNotifications
-        return [notificationData, ...prevNotifications]
-      })
-
-      setNotificationCount((prev) => prev + 1)
-      toast.success(data.message)
-    },
-    [userID],
-  )
-
-  const handlePendingNotifications = useCallback((notifications: NotificationData[]) => {
-    console.log("pending_notifications received:", notifications)
-    setNotifications(notifications)
-    setNotificationCount(notifications.filter((n) => !n.isRead).length)
-  }, [])
-
-  // Socket connection management
-  useEffect(() => {
-    if (!token || !userID) {
-      if (socket) {
-        console.log("Disconnecting socket - no token or userID")
-        socket.disconnect()
-        setSocket(null)
-        setIsConnected(false)
-      }
-      return
-    }
-
-    if (socket?.connected) {
-      return // Already connected
-    }
-
-    console.log("Attempting to connect to socket with userID:", userID)
-
-    const newSocket = io("http://localhost:5000", {
-      transports: ["websocket", "polling"],
-      timeout: 20000,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      forceNew: true,
-    })
-
-    newSocket.on("connect", () => {
-      console.log("Socket connected successfully, ID:", newSocket.id)
-      setIsConnected(true)
-      setConnectionError(null)
-
-      // Authenticate with the backend
-      console.log("Authenticating with userID:", userID)
-      newSocket.emit("authenticate", userID)
-    })
-
-    newSocket.on("disconnect", (reason) => {
-      console.log("Socket disconnected, reason:", reason)
-      setIsConnected(false)
-    })
-
-    newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error)
-      setConnectionError(error.message)
-      setIsConnected(false)
-    })
-
-    newSocket.on("reconnect", (attemptNumber) => {
-      console.log("Socket reconnected after", attemptNumber, "attempts")
-      setIsConnected(true)
-      setConnectionError(null)
-      // Re-authenticate after reconnection
-      newSocket.emit("authenticate", userID)
-    })
-
-    newSocket.on("reconnect_error", (error) => {
-      console.error("Socket reconnection error:", error)
-      setConnectionError(error.message)
-    })
-
-    // Listen for backend events
-    newSocket.on("deal_status_change", handleDealStatusChange)
-    newSocket.on("new_deal", handleNewDeal)
-    newSocket.on("pending_notifications", handlePendingNotifications)
-
-    setSocket(newSocket)
-
-    return () => {
-      console.log("Cleaning up socket connection")
-      newSocket.off("deal_status_change", handleDealStatusChange)
-      newSocket.off("new_deal", handleNewDeal)
-      newSocket.off("pending_notifications", handlePendingNotifications)
-      newSocket.disconnect()
-      setSocket(null)
-      setIsConnected(false)
-    }
-  }, [token, userID, handleDealStatusChange, handleNewDeal, handlePendingNotifications])
-
-  return (
-    <SocketContext.Provider
-      value={{
-        socket,
-        notifications,
-        setNotifications,
-        notificationCount,
-        setNotificationCount,
-        isConnected,
-        connectionError,
-      }}
-    >
-      {children}
-    </SocketContext.Provider>
-  )
-}
 
 export const useSocketContext = () => {
   const context = useContext(SocketContext)
@@ -231,4 +62,176 @@ export const useSocketContext = () => {
     throw new Error("useSocketContext must be used within a SocketProvider")
   }
   return context
+}
+
+interface SocketProviderProps {
+  children: ReactNode
+}
+
+export const SocketProvider = ({ children }: SocketProviderProps) => {
+  const [socket, setSocket] = useState<Socket | null>(null)
+  const [isConnected, setIsConnected] = useState(false)
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [notificationCount, setNotificationCount] = useState(0)
+
+  const session = useSession()
+  const userId = session?.data?.user?.id
+
+  // Load notification count from localStorage on initial render
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedCount = localStorage.getItem("notificationCount")
+      if (savedCount) {
+        setNotificationCount(Number.parseInt(savedCount, 10))
+      }
+    }
+  }, [])
+
+  // Update localStorage when notification count changes
+  useEffect(() => {
+    if (typeof window !== "undefined" && notificationCount > 0) {
+      localStorage.setItem("notificationCount", notificationCount.toString())
+    }
+  }, [notificationCount])
+
+  useEffect(() => {
+    if (!userId) return
+
+    console.log("Initializing socket connection...")
+
+    // Initialize socket connection
+    const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_URL || "", {
+      transports: ["websocket"],
+      autoConnect: true,
+    })
+
+    setSocket(socketInstance)
+
+    // Connection event handlers
+    socketInstance.on("connect", () => {
+      console.log("Connected to socket server:", socketInstance.id)
+      setIsConnected(true)
+
+      // Authenticate and join rooms
+      socketInstance.emit("authenticate", userId)
+      socketInstance.emit("join", "new_deals") // Join any specific rooms
+    })
+
+    // Handle pending notifications when user connects
+    socketInstance.on("pending_notifications", (pendingNotifications: Notification[]) => {
+      console.log("Received pending notifications:", pendingNotifications)
+
+      if (pendingNotifications && pendingNotifications.length > 0) {
+        setNotifications((prev) => {
+          // Merge with existing notifications, avoiding duplicates
+          const existingIds = new Set(prev.map((n) => n._id))
+          const newNotifications = pendingNotifications.filter((n) => !existingIds.has(n._id))
+          const merged = [...newNotifications, ...prev]
+
+          // Update notification count based on unread notifications
+          const unreadCount = merged.filter((n) => !n.isRead).length
+          setNotificationCount(unreadCount)
+
+          return merged
+        })
+      }
+    })
+
+    // Handle new deal notifications
+    socketInstance.on("new_deal", (data: { message: string; deal: Deal }) => {
+      console.log("Received new deal notification:", data)
+
+      if (data && data.deal) {
+        const newNotification: Notification = {
+          _id: `temp_${Date.now()}`, // Temporary ID until we get the real one from server
+          message: data.message,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          userId: userId,
+          isRead: false,
+          type: "new_deal",
+          dealId: data.deal,
+        }
+
+        setNotifications((prev) => [newNotification, ...prev])
+        setNotificationCount((prev) => prev + 1)
+
+        // Show browser notification if permission is granted
+        if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+          new Notification("New Deal Available!", {
+            body: data.message,
+            icon: "/favicon.ico",
+          })
+        }
+      }
+    })
+
+    // Handle deal status change notifications - Updated to handle full deal object
+    socketInstance.on("deal_status_change", (data: { message: string; deal: Deal; newStatus: string, id:string }) => {
+      console.log("Received deal status change notification:", data)
+
+      if (data && data.deal) {
+        const newNotification: Notification = {
+          _id: data.id, 
+          message: data.message,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          userId: userId,
+          isRead: false,
+          type: "deal_status_change",
+          dealId: data.deal, // Now storing the full deal object
+        }
+
+        setNotifications((prev) => [newNotification, ...prev])
+        setNotificationCount((prev) => prev + 1)
+
+        // Show browser notification if permission is granted
+        if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+          new Notification("Deal Status Updated", {
+            body: data.message,
+            icon: "/favicon.ico",
+          })
+        }
+      }
+    })
+
+    // Handle connection errors
+    socketInstance.on("connect_error", (error) => {
+      console.error("Socket connection error:", error)
+      setIsConnected(false)
+    })
+
+    socketInstance.on("disconnect", () => {
+      console.log("Disconnected from socket server")
+      setIsConnected(false)
+    })
+
+    // Cleanup on unmount
+    return () => {
+      console.log("Cleaning up socket connection")
+      socketInstance.disconnect()
+      setSocket(null)
+      setIsConnected(false)
+    }
+  }, [userId])
+
+  // Request notification permission on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission()
+      }
+    }
+  }, [])
+
+  const value: SocketContextType = {
+    socket,
+    isConnected,
+    notifications,
+    setNotifications,
+    notificationCount,
+    setNotificationCount,
+  }
+
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
