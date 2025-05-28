@@ -14,6 +14,23 @@ export interface Deal {
   description: string
   participationsLimit: number
   price: number
+  location?: string
+  images?: string[]
+  offers?: string[]
+  status?: string
+  category?:
+    | string
+    | {
+        _id: string
+        categoryName: string
+        image: string
+        createdAt: string
+        updatedAt: string
+      }
+  time?: number
+  createdAt?: string
+  updatedAt?: string
+  __v?: number
 }
 
 export interface Notification {
@@ -24,14 +41,14 @@ export interface Notification {
   userId: string
   isRead: boolean
   type: string
-  dealId?: Deal
+  dealId?: Deal | string
   auction?: {
     title: string
   }
 }
 
 const Notifications = () => {
-  const { notifications, setNotifications, setNotificationCount } = useSocketContext()
+  const { notifications, setNotifications, setNotificationCount, socket } = useSocketContext()
   const session = useSession()
   const userId = session?.data?.user?.id
   const token = session?.data?.user?.accessToken
@@ -39,6 +56,8 @@ const Notifications = () => {
   const [error, setError] = useState<string | null>(null)
   const [markingAsRead, setMarkingAsRead] = useState(false)
   const [markingIndividual, setMarkingIndividual] = useState<string | null>(null)
+
+  console.log(notifications)
 
   const markNotificationsAsRead = async () => {
     if (!token || markingAsRead) return
@@ -71,6 +90,7 @@ const Notifications = () => {
 
     setMarkingIndividual(notificationId)
     try {
+      // First update the backend via API
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}/read`, {
         method: "PATCH",
         headers: {
@@ -87,6 +107,11 @@ const Notifications = () => {
 
         // Update notification count - decrease by 1
         setNotificationCount((prev) => Math.max(0, prev - 1))
+
+        // Also emit the socket event to mark as read
+        if (socket) {
+          socket.emit("mark_notification_read", notificationId)
+        }
       }
     } catch (error) {
       console.error("Failed to mark notification as read:", error)
@@ -106,7 +131,11 @@ const Notifications = () => {
         setLoading(true)
         setError(null)
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=${userId}`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notifications?userId=${userId}`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        })
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -132,9 +161,7 @@ const Notifications = () => {
     }
 
     fetchInitialNotifications()
-  }, [userId, setNotifications, setNotificationCount])
-
-  console.log("Notifications component rendered with notifications:", notifications)
+  }, [userId, token, setNotifications, setNotificationCount])
 
   const formatNotificationTime = (dateString: string) => {
     try {
@@ -166,6 +193,40 @@ const Notifications = () => {
       default:
         return <BellRing className="h-4 w-4 text-gray-500" />
     }
+  }
+
+  // Helper function to get deal title - Updated to handle both API and socket data
+  const getDealTitle = (notification: Notification) => {
+    if (!notification.dealId) return ""
+
+    if (typeof notification.dealId === "string") {
+      return `Deal ID: ${notification.dealId}`
+    } else {
+      return notification.dealId.title || ""
+    }
+  }
+
+  // Helper function to get deal ID - Updated to handle both API and socket data
+  const getDealId = (notification: Notification) => {
+    if (!notification.dealId) return ""
+
+    if (typeof notification.dealId === "string") {
+      return notification.dealId
+    } else {
+      return notification.dealId._id || ""
+    }
+  }
+
+  // Helper function to get deal status for display
+  const getDealStatus = (notification: Notification) => {
+    if (!notification.dealId || typeof notification.dealId === "string") return ""
+    return notification.dealId.status || ""
+  }
+
+  // Helper function to get deal location for display
+  const getDealLocation = (notification: Notification) => {
+    if (!notification.dealId || typeof notification.dealId === "string") return ""
+    return notification.dealId.location || ""
   }
 
   if (loading) {
@@ -221,7 +282,7 @@ const Notifications = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between py-5">
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-2">
               <BellRing className="h-5 w-5" />
               Notifications
             </div>
@@ -243,78 +304,103 @@ const Notifications = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {notifications.map((notification) => (
-                <div
-                  key={notification._id}
-                  className={`flex items-start space-x-4 p-4 rounded-lg border transition-colors ${
-                    notification.isRead
-                      ? "bg-gray-100 hover:bg-gray-200 text-gray-500"
-                      : "bg-white hover:bg-blue-50 border-l-[10px] border-l-blue-500 text-gray-900"
-                  }`}
-                >
-                  <div className="flex-shrink-0 mt-1">{getNotificationIcon(notification.type)}</div>
+              {notifications.map((notification) => {
+                const dealId = getDealId(notification)
+                const dealTitle = getDealTitle(notification)
+                const dealStatus = getDealStatus(notification)
+                const dealLocation = getDealLocation(notification)
 
-                  <div className="flex-1 min-w-0">
-                    {notification.dealId?._id ? (
-                      <Link
-                        href={`/deals/${notification.dealId._id}`}
-                        onClick={() => !notification.isRead && markSingleNotificationAsRead(notification._id)}
-                        className="block cursor-pointer"
-                      >
-                        <p
-                          className={`text-sm mb-1 ${notification.isRead ? "font-normal text-gray-500" : "font-medium text-gray-900"}`}
-                        >
-                          {notification.message}
-                        </p>
-                        <p
-                          className={`text-sm mb-1 ${notification.isRead ? "font-normal text-gray-500" : "font-medium text-gray-900"}`}
-                        >
-                          {notification.dealId.title}
-                        </p>
+                return (
+                  <div
+                    key={notification._id}
+                    className={`flex items-start space-x-4 p-4 rounded-lg border transition-colors ${
+                      notification.isRead
+                        ? "bg-gray-100 hover:bg-gray-200 text-gray-500"
+                        : "bg-white hover:bg-blue-50 border-l-[10px] border-l-blue-500 text-gray-900"
+                    }`}
+                  >
+                    <div className="flex-shrink-0 mt-1">{getNotificationIcon(notification.type)}</div>
 
-                        {notification.auction && (
-                          <p className={`text-sm mb-2 ${notification.isRead ? "text-gray-400" : "text-blue-600"}`}>
-                            Related to: {notification.auction.title}
+                    <div className="flex-1 min-w-0">
+                      {dealId ? (
+                        <Link
+                          href={`/deals/${dealId}`}
+                          onClick={() => !notification.isRead && markSingleNotificationAsRead(notification._id)}
+                          className="block cursor-pointer"
+                        >
+                          <p
+                            className={`text-sm mb-1 ${notification.isRead ? "font-normal text-gray-500" : "font-medium text-gray-900"}`}
+                          >
+                            {notification.message}
                           </p>
-                        )}
 
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-gray-500">{formatNotificationTime(notification.createdAt)}</p>
-
-                          {!notification.isRead && markingIndividual === notification._id && (
-                            <span className="text-xs text-blue-600">Marking as read...</span>
+                          {/* Show deal title if it exists */}
+                          {dealTitle && !dealTitle.startsWith("Deal ID:") && (
+                            <p
+                              className={`text-sm mb-1 font-semibold ${notification.isRead ? "text-gray-600" : "text-gray-800"}`}
+                            >
+                              {dealTitle}
+                            </p>
                           )}
-                        </div>
-                      </Link>
-                    ) : (
-                      <div
-                        onClick={() => !notification.isRead && markSingleNotificationAsRead(notification._id)}
-                        className="cursor-pointer"
-                      >
-                        <p
-                          className={`text-sm mb-1 ${notification.isRead ? "font-normal text-gray-500" : "font-medium text-gray-900"}`}
+
+                          {/* Show deal status and location if available */}
+                          <div className="flex items-center gap-2 mb-1">
+                            {dealStatus && (
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${
+                                  dealStatus === "activate" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {dealStatus}
+                              </span>
+                            )}
+                            {dealLocation && <span className="text-xs text-gray-500">📍 {dealLocation}</span>}
+                          </div>
+
+                          {notification.auction && (
+                            <p className={`text-sm mb-2 ${notification.isRead ? "text-gray-400" : "text-blue-600"}`}>
+                              Related to: {notification.auction.title}
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-gray-500">{formatNotificationTime(notification.createdAt)}</p>
+
+                            {!notification.isRead && markingIndividual === notification._id && (
+                              <span className="text-xs text-blue-600">Marking as read...</span>
+                            )}
+                          </div>
+                        </Link>
+                      ) : (
+                        <div
+                          onClick={() => !notification.isRead && markSingleNotificationAsRead(notification._id)}
+                          className="cursor-pointer"
                         >
-                          {notification.message}
-                        </p>
-
-                        {notification.auction && (
-                          <p className={`text-sm mb-2 ${notification.isRead ? "text-gray-400" : "text-blue-600"}`}>
-                            Related to: {notification.auction.title}
+                          <p
+                            className={`text-sm mb-1 ${notification.isRead ? "font-normal text-gray-500" : "font-medium text-gray-900"}`}
+                          >
+                            {notification.message}
                           </p>
-                        )}
 
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-gray-500">{formatNotificationTime(notification.createdAt)}</p>
-
-                          {!notification.isRead && markingIndividual === notification._id && (
-                            <span className="text-xs text-blue-600">Marking as read...</span>
+                          {notification.auction && (
+                            <p className={`text-sm mb-2 ${notification.isRead ? "text-gray-400" : "text-blue-600"}`}>
+                              Related to: {notification.auction.title}
+                            </p>
                           )}
+
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-gray-500">{formatNotificationTime(notification.createdAt)}</p>
+
+                            {!notification.isRead && markingIndividual === notification._id && (
+                              <span className="text-xs text-blue-600">Marking as read...</span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>
