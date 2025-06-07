@@ -4,7 +4,7 @@ import DealDetails from "@/components/auctions/deals-details/deal-details"
 
 export default function AuctionPage({ params }: { params: { id: string } }) {
   return (
-    <div className="container mx-auto py-8 px-4 mt-20">
+    <div className="container mx-auto py-4 px-4">
       <Suspense fallback={<AuctionDetailsSkeleton />}>
         <DealDetails auctionId={params.id} />
       </Suspense>

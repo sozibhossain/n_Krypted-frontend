@@ -114,15 +114,15 @@ export default function NotifyMeList() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         {bookings.map((booking) => (
                             <DealsCard
-                                key={booking.dealsId._id}
-                                id={booking.dealsId._id}
-                                status={booking.dealsId.status}
-                                title={booking.dealsId.title}
-                                image={booking.dealsId.images?.[0] || "/assets/deals.png"}
-                                description={booking.dealsId.description}
-                                price={booking.dealsId.price}
-                                participations={booking.dealsId.participations}
-                                maxParticipants={booking.dealsId.maxParticipants}
+                                key={booking.dealsId?._id}
+                                id={booking?.dealsId?._id}
+                                status={booking.dealsId?.status}
+                                title={booking.dealsId?.title}
+                                image={booking.dealsId?.images?.[0] || "/assets/deals.png"}
+                                description={booking.dealsId?.description}
+                                price={booking.dealsId?.price}
+                                participations={booking.dealsId?.participations}
+                                maxParticipants={booking.dealsId?.maxParticipants}
                             />
                         ))}
                     </div>
