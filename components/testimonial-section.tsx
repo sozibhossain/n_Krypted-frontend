@@ -73,6 +73,8 @@ export function TestimonialSection() {
 
   const feedback = data.feedbacks[currentIndex]
 
+  console.log(feedback)
+
   // Format date to be more readable
   const formattedDate = new Date(feedback.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
