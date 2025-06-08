@@ -41,7 +41,7 @@ export function BlogCommentsSection({ blogId }: BlogCommentsSectionProps) {
     queryKey: ["comments", blogId],
     queryFn: async () => {
       const response = await fetch(
-        `https://n-krypted-backend-n9v6.onrender.com/api/comments/${blogId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/comments/${blogId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch comments");
