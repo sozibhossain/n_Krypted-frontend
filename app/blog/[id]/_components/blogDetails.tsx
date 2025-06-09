@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
 import { Calendar } from "lucide-react";
+import BlogComments from "./blogComments";
+import { BlogCommentsSection } from "./BlogCommentsShow";
 
 interface BlogDetailsProps {
   id?: string;
@@ -50,8 +52,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
 
     fetchBlog();
   }, [blogId]);
-
-
 
   if (loading) {
     return (
@@ -117,6 +117,10 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             }}
           />
         </div>
+
+        <BlogCommentsSection blogId = {blogId}/>
+
+        <BlogComments blogId = {blogId}/>
       </div>
     </div>
   );
