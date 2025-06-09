@@ -1,36 +1,35 @@
-"use client"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ChevronRight, Users } from "lucide-react"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { toast } from "sonner"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { PaymentForm } from "./pyment/Pyment"
-import { useRouter } from "next/navigation"
+"use client";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ChevronRight, Users } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
+import PayPalCheckout from "./PayPalCheckout";
 
 interface DealsCardProps {
-  id: string
-  title: string
-  description: string
-  price: number
-  participations: number
-  maxParticipants?: number
-  image?: string
-  status?: string
-  time?: number // in minutes
-  createdAt?: string | Date
-  updatedAt?: string | Date
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  participations: number;
+  maxParticipants?: number;
+  image?: string;
+  status?: string;
+  time?: number; // in minutes
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 interface TimeLeft {
-  hours: number
-  minutes: number
-  seconds: number
-  isExpired: boolean
+  hours: number;
+  minutes: number;
+  seconds: number;
+  isExpired: boolean;
 }
 
 export function DealsCard({
@@ -46,24 +45,17 @@ export function DealsCard({
   status,
   time = 0,
 }: DealsCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { data: session } = useSession()
-  const [bookingId, setBookingId] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session } = useSession();
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     hours: 0,
     minutes: 0,
     seconds: 0,
     isExpired: false,
-  })
-
-
-  const router = useRouter();
-
-
- 
-
+  });
 
   // Timer logic
   useEffect(() => {
@@ -73,114 +65,108 @@ export function DealsCard({
         minutes: 0,
         seconds: 0,
         isExpired: true,
-      })
-      return
+      });
+      return;
     }
 
     const timer = setInterval(() => {
-      const startTime = updatedAt || createdAt
+      const startTime = updatedAt || createdAt;
 
       if (!startTime) {
-        clearInterval(timer)
+        clearInterval(timer);
         setTimeLeft({
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const endTime = new Date(new Date(startTime).getTime() + time * 60000)
-      const now = new Date()
-      const difference = endTime.getTime() - now.getTime()
+      const endTime = new Date(new Date(startTime).getTime() + time * 60000);
+      const now = new Date();
+      const difference = endTime.getTime() - now.getTime();
 
       if (difference <= 0) {
-        clearInterval(timer)
+        clearInterval(timer);
         setTimeLeft({
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const hours = Math.floor(difference / (1000 * 60 * 60))
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
       setTimeLeft({
         hours,
         minutes,
         seconds,
         isExpired: false,
-      })
-    }, 1000)
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [time, createdAt, updatedAt])
+    return () => clearInterval(timer);
+  }, [time, createdAt, updatedAt]);
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      router.push("/login");
-      return false;
+      toast.success("Please log in to book this deal");
+      return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          dealsId: id,
-          notifyMe: notifyMe,
-          isBooked: !notifyMe // Explicitly set opposites
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            dealsId: id,
+            notifyMe: notifyMe,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-
-        // Handle API inconsistency
-        const isActualBooking = notifyMe ? false : data.booking.isBooked;
-
         setBookingId(data.booking._id);
-
-        if (notifyMe) {
-          toast.success("You'll be notified when this deal becomes available!");
-          return false;
-        }
-
-        return isActualBooking; // Only open modal if it's a real booking
+        setIsModalOpen(true);
       } else {
         const error = await response.json();
         throw new Error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Something went wrong: " + (error as Error).message);
-      return false;
+      toast.error("Something went wrong" + (error as Error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
   // Helper functions for better readability
-  const isDealExpired = timeLeft.isExpired
-  const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false
-  const hasTimeLimit = time > 0
-  const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true
-  const shouldShowParticipants =
-    hasTimeLimit &&
-    !isDealExpired &&
-    maxParticipants &&
-    hasAvailableSpots &&
-    status === "activate"
+  const isDealExpired = timeLeft.isExpired;
+  const isDealAtCapacity = maxParticipants
+    ? participations >= maxParticipants
+    : false;
+  const hasTimeLimit = time > 0;
+  const hasAvailableSpots = maxParticipants
+    ? participations < maxParticipants
+    : true;
+  // const shouldShowTimer = hasTimeLimit && !isDealExpired && (createdAt || updatedAt)
 
+  // Updated participant display logic with all three conditions
+  const shouldShowParticipants =
+    hasTimeLimit && !isDealExpired && maxParticipants && hasAvailableSpots;
+  // const shouldShowFullCapacityWarning = hasTimeLimit && !isDealExpired && maxParticipants && !hasAvailableSpots
 
   const renderActionButton = () => {
     // Priority 1: If time has expired
@@ -188,14 +174,12 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={async () => {
-            await handleBooking(true)
-          }}
+          onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
         </Button>
-      )
+      );
     }
 
     // Priority 2: If deal is fully booked (participations reached max)
@@ -203,14 +187,12 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={async () => {
-            await handleBooking(true)
-          }}
+          onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
         </Button>
-      )
+      );
     }
 
     // Priority 3: Regular status-based rendering
@@ -218,36 +200,34 @@ export function DealsCard({
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={async () => {
-            const shouldOpenModal = await handleBooking(false)
-            if (shouldOpenModal) setIsModalOpen(true)
-          }}
+          onClick={() => handleBooking(false)}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Book now"}
         </Button>
-      )
+      );
     } else if (status === "deactivate") {
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
-          onClick={async () => {
-            await handleBooking(true)
-          }}
+          onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
           {isLoading ? "Processing..." : "Notify me"}
         </Button>
-      )
+      );
     }
 
     // Default fallback
     return (
-      <Button className="w-full bg-gray-400 text-white font-semibold mt-2" disabled>
+      <Button
+        className="w-full bg-gray-400 text-white font-semibold mt-2"
+        disabled
+      >
         Unavailable
       </Button>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -259,14 +239,19 @@ export function DealsCard({
             onMouseLeave={() => setIsHovered(false)}
           >
             <Image
-              src={image || "/placeholder.svg?height=222&width=370&query=deal image"}
+              src={
+                image ||
+                "/placeholder.svg?height=222&width=370&query=deal image"
+              }
               alt={title || "Deal Image"}
               width={600}
               height={400}
-              className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${isHovered ? "scale-105" : "scale-100"
-                } transition-transform duration-300`}
+              className={`w-[370px] h-[222px] aspect-[5/4] object-cover rounded-lg ${
+                isHovered ? "scale-105" : "scale-100"
+              } transition-transform duration-300`}
             />
 
+            {/* Timer - Only show if deal has time and isn't expired */}
             {shouldShowParticipants && (
               <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
                 <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
@@ -296,7 +281,9 @@ export function DealsCard({
           </div>
 
           <CardContent className="space-y-2 pt-4">
-            <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
+            <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">
+              {title}
+            </h3>
             <p className="text-[16px] font-normal text-[#737373]">
               <div
                 className="text-[#737373] truncate max-w-full"
@@ -319,9 +306,16 @@ export function DealsCard({
               </div>
             </Link>
 
+            {/* Price and Participants Display */}
             <div className="flex items-center justify-between">
               <span className="font-semibold">${price?.toFixed(2)}</span>
 
+              {/* Show participants when all conditions are met:
+                  1. time > 0 (hasTimeLimit)
+                  2. !timeLeft.isExpired 
+                  3. maxParticipants exists
+                  4. participations < maxParticipants (hasAvailableSpots)
+              */}
               {shouldShowParticipants && (
                 <div className="flex gap-2 items-center text-black">
                   <Users className="w-4 h-4" />
@@ -331,6 +325,7 @@ export function DealsCard({
                 </div>
               )}
 
+              {/* Show participants for deals without time limits but with capacity */}
               {!hasTimeLimit && maxParticipants && (
                 <div className="flex gap-2 items-center text-gray-600">
                   <Users className="w-4 h-4" />
@@ -346,11 +341,18 @@ export function DealsCard({
         <CardFooter>{renderActionButton()}</CardFooter>
       </Card>
 
+      {/* Success Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="p-10">
-          <PaymentForm amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} />
+        <DialogContent className="p-5 w-full">
+          {/* <PaymentForm amount={price} bookingId={bookingId ?? ""} userId={session?.user?.id ?? ""} /> */}
+          <PayPalCheckout
+            amount={price}
+            userId={session?.user?.id ?? ""}
+            bookingId={bookingId ?? ""}
+           
+          />
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
