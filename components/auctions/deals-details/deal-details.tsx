@@ -20,7 +20,8 @@ import { Input } from "@/components/ui/input";
 import StarRating from "@/app/deals/Star-rating";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { PaymentForm } from "@/components/pyment/Pyment";
+
+import PayPalCheckout from "@/components/PayPalCheckout";
 
 interface AuctionDetailsProps {
   auctionId: string;
@@ -107,7 +108,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const [editRating, setEditRating] = useState(0);
   const [editComment, setEditComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [bookingId, setBookingId] = useState<string | null>(null);
+  // const [bookingId, setBookingId] = useState<string | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const session = useSession();
   const token = session?.data?.user?.accessToken;
@@ -373,8 +374,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
 
       if (response.ok) {
-        const data = await response.json();
-        setBookingId(data.booking._id);
+        // const data = await response.json();
+        // setBookingId(data.booking._id);
 
         // Open the payment modal
         setIsPaymentModalOpen(true);
@@ -721,11 +722,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       {/* Payment Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-        <DialogContent className="p-10 bg-[#212121] border border-[#FFFFFF33] text-white">
-          <PaymentForm
+        <DialogContent className="p-10  border-[#FFFFFF33] text-white">
+          {/* <PaymentForm
             amount={auction?.price || 0}
-            bookingId={bookingId ?? ""}
+            bookingId={auction?.price || 0}
             userId={session?.data?.user?.id ?? ""}
+          /> */}
+          <PayPalCheckout
+            amount={auction?.price || 0}
+            userId={session?.data?.user?.id ?? ""}
+            bookingId={auction?.price || 0}
           />
         </DialogContent>
       </Dialog>
