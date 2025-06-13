@@ -1,6 +1,6 @@
 "use client";
 
-import { MoveLeft, MoveRight, Quote } from "lucide-react";
+import { MoveLeft, MoveRight} from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -109,7 +109,7 @@ export function BlogCommentsSection({ blogId }: BlogCommentsSectionProps) {
   return (
     <section className="container !mt-[-70px] py-4 bg-white rounded-2xl">
           <div className="relative mb-5 pl-6 py-8">
-            <Quote className="absolute left-0 top-0 h-5 w-5 text-gray-500" />
+            {/* <Quote className="absolute left-0 top-0 h-5 w-5 text-gray-500" /> */}
             <p className="text-lg italic text-[#212121]">{comment.message}</p>
           </div>
           <div className="flex items-center justify-between gap-4">
