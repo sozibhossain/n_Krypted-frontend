@@ -116,9 +116,12 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
               __html: blog?.description ?? "Blog Description",
             }}
           />
-        </div>
+          <div className="pt-[150px]">
 
         <BlogCommentsSection blogId = {blogId}/>
+          </div>
+        </div>
+
 
         <BlogComments blogId = {blogId}/>
       </div>

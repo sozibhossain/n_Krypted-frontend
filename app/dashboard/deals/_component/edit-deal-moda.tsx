@@ -12,9 +12,12 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
+
+import dynamic from "next/dynamic"
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
+import "react-quill/dist/quill.snow.css"
 
 interface EditDealModalProps {
   open: boolean
@@ -40,6 +43,7 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
   const [offers, setOffers] = useState<string[]>([])
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [existingImages, setExistingImages] = useState<string[]>([])
+  const [description, setDescription] = useState("")
 
   const queryClient = useQueryClient()
 
@@ -65,6 +69,7 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
           // Set form values
           setValue("title", data.deal.title)
           setValue("description", data.deal.description)
+          setDescription(data.deal.description)
           setValue("price", data.deal.price)
           setValue("location", data.deal.location)
           setValue("participationsLimit", data.deal.participationsLimit)
@@ -198,11 +203,18 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
 
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...register("description", { required: "Description is required" })}
-                className="w-full min-h-[100px]"
-              />
+              <div className="border rounded-md">
+                <ReactQuill
+                  id="description"
+                  value={description}
+                  onChange={(content) => {
+                    setValue("description", content)
+                    setDescription(content)
+                  }}
+                  className=""
+                  theme="snow"
+                />
+              </div>
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 

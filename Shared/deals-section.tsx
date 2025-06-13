@@ -156,7 +156,7 @@ export function DealsSection() {
                 dealsData.map((deal: Deal) => (
                   <CarouselItem
                     key={deal._id}
-                    className={`pl-2 md:pl-4 ${itemsPerView === 1 ? "basis-full" : itemsPerView === 2 ? "basis-1/2" : "basis-1/3"
+                    className={` ${itemsPerView === 1 ? "basis-full" : itemsPerView === 1 ? "basis-1/2" : "basis-1/3"
                       }`}
                   >
                     <div className="p-1">

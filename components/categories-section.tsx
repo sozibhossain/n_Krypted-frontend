@@ -50,11 +50,11 @@ export function CategoriesSection() {
     <section className="mt-24 ">
       <div className="container space-y-12">
 
-        <div className="space-y-4">
+        <div className="space-y-4  ">
           <div className="flex items-center gap-2 md:gap-4">
             <div className="w-3 md:w-5 h-6 md:h-9 bg-white rounded" />
             <h1
-              className="font-benedict text-2xl md:text-[40px] font-normal text-white"
+              className="font-benedict text-2xl md:text-[35px] font-normal text-white"
               style={{ fontFamily: "cursive" }}
             >
               Categories
@@ -81,7 +81,7 @@ export function CategoriesSection() {
                 allCategory?.map((category: any, index: number) => (
                   <CarouselItem
                     key={category._id || index}
-                    className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4"
+                    className="basis-full py-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-[25px] "
                   >
                     <CategoryCard title={category.categoryName} icon={category.image || ""} />
                   </CarouselItem>
