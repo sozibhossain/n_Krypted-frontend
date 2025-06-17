@@ -2,6 +2,7 @@
 import { MoveLeft, MoveRight, Quote } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 
 // Define the feedback type based on your API response
 type Feedback = {
@@ -99,24 +100,32 @@ export function TestimonialSection() {
         <div className="col-span-6 md:col-span-2 lg:col-span-2">
           <div className="flex items-center gap-4">
             <div className="w-5 h-9 bg-white rounded" />
-            <div>
-              <h1 className="font-benedict text-[40px] font-normal mb-2 text-white">
+            <div className="flex items-center gap-2">
+              <h1
+                className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
+              >
                 Testimonial
               </h1>
             </div>
           </div>
-          <h2 className="text-white lg:mb-4 text-2xl lg:text-5xl font-bold tracking-tight">
+
+          <h2 className="text-white lg:mb-4 text-2xl lg:text-[40px] font-semibold leading-[120%]">
             What does our client say?
           </h2>
-          <p className="text-white text-sm mt-2">
-            {data.feedbacks.length} testimonials received
-          </p>
         </div>
 
         <div className="col-span-6 md:col-span-4 lg:col-span-4">
-          <div className="relative mb-5 pl-6">
-            <Quote className="absolute left-0 top-0 h-5 w-5 text-white" />
-            <p className="text-white text-lg italic text-muted-foreground">
+          <div className=" flex flex-col mb-5 pl-6 gap-4">
+            {/* <Quote className="absolute left-0 top-0 h-5 w-5 text-white" /> */}
+            <Image
+              src="/assets/E.png"
+              alt="quote"
+              width={50}
+              height={50}
+              className=" h-[32px] w-[44px] text-white"
+            />
+            <p className="text-white text-lg text-muted-foreground">
               {feedback.message}
             </p>
           </div>
@@ -132,7 +141,7 @@ export function TestimonialSection() {
                 {feedback.name}
               </h4>
               <p className="text-white text-sm text-muted-foreground">
-                {formattedDate}
+                Verified Bidder
               </p>
             </div>
 
@@ -152,11 +161,6 @@ export function TestimonialSection() {
                 <span className="sr-only">Next</span>
               </button>
             </div>
-          </div>
-          <div className="mt-4 text-white text-sm">
-            <span className="text-muted-foreground">
-              {currentIndex + 1} of {data.feedbacks.length}
-            </span>
           </div>
         </div>
       </div>

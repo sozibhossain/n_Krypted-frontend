@@ -71,7 +71,7 @@ export function Pagination({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-white">
         Showing {startItem} to {endItem} of {totalItems} results
       </div>
 
@@ -79,7 +79,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          className="h-9 w-9 rounded-md border border-gray-200"
+          className="h-9 w-9 rounded-md border border-[#A8A8A8] text-white bg-[#A8A8A8]"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || isLoading}
         >
@@ -116,7 +116,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          className="h-9 w-9 rounded-md border border-gray-200"
+          className="h-9 w-9 rounded-md border border-[#A8A8A8] text-white bg-[#A8A8A8]"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || isLoading}
         >
