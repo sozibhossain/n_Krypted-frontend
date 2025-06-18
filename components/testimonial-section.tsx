@@ -1,5 +1,5 @@
 "use client";
-import { MoveLeft, MoveRight, Quote } from "lucide-react";
+import { MoveLeft, MoveRight} from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -85,14 +85,14 @@ export function TestimonialSection() {
   console.log(feedback);
 
   // Format date to be more readable
-  const formattedDate = new Date(feedback.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+  // const formattedDate = new Date(feedback.createdAt).toLocaleDateString(
+  //   "en-US",
+  //   {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   }
+  // );
 
   return (
     <section className="container lg:mt-24 py-[50px]">

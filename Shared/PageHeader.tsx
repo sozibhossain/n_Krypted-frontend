@@ -33,11 +33,12 @@ export function PageHeader({ title, items, imge }: PageHeaderProps) {
 
   return (
     <div
-      className="relative w-full flex flex-col items-center justify-center bg-black pt-10"
+      className={cn("relative w-full flex flex-col items-center justify-center bg-black pt-10")}
       style={{
         backgroundImage: `url(${imge})`,
         backgroundSize: "cover",
         backgroundRepeat: "repeat",
+        backgroundPosition: "top",
         top: 0,
         left: 0,
         height: height
