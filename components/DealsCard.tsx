@@ -301,14 +301,14 @@ export function DealsCard({
             </p>
             <Link href={`/deals/${id}`}>
               <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
-                <span>Read More</span>
+                <span>Mehr anzeigen</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
             </Link>
 
             {/* Price and Participants Display */}
             <div className="flex items-center justify-between">
-              <span className="font-semibold">${price?.toFixed(2)}</span>
+              <span className="font-semibold">{price?.toFixed(2)} EUR</span>
 
               {/* Show participants when all conditions are met:
                   1. time > 0 (hasTimeLimit)

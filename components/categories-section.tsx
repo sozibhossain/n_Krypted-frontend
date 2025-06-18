@@ -58,10 +58,10 @@ export function CategoriesSection() {
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               style={{ fontFamily: "cursive" }}
             >
-              Categories
+              Kategorien
             </h1>
           </div>
-          <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Explore Our Category</p>
+          <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Entdecke unsere Kategorien</p>
         </div>
 
         <div className="w-full">

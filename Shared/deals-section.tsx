@@ -84,7 +84,7 @@ export function DealsSection() {
                 </h1>
               </div>
             </div>
-            <p className="text-xl sm:text-2xl md:text-[40px] font-bold text-white">Our Popular Deals</p>
+            <p className="text-xl sm:text-2xl md:text-[40px] font-bold text-white">Unsere beliebten Deals</p>
           </div>
 
           <div className="flex gap-2 mt-2 sm:mt-0">
