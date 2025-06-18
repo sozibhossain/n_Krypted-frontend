@@ -89,10 +89,11 @@ export function Navbar() {
                     alt="Logo"
                     width={100}
                     height={100}
-                    className="h-[30px] w-[80px]"
+                    className="h-[40px] w-[110px]"
                   />
                 </div>
-                <h1 className="font-benedict text-[32px] font-normal mb-2 text-white">Walk Throughz</h1>
+                <h1 className="text-[35px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Walk Throughz</h1>
               </div>
             </Link>
           </div>

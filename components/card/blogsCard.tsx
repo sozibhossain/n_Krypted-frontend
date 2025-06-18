@@ -38,7 +38,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                                 </div>
                             </div>
                         </div>
-                        <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title?.slice(0, 25)}...</h3>
+                        <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title?.slice(0, 55)}...</h3>
                     </CardContent>
                 </div>
             </Card>

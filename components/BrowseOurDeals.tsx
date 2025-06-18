@@ -56,7 +56,8 @@ export function BrowseOurDeals() {
           <div className="flex items-center gap-4">
             <div className="w-5 h-9 bg-white rounded" />
             <div>
-              <h1 className="font-benedict text-[35px] font-normal mb-2 text-white">Our Deal </h1>
+              <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Our Deal </h1>
             </div>
           </div>
           <p className="text-[20px] lg:text-[40px] font-bold text-white">Browse Our Deals</p>

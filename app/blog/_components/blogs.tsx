@@ -29,8 +29,9 @@ function Blogs() {
   return (
     <section>
       <PageHeader
-        title="Blog Page"
-        imge="/assets/herobg.png"
+        title="Our Latest Blogs"
+        imge="/assets/blogs.jpg"
+        
         items={[
           {
             label: "Home",
@@ -44,7 +45,7 @@ function Blogs() {
       />
       <div className="container my-24">
         {loading ? (
-          <p className="text-center">Loading blogs...</p>
+          <p className="text-center text-white">Loading blogs...</p>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {blogs.map((blog: Blog) => (

@@ -54,7 +54,8 @@ export function CategoriesSection() {
           <div className="flex items-center gap-2 md:gap-4">
             <div className="w-3 md:w-5 h-6 md:h-9 bg-white rounded" />
             <h1
-              className="font-benedict text-2xl md:text-[35px] font-normal text-white"
+              className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               style={{ fontFamily: "cursive" }}
             >
               Categories

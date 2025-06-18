@@ -14,7 +14,8 @@ export function FaqSection() {
               <div className="flex items-center gap-4">
                 <div className="w-4 h-7 sm:w-5 sm:h-9 bg-white rounded" />
                 <h1
-                  className="font-benedict text-[35px] font-normal mb-2 text-white "
+                  className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
                 >
                   „FAQs“
                 </h1>

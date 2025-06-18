@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { Blog } from "@/app/blog/_components/type";
 import BlogsCard from "./card/blogsCard";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { MoveRight } from "lucide-react";
 
 export function BlogsSection() {
   const [blogs, setBlogs] = useState([]);
@@ -28,14 +31,22 @@ export function BlogsSection() {
 
   return (
     <section className="container lg:mt-24">
-      <div>
-        <div className="flex items-center gap-4">
-          <div className="w-5 h-9 bg-white rounded" />
-          <div className="backdrop-blur-sm">
-            <h1 className="font-benedict text-[35px] font-normal mb-2 text-white ">Blog</h1>
+        <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-4">
+            <div className="w-5 h-9 bg-white rounded" />
+            <div>
+              <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Blog</h1>
+            </div>
           </div>
+          <p className="text-[20px] lg:text-[40px] font-bold text-white">Our Latest Blogs</p>
         </div>
-        <p className="text-[40px] font-bold text-white">Our Latest Blogs</p>
+        <Link href={"/blog"}>
+          <Button className="bg-white text-black">
+            Explore All <MoveRight />
+          </Button>
+        </Link>
       </div>
 
       <div className="py-8">

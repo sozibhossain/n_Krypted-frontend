@@ -108,7 +108,7 @@ export function Footer() {
         <div className="my-6 border-b border-gray-600" />
       </div>
 
-      <div className="container mx-auto px-6 md:px-16">
+      <div className="container">
         {/* Payment Methods */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
           <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted Payment Methods:</p>

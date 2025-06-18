@@ -78,7 +78,8 @@ export function DealsSection() {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-3 sm:w-5 h-6 sm:h-9 bg-white rounded" />
               <div>
-                <h1 className="font-benedict text-2xl sm:text-3xl md:text-[35px] font-normal mb-1 sm:mb-2 text-white">
+                <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">
                   Popular
                 </h1>
               </div>

@@ -146,7 +146,7 @@ export function CategoriesAndSearchBar() {
   const HIDDEN_ROUTES = ["/dashboard", "/login", "/sign-up", "/reset-password", "/forgot-password"]
 
   return (
-    <div className="sticky top-[80px] z-50 bg-[#212121] w-full">
+    <div className="sticky top-[100px] z-50 bg-[#212121] w-full">
       <Hideon routes={HIDDEN_ROUTES}>
         <div className="">
           <header className="container py-3 ">
