@@ -69,7 +69,7 @@ export function Footer() {
               <Link href="/">Home</Link>
             </li>
             <li>
-              <Link href="/about-us">About Us</Link>
+              <Link href="/about-us">Über uns</Link>
             </li>
             <li>
               <Link href="/deals">Deals</Link>
@@ -78,7 +78,7 @@ export function Footer() {
               <Link href="/blog">Blogs</Link>
             </li>
             <li>
-              <Link href="/contact">Contact</Link>
+              <Link href="/contact">Kontakt</Link>
             </li>
           </ul>
         </div>
@@ -129,8 +129,8 @@ export function Footer() {
           <p>© 2025 Agency All rights reserved.</p>
           <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
             <Link href="/suport">Support</Link>
-            <Link href="/report">Report Infringement</Link>
-            <Link href="/refund-policies">Refund Policies</Link>
+            <Link href="/report">Geschäftsbedingungen</Link>
+            <Link href="/refund-policies">Datenschutzerklärung</Link>
           </div>
         </div>
       </div>

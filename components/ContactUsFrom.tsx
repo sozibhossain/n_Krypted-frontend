@@ -137,7 +137,7 @@ export default function ContactUsForm() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white pb-2">
-                  Email *
+                  E-Mail *
                 </label>
                 <input
                   type="email"
@@ -153,7 +153,7 @@ export default function ContactUsForm() {
 
               <div>
                 <label htmlFor="phoneNumber" className="block text-sm font-medium text-white pb-2">
-                  Phone Number
+                 Mobilnummer
                 </label>
                 <input
                   type="tel"
@@ -168,13 +168,13 @@ export default function ContactUsForm() {
             </div>
             <div className="lg:col-span-2">
               <label htmlFor="message" className="block text-sm font-medium text-white pb-2">
-                Message *
+                Nachricht *
               </label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Enter your message"
+                placeholder="Schreib eine Nachricht"
                 className="w-full h-[200px] lg:h-[255px] p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 disabled={isSubmitting}
                 required
@@ -195,7 +195,7 @@ export default function ContactUsForm() {
               className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              {isSubmitting ? 'Einreichen...' : 'Einreichen'}
             </button>
           </div>
         </form>
