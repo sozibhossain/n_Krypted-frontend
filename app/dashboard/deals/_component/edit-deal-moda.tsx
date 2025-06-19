@@ -19,26 +19,32 @@ import dynamic from "next/dynamic"
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 import "react-quill/dist/quill.snow.css"
 
-interface EditDealModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  dealId: string | null
+interface Location {
+  country: string
+  city: string
 }
 
 interface DealData {
   title: string
   description: string
   price: number
-  location: string
+  location: Location
   offers: string[]
   images: string[]
   participationsLimit: number
-  time: string
+  time: number
+  status?: string
+  category?: string
+}
+
+interface EditDealModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  dealId: string
 }
 
 export default function EditDealModal({ open, onOpenChange, dealId }: EditDealModalProps) {
   const [isLoading, setIsLoading] = useState(false)
-  // const [dealData, setDealData] = useState<DealData | null>(null)
   const [offerInput, setOfferInput] = useState("")
   const [offers, setOffers] = useState<string[]>([])
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
@@ -71,16 +77,14 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
           setValue("description", data.deal.description)
           setDescription(data.deal.description)
           setValue("price", data.deal.price)
-          setValue("location", data.deal.location)
+          setValue("location.country", data.deal.location.country)
+          setValue("location.city", data.deal.location.city)
           setValue("participationsLimit", data.deal.participationsLimit)
-
-          // Set time field as-is from API
-          setValue("time", data.deal.time || "")
+          setValue("time", data.deal.time)
 
           // Set offers and images
           setOffers(data.deal.offers || [])
           setExistingImages(data.deal.images || [])
-          // setDealData(data.deal)
         } catch (error) {
           console.error("Error fetching deal data:", error)
           toast.error("Failed to load deal data")
@@ -124,10 +128,10 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
     formData.append("title", data.title)
     formData.append("description", data.description)
     formData.append("price", data.price.toString())
-    formData.append("location", data.location)
+    formData.append("location[country]", data.location.country)
+    formData.append("location[city]", data.location.city)
     formData.append("participationsLimit", data.participationsLimit.toString())
-
-    formData.append("time", data.time)
+    formData.append("time", data.time.toString())
 
     // Add offers
     offers.forEach((offer, index) => {
@@ -234,10 +238,25 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
               {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" {...register("location", { required: "Location is required" })} className="w-full" />
-              {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  id="country"
+                  {...register("location.country", { required: "Country is required" })}
+                  className="w-full"
+                />
+                {errors.location?.country && <p className="text-red-500 text-sm">{errors.location.country.message}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  {...register("location.city", { required: "City is required" })}
+                  className="w-full"
+                />
+                {errors.location?.city && <p className="text-red-500 text-sm">{errors.location.city.message}</p>}
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -261,10 +280,14 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
               <Label htmlFor="time">Deal Time (minutes)</Label>
               <Input
                 id="time"
-                type="text"
-                {...register("time", { required: "Deal time is required" })}
+                type="number"
+                {...register("time", {
+                  required: "Deal time is required",
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Deal time must be at least 1 minute" },
+                })}
                 className="w-full"
-                placeholder="Enter deal time"
+                placeholder="Enter deal time in minutes"
               />
               {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
             </div>
