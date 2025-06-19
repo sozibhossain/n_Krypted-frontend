@@ -1,75 +1,79 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { toast } from "sonner"
+import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ContactUsForm() {
   const [formData, setFormData] = useState({
     name: "", // Changed from fullName to match API
     email: "",
     phoneNumber: "", // Changed from phone to match API
-    message: ""
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
-    success: boolean
-    message: string
-  } | null>(null)
+    success: boolean;
+    message: string;
+  } | null>(null);
 
-  console.log(submitStatus)
-  
+  console.log(submitStatus);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       setSubmitStatus({
         success: false,
-        message: "Please fill in all required fields"
-      })
-      return
+        message: "Please fill in all required fields",
+      });
+      return;
     }
 
     // Email validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setSubmitStatus({
         success: false,
-        message: "Please enter a valid email address"
-      })
-      return
+        message: "Please enter a valid email address",
+      });
+      return;
     }
 
-    setIsSubmitting(true)
-    setSubmitStatus(null)
+    setIsSubmitting(true);
+    setSubmitStatus(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phoneNumber: formData.phoneNumber,
-          message: formData.message
-        }),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/feedback`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            message: formData.message,
+          }),
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit feedback')
+        throw new Error(data.message || "Failed to submit feedback");
       }
 
       // Reset form on successful submission
@@ -77,33 +81,38 @@ export default function ContactUsForm() {
         name: "",
         email: "",
         phoneNumber: "",
-        message: ""
-      })
-      
+        message: "",
+      });
+
       setSubmitStatus({
         success: true,
-        message: "Thank you for your feedback! We'll get back to you soon."
-      })
-      
+        message: "Thank you for your feedback! We'll get back to you soon.",
+      });
+
       // Log the full response for debugging
-      console.log("Feedback submitted successfully:", data)
+      console.log("Feedback submitted successfully:", data);
     } catch (error) {
-      console.error("Feedback submission error:", error)
+      console.error("Feedback submission error:", error);
       setSubmitStatus({
         success: false,
-        message: error instanceof Error ? error.message : "Something went wrong. Please try again."
-      })
+        message:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
+      });
     } finally {
-      setIsSubmitting(false)
-      toast.success("Feedback submitted successfully! We'll get back to you soon.")
+      setIsSubmitting(false);
+      toast.success(
+        "Feedback submitted successfully! We'll get back to you soon."
+      );
     }
-  }
+  };
 
   return (
     <div className="container py-24 lg:mt-24">
       <div>
         <h1 className="text-xl lg:text-4xl lg:text-[48px] font-bold mb-4 text-white text-center">
-          Any suggestions or feedback,
+          Du hast Feedback oder eine Idee?
         </h1>
         <h1
           // className="font-benedict text-2xl sm:text-3xl md:text-4xl mb-6 md:mb-8 text-center text-white"
@@ -111,16 +120,19 @@ export default function ContactUsForm() {
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
           style={{ fontFamily: "cursive" }}
         >
-          Get in touch.
+          Lass von dir hören!
         </h1>
       </div>
 
       <div>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="lg:col-span-1 space-y-4 sm:space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-white pb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-white pb-2"
+                >
                   Name *
                 </label>
                 <input
@@ -136,8 +148,11 @@ export default function ContactUsForm() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-white pb-2">
-                  Email *
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-white pb-2"
+                >
+                  E-Mail *
                 </label>
                 <input
                   type="email"
@@ -152,8 +167,11 @@ export default function ContactUsForm() {
               </div>
 
               <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-white pb-2">
-                  Phone Number
+                <label
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-white pb-2"
+                >
+                  Mobilnummer
                 </label>
                 <input
                   type="tel"
@@ -167,14 +185,17 @@ export default function ContactUsForm() {
               </div>
             </div>
             <div className="lg:col-span-2">
-              <label htmlFor="message" className="block text-sm font-medium text-white pb-2">
-                Message *
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-white pb-2"
+              >
+                Nachricht *
               </label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Enter your message"
+                placeholder="Schreib eine Nachricht"
                 className="w-full h-[200px] lg:h-[255px] p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                 disabled={isSubmitting}
                 required
@@ -195,11 +216,11 @@ export default function ContactUsForm() {
               className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              {isSubmitting ? "Einreichen..." : "Einreichen"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
