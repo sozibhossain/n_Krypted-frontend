@@ -110,20 +110,29 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
         </div>
 
         <div className="text-white font-[16px] leading-[19.2px]">
-          <div
-            className="list-item list-none !text-white blogcontent"
-            dangerouslySetInnerHTML={{
-              __html: blog?.description ?? "Blog Description",
-            }}
-          />
-          <div className="pt-[150px]">
+          <>
+            <style>{`
+              .blogcontent img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+              }
+            `}</style>
 
-        <BlogCommentsSection blogId = {blogId}/>
+            <div
+              className="list-item list-none !text-white blogcontent"
+              dangerouslySetInnerHTML={{
+                __html: blog?.description ?? "Blog Description",
+              }}
+            />
+          </>
+
+          <div className="pt-[150px]">
+            <BlogCommentsSection blogId={blogId} />
           </div>
         </div>
 
-
-        <BlogComments blogId = {blogId}/>
+        <BlogComments blogId={blogId} />
       </div>
     </div>
   );
