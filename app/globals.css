@@ -145,6 +145,9 @@
   margin-bottom: 0.5em;
   font-weight: bold;
 }
+.blogcontent{
+color: white !important;
+}
 
 .list-item h1 {
   @apply text-3xl;
