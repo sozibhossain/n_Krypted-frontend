@@ -11,9 +11,7 @@ function Blogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/blog`
-        );
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog`);
         const data = await res.json();
         setBlogs(data.blogs);
       } catch (error) {
@@ -31,7 +29,6 @@ function Blogs() {
       <PageHeader
         title="Our Latest Blogs"
         imge="/assets/blogs.jpg"
-        
         items={[
           {
             label: "Home",
