@@ -111,7 +111,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
 
         <div className="text-white font-[16px] leading-[19.2px]">
           <div
-            className="list-item list-none"
+            className="list-item list-none !text-white blogcontent"
             dangerouslySetInnerHTML={{
               __html: blog?.description ?? "Blog Description",
             }}
