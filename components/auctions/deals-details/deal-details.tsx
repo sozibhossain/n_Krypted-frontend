@@ -458,7 +458,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </p>
             <div className="flex items-center gap-2 text-gray-500">
               <MapPin className="w-4 h-4 text-white" />
-              <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">{auction?.location}</span>
+              <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">{auction?.location.country}, {auction?.location.city}</span>
             </div>
             {/* <div className="flex items-center gap-2 text-gray-500">
               <Calendar className="w-4 h-4 text-white" />
