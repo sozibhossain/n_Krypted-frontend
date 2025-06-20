@@ -9,16 +9,7 @@ const page = () => {
       <PageHeader
         title="Contact Us"
         imge="/assets/herobg.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "Contact",
-            href: "/faq",
-          },
-        ]}
+     
       />
     <div className="my-20 lg:mt-28 container">
       <div className="grid grid-cols-2 items-center">

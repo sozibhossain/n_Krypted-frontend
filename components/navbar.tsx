@@ -77,23 +77,23 @@ export function Navbar() {
 
   return (
     <Hideon routes={HIDDEN_ROUTES}>
-      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center flex-col">
+      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center  flex-col">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
           <div>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="text-center">
+            <Link href="/" className="">
+              <div className="">
                 <div className="flex justify-center">
                   <Image
-                    src="/assets/logoheader.png"
+                    src="/assets/ml.png"
                     alt="Logo"
-                    width={100}
-                    height={100}
-                    className="h-[40px] w-[110px]"
+                    width={1000}
+                    height={1000}
+                    className="h-[80px] w-[140px]"
                   />
                 </div>
-                <h1 className="text-[35px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Walk Throughz</h1>
+                {/* <h1 className="text-[35px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]">Walk Throughz</h1> */}
               </div>
             </Link>
           </div>

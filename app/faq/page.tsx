@@ -9,16 +9,7 @@ const page = () => {
       <PageHeader
         title="Frequently Asked Questions"
         imge="/assets/faq2.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "FAQ",
-            href: "/faq",
-          },
-        ]}
+       
       />
       <div className="container">
         <div className="grid grid-cols-3 gap-4 pt-16">

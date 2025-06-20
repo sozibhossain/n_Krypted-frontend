@@ -8,16 +8,7 @@ export default function page() {
       <PageHeader
         title="Our All Deals"
         imge="/assets/herobg.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "Deals",
-            href: "/blogs",
-          },
-        ]}
+      
       />
       <div className="lg:mt-28 container">
         <Suspense fallback={<div>Loading...</div>}>

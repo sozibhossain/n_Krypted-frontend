@@ -110,7 +110,7 @@ export function TestimonialSection() {
             </div>
           </div>
 
-          <h2 className="text-white lg:mb-4 text-2xl lg:text-[40px] font-semibold leading-[120%]">
+          <h2 className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">
             What does our client say?
           </h2>
         </div>

@@ -13,16 +13,7 @@ export default function SupportPage() {
             <PageHeader
                 title="Support"
                 imge="/assets/herobg.png"
-                items={[
-                    {
-                        label: "Home",
-                        href: "/",
-                    },
-                    {
-                        label: "Support",
-                        href: "/blogs",
-                    },
-                ]}
+             
             />
 
         <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">

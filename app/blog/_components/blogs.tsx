@@ -29,16 +29,7 @@ function Blogs() {
       <PageHeader
         title="Our Latest Blogs"
         imge="/assets/blogs.jpg"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "blogs",
-            href: "/blogs",
-          },
-        ]}
+       
       />
       <div className="container my-24">
         {loading ? (

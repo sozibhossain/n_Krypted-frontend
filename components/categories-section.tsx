@@ -61,7 +61,7 @@ export function CategoriesSection() {
               Kategorien
             </h1>
           </div>
-          <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Entdecke unsere Kategorien</p>
+          <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Entdecke unsere Kategorien</p>
         </div>
 
         <div className="w-full">
