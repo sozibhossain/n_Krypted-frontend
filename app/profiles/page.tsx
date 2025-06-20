@@ -188,10 +188,7 @@ export default function Dashboard() {
             <PageHeader
                 title="My Profile"
                 imge="/assets/herobg.png"
-                items={[
-                    { label: "Home", href: "/" },
-                    { label: "My Profile", href: "/profiles" },
-                ]}
+          
             />
             <div className="flex flex-col md:flex-row min-h-screen text-white container pt-[80px]">
                 <div className="w-full md:w-80 p-6 flex flex-col items-center md:sticky md:top-0 md:h-screen">

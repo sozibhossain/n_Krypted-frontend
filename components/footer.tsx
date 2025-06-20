@@ -114,13 +114,16 @@ export function Footer() {
           <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted Payment Methods:</p>
           <div className="flex space-x-4">
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
-              <Image src="/assets/paypal.png" alt="PayPal" width={60} height={30} className="h-6 w-auto" />
+              <Image src="/assets/Paypal.png" alt="PayPal" width={60} height={30} className="h-6 w-auto" />
             </div>
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
               <Image src="/assets/amex.png" alt="American Express" width={60} height={30} className="h-6 w-auto" />
             </div>
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
               <Image src="/assets/maestro.png" alt="Maestro" width={60} height={30} className="h-6 w-auto" />
+            </div>
+              <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
+              <Image src="/assets/visa.png" alt="Maestro" width={60} height={30} className="h-6 w-auto" />
             </div>
           </div>
         </div>

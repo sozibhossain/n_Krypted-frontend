@@ -9,16 +9,7 @@ export default function ReportInfringement() {
             <PageHeader
                 title="Report Infringement"
                 imge="/assets/herobg.png"
-                items={[
-                    {
-                        label: "Home",
-                        href: "/",
-                    },
-                    {
-                        label: "Report Infringement",
-                        href: "/faq",
-                    },
-                ]}
+             
             />
             <div className="w-full container mt-[80px] pb-[120px]">
                 <h1 className="text-2xl md:text-[32px] font-semibold text-[#FFFFFF] mb-6">Report Infringement</h1>

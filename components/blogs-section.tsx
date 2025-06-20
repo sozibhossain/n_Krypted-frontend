@@ -40,7 +40,7 @@ export function BlogsSection() {
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Blog</h1>
             </div>
           </div>
-          <p className="text-[20px] lg:text-[40px] font-bold text-white">Unsere aktuellen Blogs</p>
+          <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Unsere aktuellen Blogs</p>
         </div>
         <Link href={"/blog"}>
           <Button className="bg-white text-black">
