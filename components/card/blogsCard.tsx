@@ -15,7 +15,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                         alt="Blog Image"
                         width={1000}
                         height={1000}
-                        className="h-[205px] lg:h-[305px] w-full"
+                        className="h-[205px] lg:h-[305px] w-full object-cover"
                     />
                 </div>
 
@@ -25,7 +25,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                         <div className='flex items-center space-x-3'>
                             <div className='flex items-center space-x-2'>
                                 <UserRound className='w-[15px] h-[15px]' />
-                                <p>admin</p>
+                                <p className='text-xs'>admin</p>
                             </div>
                             <div className="text-[12px] flex items-center space-x-2">
                                 <Calendar className='w-[15px] h-[15px]' />
@@ -38,7 +38,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                                 </div>
                             </div>
                         </div>
-                        <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title?.slice(0, 25)}...</h3>
+                        <h3 className="mb-2 font-medium text-[18px] text-white">{blog?.title?.slice(0, 55)}...</h3>
                     </CardContent>
                 </div>
             </Card>

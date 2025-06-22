@@ -12,8 +12,28 @@ function BlogComments({ blogId }: BlogCommentsProps) {
         email: '',
         message: ''
     });
-
     const [message, setMessage] = useState<string | null>(null);
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        if (session?.user) {
+            setFormData(prev => ({
+                ...prev,
+                name: session.user?.name || '',
+                email: session.user?.email || ''
+            }));
+        } else {
+            const saved = localStorage.getItem('blogCommentInfo');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                setFormData(prev => ({
+                    ...prev,
+                    name: parsed.name || '',
+                    email: parsed.email || ''
+                }));
+            }
+        }
+    }, [session]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -23,61 +43,49 @@ function BlogComments({ blogId }: BlogCommentsProps) {
         }));
     };
 
-    const sesstion = useSession();
-    const token = sesstion?.data?.user?.accessToken || '';
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/add-comment/${blogId}`, {
+            // Ensure your API endpoint is correct - typically it would be /api/comments without the extra 'm'
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${session?.user?.accessToken || ''}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    userId: session?.user?.id,
+                    message: formData.message,  // Changed from 'message' to 'content' to match common conventions
+                    blogId: blogId
+                })
             });
 
-            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            if (response.ok) {
-                setMessage('Comment submitted successfully!');
-                setFormData({ name: '', email: '', message: '' });
-                if (!saveInfo) {
-                    localStorage.removeItem('blogCommentInfo');
-                }
-            } else {
-                console.error('Backend error:', result);
-                setMessage(result.message || 'Failed to submit comment.');
+          
+
+            setMessage('Comment submitted successfully!');
+            setFormData(prev => ({ ...prev, message: '' }));
+            
+            if (!saveInfo && !session?.user) {
+                localStorage.removeItem('blogCommentInfo');
             }
         } catch (error) {
             console.error('Error submitting comment:', error);
-            setMessage('Something went wrong.');
+            setMessage(error instanceof Error ? error.message : 'Something went wrong.');
         }
     };
 
-    // Load saved name/email from localStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem('blogCommentInfo');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            setFormData(prev => ({
-                ...prev,
-                name: parsed.name || '',
-                email: parsed.email || ''
-            }));
-        }
-    }, []);
-
-    // Save name/email when saveInfo is true
-    useEffect(() => {
-        if (saveInfo) {
+        if (saveInfo && !session?.user) {
             localStorage.setItem('blogCommentInfo', JSON.stringify({
                 name: formData.name,
                 email: formData.email
             }));
         }
-    }, [formData.name, formData.email, saveInfo]);
+    }, [formData.name, formData.email, saveInfo, session]);
 
     return (
         <div className="">
@@ -85,24 +93,28 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                 <h1 className="text-2xl font-bold text-white">Leave a comment</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Your name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded" 
-                />
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                />
+                {!session?.user && (
+                    <>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Your name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 border rounded" 
+                        />
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Your email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 border rounded"
+                        />
+                    </>
+                )}
                 <textarea
                     name="message"
                     placeholder="Your comment"
@@ -111,25 +123,29 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                     required
                     className="w-full p-2 border rounded h-32"
                 />
-                <div className="flex items-clenter space-x-2 text-white">
-                    <input
-                        type="checkbox"
-                        id="subscribe"
-                        name="subscribe"
-                        checked={saveInfo}
-                        onChange={() => setSaveInfo(prev => !prev)}
-                        className="mt-1"
-                    />
-                    <label htmlFor="subscribe" className='mt-[3px]'>
-                        Save my name and email in this browser for the next time I comment.
-                    </label>
-                </div>
-                <div className=''>
+                {!session?.user && (
+                    <div className="flex items-center space-x-2 text-white">
+                        <input
+                            type="checkbox"
+                            id="saveInfo"
+                            name="saveInfo"
+                            checked={saveInfo}
+                            onChange={() => setSaveInfo(prev => !prev)}
+                            className="mt-1"
+                        />
+                        <label htmlFor="saveInfo" className='mt-[3px]'>
+                            Save my name and email in this browser for the next time I comment.
+                        </label>
+                    </div>
+                )}
+                <div>
                     <button type="submit" className="bg-white text-black px-8 py-2 rounded">
                         Submit
                     </button>
                 </div>
-                {message && <p className="mt-2 text-sm">{message}</p>}
+                {message && <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-500' : 'text-red-500'}`}>
+                    {message}
+                </p>}
             </form>
         </div>
     );

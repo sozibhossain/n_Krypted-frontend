@@ -12,36 +12,90 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
 
-interface EditDealModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  dealId: string | null
+import dynamic from "next/dynamic"
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
+import "react-quill/dist/quill.snow.css"
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useQuery } from "@tanstack/react-query"
+
+interface Location {
+  country: string
+  city: string
 }
 
 interface DealData {
   title: string
   description: string
   price: number
-  location: string
+  location: Location
   offers: string[]
   images: string[]
   participationsLimit: number
-  time: string
+  time: number
+  status?: string
+  category?: string
+}
+
+interface Category {
+  _id: string
+  categoryName: string
+  image: string
+  createdAt: string
+  updatedAt: string
+}
+
+interface CategoriesResponse {
+  success: boolean
+  data: Category[]
+  pagination: {
+    currentPage: number
+    totalPages: number
+    totalItems: number
+    itemsPerPage: number
+  }
+}
+
+interface EditDealModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  dealId: string
 }
 
 export default function EditDealModal({ open, onOpenChange, dealId }: EditDealModalProps) {
   const [isLoading, setIsLoading] = useState(false)
-  // const [dealData, setDealData] = useState<DealData | null>(null)
   const [offerInput, setOfferInput] = useState("")
   const [offers, setOffers] = useState<string[]>([])
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [existingImages, setExistingImages] = useState<string[]>([])
+  const [description, setDescription] = useState("")
 
   const queryClient = useQueryClient()
+
+  const [category, setCategory] = useState("")
+
+  // Fetch categories from API
+  const { data: categoriesData } = useQuery<CategoriesResponse>({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories")
+        }
+        const data = await response.json()
+        return data
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        throw err
+      }
+    },
+  })
+
+  const categories = categoriesData?.data || []
 
   const {
     register,
@@ -65,17 +119,17 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
           // Set form values
           setValue("title", data.deal.title)
           setValue("description", data.deal.description)
+          setDescription(data.deal.description)
           setValue("price", data.deal.price)
-          setValue("location", data.deal.location)
+          setValue("location.country", data.deal.location.country)
+          setValue("location.city", data.deal.location.city)
           setValue("participationsLimit", data.deal.participationsLimit)
-
-          // Set time field as-is from API
-          setValue("time", data.deal.time || "")
+          setValue("time", data.deal.time)
+          setCategory(data.deal.category?._id || "")
 
           // Set offers and images
           setOffers(data.deal.offers || [])
           setExistingImages(data.deal.images || [])
-          // setDealData(data.deal)
         } catch (error) {
           console.error("Error fetching deal data:", error)
           toast.error("Failed to load deal data")
@@ -119,10 +173,14 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
     formData.append("title", data.title)
     formData.append("description", data.description)
     formData.append("price", data.price.toString())
-    formData.append("location", data.location)
+    formData.append("location[country]", data.location.country)
+    formData.append("location[city]", data.location.city)
     formData.append("participationsLimit", data.participationsLimit.toString())
+    formData.append("time", data.time.toString())
 
-    formData.append("time", data.time)
+    if (category) {
+      formData.append("category", category)
+    }
 
     // Add offers
     offers.forEach((offer, index) => {
@@ -198,12 +256,35 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
 
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...register("description", { required: "Description is required" })}
-                className="w-full min-h-[100px]"
-              />
+              <div className="border rounded-md">
+                <ReactQuill
+                  id="description"
+                  value={description}
+                  onChange={(content) => {
+                    setValue("description", content)
+                    setDescription(content)
+                  }}
+                  className=""
+                  theme="snow"
+                />
+              </div>
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="category">Deal Category</Label>
+              <Select value={category} onValueChange={setCategory} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat._id} value={cat._id}>
+                      {cat.categoryName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">
@@ -222,10 +303,21 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
               {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" {...register("location", { required: "Location is required" })} className="w-full" />
-              {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  id="country"
+                  {...register("location.country", { required: "Country is required" })}
+                  className="w-full"
+                />
+                {errors.location?.country && <p className="text-red-500 text-sm">{errors.location.country.message}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="city">City</Label>
+                <Input id="city" {...register("location.city", { required: "City is required" })} className="w-full" />
+                {errors.location?.city && <p className="text-red-500 text-sm">{errors.location.city.message}</p>}
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -249,10 +341,14 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
               <Label htmlFor="time">Deal Time (minutes)</Label>
               <Input
                 id="time"
-                type="text"
-                {...register("time", { required: "Deal time is required" })}
+                type="number"
+                {...register("time", {
+                  required: "Deal time is required",
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Deal time must be at least 1 minute" },
+                })}
                 className="w-full"
-                placeholder="Enter deal time"
+                placeholder="Enter deal time in minutes"
               />
               {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
             </div>

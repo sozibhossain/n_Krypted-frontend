@@ -7,18 +7,9 @@ const page = () => {
   return (
     <div>
       <PageHeader
-        title="Contact Us"
+        title="Kontakt"
         imge="/assets/herobg.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "Contact",
-            href: "/faq",
-          },
-        ]}
+     
       />
     <div className="my-20 lg:mt-28 container">
       <div className="grid grid-cols-2 items-center">

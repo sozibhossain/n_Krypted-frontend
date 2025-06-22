@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
 import { Calendar } from "lucide-react";
+import BlogComments from "./blogComments";
+import { BlogCommentsSection } from "./BlogCommentsShow";
 
 interface BlogDetailsProps {
   id?: string;
@@ -50,8 +52,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
 
     fetchBlog();
   }, [blogId]);
-
-
 
   if (loading) {
     return (
@@ -102,21 +102,37 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           <Image
             src={blog.image || "/default-image.jpg"}
             alt={blog.title || "Blog image"}
-            width={800}
-            height={450}
-            className="object-cover w-full h-full"
+            width={1000}
+            height={1000}
+            className="object-cover w-full h-[630px] "
             priority
           />
         </div>
 
         <div className="text-white font-[16px] leading-[19.2px]">
-          <div
-            className="list-item list-none"
-            dangerouslySetInnerHTML={{
-              __html: blog?.description ?? "Blog Description",
-            }}
-          />
+          <>
+            <style>{`
+              .blogcontent img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+              }
+            `}</style>
+
+            <div
+              className="list-item list-none !text-white blogcontent"
+              dangerouslySetInnerHTML={{
+                __html: blog?.description ?? "Blog Description",
+              }}
+            />
+          </>
+
+          <div className="pt-[150px]">
+            <BlogCommentsSection blogId={blogId} />
+          </div>
         </div>
+
+        <BlogComments blogId={blogId} />
       </div>
     </div>
   );

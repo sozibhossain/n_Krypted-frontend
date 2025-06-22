@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -20,8 +21,8 @@ import { Input } from "@/components/ui/input"
 import StarRating from "@/app/deals/Star-rating"
 import { toast } from "sonner"
 import { useSession } from "next-auth/react"
-import { PaymentForm } from "@/components/pyment/Pyment"
 
+import PayPalCheckout from "@/components/PayPalCheckout"
 
 interface AuctionDetailsProps {
   auctionId: string
@@ -68,12 +69,13 @@ const AuctionImageGallery: React.FC<AuctionImageGalleryProps> = ({ images, selec
 
   return (
     <div className="flex flex-row md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-      {images.map((image, index) => (
+      {images.slice(0, 4).map((image, index) => (
         <button
           key={index}
           onClick={() => onSelect(index)}
-          className={`relative min-w-[70px] w-[70px] h-[70px] md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-all ${selectedIndex === index ? "border-blue-500 shadow-md" : "border-transparent hover:border-gray-300"
-            }`}
+          className={`relative min-w-[70px] !w-[82px] md:!w-[70px] !h-[85px] md:h-20 rounded-md overflow-hidden border-2 transition-all ${
+            selectedIndex === index ? "border-blue-500 shadow-md" : "border-transparent hover:border-gray-300"
+          }`}
         >
           <Image
             src={image || "/placeholder.svg"}
@@ -182,7 +184,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEmail("")
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to submit review", { position: "top-right" })
+      toast.error(error.message || "Failed to submit review", {
+        position: "top-right",
+      })
     },
   })
 
@@ -218,7 +222,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] })
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete review", { position: "top-right" })
+      toast.error(error.message || "Failed to delete review", {
+        position: "top-right",
+      })
       setIsDeleteModalOpen(false)
       setReviewToDelete(null)
     },
@@ -261,7 +267,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditRating(0)
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update review", { position: "top-right" })
+      toast.error(error.message || "Failed to update review", {
+        position: "top-right",
+      })
     },
   })
 
@@ -401,32 +409,34 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 lg:gap-8">
-        {/* Image Gallery - Left Side */}
-        <div className="md:col-span-2 lg:col-span-1 order-2 md:order-1">
-          <AuctionImageGallery
-            images={auction?.images}
-            selectedIndex={selectedImageIndex}
-            onSelect={setSelectedImageIndex}
-          />
-        </div>
-
-        {/* Main Image - Middle */}
-        <div className="md:col-span-5 lg:col-span-6 space-y-4 order-1 md:order-2">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-muted">
-            <Image
-              src={auction?.images?.[selectedImageIndex] || "/placeholder.svg"}
-              alt={auction?.title || "Property image"}
-              fill
-              className="object-cover"
-              priority
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-7 gap-4 md:gap-6 lg:gap-8 col-span-6">
+          {/* Image Gallery - Left Side */}
+          <div className="col-span-7 md:col-span-1 order-2 md:order-1">
+            <AuctionImageGallery
+              images={auction?.images}
+              selectedIndex={selectedImageIndex}
+              onSelect={setSelectedImageIndex}
             />
+          </div>
+
+          {/* Main Image - Middle */}
+          <div className="col-span-7 md:col-span-6 space-y-4 order-1 md:order-2">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+              <Image
+                src={auction?.images?.[selectedImageIndex] || "/placeholder.svg"}
+                alt={auction?.title || "Property image"}
+                fill
+                className="object-cover  !h-[491px] md:!h-[391px]"
+                priority
+              />
+            </div>
           </div>
         </div>
 
         {/* Auction Details - Right Side */}
-        <div className="md:col-span-5 order-3">
+        <div className="md:col-span-6 order-3">
           <div className="space-y-4">
             <h1 className="text-2xl md:text-3xl lg:text-[40px] font-semibold text-[#FFFFFF]">
               {auction?.title || "Property Title"}
@@ -448,7 +458,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </p>
             <div className="flex items-center gap-2 text-gray-500">
               <MapPin className="w-4 h-4 text-white" />
-              <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">{auction?.location}</span>
+              <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">{auction?.location.country}, {auction?.location.city}</span>
             </div>
             {/* <div className="flex items-center gap-2 text-gray-500">
               <Calendar className="w-4 h-4 text-white" />
@@ -478,7 +488,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       />
 
       {/* Review Section */}
-      <div className="space-y-6 pb-[120px]">
+      <div className="space-y-6 pb-[20px] md:pb-[120px]">
         <h2 className="text-[32px] text-[#FFFFFF] font-semibold">Customer Reviews</h2>
         <div>
           <p className="text-xl text-[#FFFFFF] font-medium">Be the first to review&quot;This Deals&quot;</p>
@@ -644,11 +654,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       {/* Payment Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-        <DialogContent className="p-10 bg-[#212121] border border-[#FFFFFF33] text-white">
-          <PaymentForm
+        <DialogContent className="p-10  border-[#FFFFFF33] text-white">
+          {/* <PaymentForm
             amount={auction?.price || 0}
-            bookingId={bookingId ?? ""}
+            bookingId={auction?.price || 0}
             userId={session?.data?.user?.id ?? ""}
+          /> */}
+          <PayPalCheckout
+            amount={auction?.price || 0}
+            userId={session?.data?.user?.id ?? ""}
+            bookingId={bookingId ?? ""}
           />
         </DialogContent>
       </Dialog>

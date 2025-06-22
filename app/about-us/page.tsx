@@ -16,16 +16,7 @@ const page = () => {
       <PageHeader
         title="About Us"
         imge="/assets/about-us.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "About Us",
-            href: "/blogs",
-          },
-        ]}
+     
       />
       <div className="mt-18 lg:mt-24 container">
       <div className="text-center mt-8">

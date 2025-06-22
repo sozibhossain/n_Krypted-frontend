@@ -6,16 +6,7 @@ export default function RefundPoliciesPage() {
       <PageHeader
         title="Report Infringement"
         imge="/assets/herobg.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "Report Infringement",
-            href: "/faq",
-          },
-        ]}
+       
       />
       <div className="container mx-auto px-4 py-8 mt-[80px] mb-[120px] text-white">
         <h1 className="text-3xl font-bold mb-6">Refund Policies</h1>

@@ -78,12 +78,13 @@ export function DealsSection() {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-3 sm:w-5 h-6 sm:h-9 bg-white rounded" />
               <div>
-                <h1 className="font-benedict text-2xl sm:text-3xl md:text-[40px] font-normal mb-1 sm:mb-2 text-white">
+                <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">
                   Popular
                 </h1>
               </div>
             </div>
-            <p className="text-xl sm:text-2xl md:text-[40px] font-bold text-white">Our Popular Deals</p>
+            <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Unsere beliebten Deals</p>
           </div>
 
           <div className="flex gap-2 mt-2 sm:mt-0">
@@ -156,7 +157,7 @@ export function DealsSection() {
                 dealsData.map((deal: Deal) => (
                   <CarouselItem
                     key={deal._id}
-                    className={`pl-2 md:pl-4 ${itemsPerView === 1 ? "basis-full" : itemsPerView === 2 ? "basis-1/2" : "basis-1/3"
+                    className={` ${itemsPerView === 1 ? "basis-full" : itemsPerView === 1 ? "basis-1/2" : "basis-1/3"
                       }`}
                   >
                     <div className="p-1">

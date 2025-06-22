@@ -4,29 +4,29 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
     {
-        question: "How do I register for an auction?",
+        question: "Wie buche ich einen Walk Through?",
         answer:
-            "Click the Register button at the top of our site. Complete the form with your details and verify your email to activate your account. Once you're verified, you're ready to start bidding!",
+            "Wähle einfach deinen gewünschten Walk Through aus und buche ihn online. Nach erfolgreicher Buchung erhältst du deinen Zugangscode per E-Mail oder findest ihn in deinem Nutzerkonto. Zeig den Code einfach beim Walk Through vor – und schon kann’s losgehen!",
     },
     {
-        question: "Is there a fee to join or bid?",
+        question: "Wie lange dauert ein Walk Through?",
         answer:
-            "Registration is completely free! There are no charges to join or place bids. You only pay if you win an item, along with any applicable buyer’s premium and shipping fees.",
+            "Die Dauer kann leicht variieren – je nachdem, wie der Walk Through verläuft. Plane am besten etwa 30 bis 60 Minuten ein",
     },
     {
-        question: "How do I place a bid?",
+        question: "Muss ich pünktlich erscheinen? ",
         answer:
-            "Once registered and logged in, simply navigate to the item you’re interested in and enter your bid. You can also set a maximum bid and let our system bid incrementally on your behalf up to that limit.",
+            "Ja, bitte sei etwa 10 Minuten vor Beginn vor Ort. So startet alles entspannt und du verpasst nichts.",
     },
     {
-        question: "What payment methods are accepted?",
+        question: "Was, wenn ich den Termin nicht wahrnehmen kann?",
         answer:
-            "We accept major credit and debit cards, bank transfers, and secure online payment platforms. Full payment details are provided at checkout after you win an item.",
+            "Aktuell ist eine Umbuchung leider noch nicht möglich – aber wir arbeiten bereits an einer Lösung!",
     },
     {
-        question: "How do I receive my item after winning?",
+        question: "Was genau ist ein Walk Through eigentlich?",
         answer:
-            "After payment is confirmed, we’ll carefully package your item and ship it using a trusted courier. You'll receive a tracking number so you can monitor your delivery every step of the way.",
+            "Ein Walk Through ist eine kurze, geführte Tour durch besondere Orte – zum Beispiel durch kleine Läden, Ateliers, Werkstätten oder Cafés. Die Gastgeber:innen geben direinen persönlichen Einblick hinter die Kulissen – authentisch, nahbar und oft überraschend",
     }
 ]
 
@@ -36,7 +36,7 @@ function Faq() {
             <Accordion type="single" collapsible className="w-full flex flex-col gap-4 ">
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="rounded-lg">
-                        <AccordionTrigger className="text-left text-base md:text-xl lg:text-2xl font-semibold text-white">{faq.question}</AccordionTrigger>
+                        <AccordionTrigger className="text-left text-base md:text-xl lg:text-xl font-semibold text-white">{faq.question}</AccordionTrigger>
                         <AccordionContent className="text-[#E0E0E0]">{faq.answer}</AccordionContent>
                     </AccordionItem>
                 ))}

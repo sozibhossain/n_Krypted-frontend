@@ -14,16 +14,17 @@ export function FaqSection() {
               <div className="flex items-center gap-4">
                 <div className="w-4 h-7 sm:w-5 sm:h-9 bg-white rounded" />
                 <h1
-                  className="font-benedict text-[40px] font-normal mb-2 text-white "
+                  className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
                 >
-                  FAQS
+                  FAQs
                 </h1>
               </div>
-              <h2 className="text-white text-[20px] font-semibold tracking-tight md:text-[30px] lg:text-[40px] mt-2 mb-4">Frequently Asked Questions</h2>
+              <h2 className="text-white text-[24px] font-semibold tracking-tight md:text-[30px] lg:text-[30px] mt-2 mb-4">Frequently Asked Questions</h2>
             </div>
             <Link href="/faq">
               <Button className="bg-white text-black">
-                Explore All <MoveRight />
+                Alle Fragen anzeigen <MoveRight />
               </Button>
             </Link>
           </div>

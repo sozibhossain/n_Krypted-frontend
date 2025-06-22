@@ -8,16 +8,7 @@ const page = () => {
       <PageHeader
         title="Notifications"
         imge="/assets/herobg.png"
-        items={[
-          {
-            label: "Home",
-            href: "/",
-          },
-          {
-            label: "notifications",
-            href: "/notifications",
-          },
-        ]}
+      
       />
       <div className="py-28 container">
         <Notifications />

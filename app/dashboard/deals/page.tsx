@@ -1,17 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useTransition } from "react"
-import { Edit, Trash, Plus, Eye } from "lucide-react"
+import { useState } from "react";
+import { useTransition } from "react";
+import { Edit, Trash, Plus, Eye } from "lucide-react";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Switch } from "@/components/ui/switch"
-import Layout from "@/components/dashboard/layout"
-import { Pagination } from "@/components/dashboard/pagination"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+import Layout from "@/components/dashboard/layout";
+import { Pagination } from "@/components/dashboard/pagination";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,141 +28,161 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
-import AddDealModal from "./_component/add-deal-modal"
-import { Skeleton } from "@/components/ui/skeleton"
-import DealDetailsModal from "./_component/deal-details-modal"
-import EditDealModal from "./_component/edit-deal-moda"
-
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import AddDealModal from "./_component/add-deal-modal";
+import { Skeleton } from "@/components/ui/skeleton";
+import DealDetailsModal from "./_component/deal-details-modal";
+import EditDealModal from "./_component/edit-deal-moda";
 
 interface Category {
-  _id: string
-  categoryName: string
-  image: string
-  createdAt: string
-  updatedAt: string
+  _id: string;
+  categoryName: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Deal {
-  _id: string
-  title: string
-  description: string
-  participations: number
-  price: number
-  location: string
-  images: string[]
-  offers: string[]
-  status: string
-  category: Category | null
-  createdAt: string
-  updatedAt: string
+  _id: string;
+  title: string;
+  description: string;
+  participations: number;
+  price: number;
+  location: {
+    country: string;
+    city: string;
+  };
+  images: string[];
+  offers: string[];
+  status: string;
+  category: Category | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PaginationInfo {
-  currentPage: number
-  totalPages: number
-  totalItems: number
-  itemsPerPage: number
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
 }
 
 interface ApiResponse {
-  success: boolean
-  deals: Deal[]
-  pagination: PaginationInfo
+  success: boolean;
+  deals: Deal[];
+  pagination: PaginationInfo;
 }
 
 interface CategoriesResponse {
-  success: boolean
-  data: Category[]
-  pagination: PaginationInfo
+  success: boolean;
+  data: Category[];
+  pagination: PaginationInfo;
 }
 
 export default function DealsManagement() {
-  const [page, setPage] = useState(1)
-  const queryClient = useQueryClient()
+  const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery<ApiResponse>({
     queryKey: ["deals", page],
     queryFn: async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deals?page=${page}&limit=10`)
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/deals?page=${page}&limit=10`
+        );
         if (!response.ok) {
-          throw new Error("Failed to fetch deals")
+          throw new Error("Failed to fetch deals");
         }
-        return await response.json()
+        return await response.json();
       } catch (err) {
-        console.error("Error fetching deals:", err)
-        throw err
+        console.error("Error fetching deals:", err);
+        throw err;
       }
     },
-  })
+  });
+
+ 
 
   // Fetch categories from API
   const { data: categoriesData } = useQuery<CategoriesResponse>({
     queryKey: ["categories"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
+        );
         if (!response.ok) {
-          throw new Error("Failed to fetch categories")
+          throw new Error("Failed to fetch categories");
         }
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
       } catch (err) {
-        console.error("Error fetching categories:", err)
-        throw err
+        console.error("Error fetching categories:", err);
+        throw err;
       }
     },
-  })
+  });
 
-  const categories = categoriesData?.data || []
+  const categories = categoriesData?.data || [];
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to delete deal")
+        throw new Error("Failed to delete deal");
       }
 
-      return response.json()
+      return response.json();
     },
     onSuccess: () => {
       // Invalidate and refetch the deals query
-      queryClient.invalidateQueries({ queryKey: ["deals"] })
-      toast.success("Deal deleted successfully", { position: "top-right" })
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+      toast.success("Deal deleted successfully", { position: "top-right" });
     },
     onError: (error) => {
-      console.error("Error deleting deal:", error)
-      toast.error("Failed to delete deal", { position: "top-right" })
+      console.error("Error deleting deal:", error);
+      toast.error("Failed to delete deal", { position: "top-right" });
     },
-  })
+  });
 
   const statusMutation = useMutation({
-    mutationFn: async ({ id, newStatus }: { id: string; newStatus: string }) => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
+    mutationFn: async ({
+      id,
+      newStatus,
+    }: {
+      id: string;
+      newStatus: string;
+    }) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to update deal status")
+        throw new Error("Failed to update deal status");
       }
 
-      return response.json()
+      return response.json();
     },
     onError: (error, variables) => {
-      console.error("Error updating deal status:", error)
-      toast.error("Failed to update deal status", { position: "top-right" })
+      console.error("Error updating deal status:", error);
+      toast.error("Failed to update deal status", { position: "top-right" });
 
       // Revert the optimistic update on error
       if (data) {
@@ -163,50 +190,59 @@ export default function DealsManagement() {
           ...data,
           deals: data.deals.map((deal) =>
             deal._id === variables.id
-              ? { ...deal, status: variables.newStatus === "activate" ? "deactivate" : "activate" }
-              : deal,
+              ? {
+                  ...deal,
+                  status:
+                    variables.newStatus === "activate"
+                      ? "deactivate"
+                      : "activate",
+                }
+              : deal
           ),
-        })
+        });
       }
     },
-  })
+  });
 
-  const deals = data?.deals || []
+  const deals = data?.deals || [];
   const pagination = data?.pagination || {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
     itemsPerPage: 10,
-  }
+  };
 
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
 
-  const [updatingStatusIds, setUpdatingStatusIds] = useState<string[]>([])
-  const [selectedDealId, setSelectedDealId] = useState<string | null>(null)
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editDealId, setEditDealId] = useState<string | null>(null)
+  const [updatingStatusIds, setUpdatingStatusIds] = useState<string[]>([]);
+  const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editDealId, setEditDealId] = useState<string | null>(null);
 
   const handlePageChange = (page: number) => {
     startTransition(() => {
-      setPage(page)
-    })
-  }
+      setPage(page);
+    });
+  };
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
       // Add the deal ID to the updating list
-      setUpdatingStatusIds((prev) => [...prev, id])
+      setUpdatingStatusIds((prev) => [...prev, id]);
 
       // Calculate the new status
-      const newStatus = currentStatus === "activate" ? "deactivate" : "activate"
+      const newStatus =
+        currentStatus === "activate" ? "deactivate" : "activate";
 
       // Optimistically update the UI
       if (data) {
         queryClient.setQueryData(["deals", page], {
           ...data,
-          deals: data.deals.map((deal) => (deal._id === id ? { ...deal, status: newStatus } : deal)),
-        })
+          deals: data.deals.map((deal) =>
+            deal._id === id ? { ...deal, status: newStatus } : deal
+          ),
+        });
       }
 
       // Call the mutation
@@ -215,46 +251,53 @@ export default function DealsManagement() {
         {
           onSettled: () => {
             // Remove the deal ID from the updating list when done (success or error)
-            setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id))
+            setUpdatingStatusIds((prev) =>
+              prev.filter((dealId) => dealId !== id)
+            );
           },
           onSuccess: () => {
-            toast.success(`Deal ${newStatus === "activate" ? "activated" : "deactivated"} successfully`, {
-              position: "top-right",
-            })
+            toast.success(
+              `Deal ${
+                newStatus === "activate" ? "activated" : "deactivated"
+              } successfully`,
+              {
+                position: "top-right",
+              }
+            );
           },
-        },
-      )
+        }
+      );
     } catch (error) {
-      console.error("Error updating deal status:", error)
+      console.error("Error updating deal status:", error);
       // Make sure to remove from updating list in case of error
-      setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id))
+      setUpdatingStatusIds((prev) => prev.filter((dealId) => dealId !== id));
     }
-  }
+  };
 
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [dealToDelete, setDealToDelete] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [dealToDelete, setDealToDelete] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
-      setDealToDelete(id)
-      setDeleteDialogOpen(true)
+      setDealToDelete(id);
+      setDeleteDialogOpen(true);
     } catch (error) {
-      console.error("Error preparing to delete deal:", error)
+      console.error("Error preparing to delete deal:", error);
     }
-  }
+  };
 
   const confirmDelete = async () => {
-    if (!dealToDelete) return
+    if (!dealToDelete) return;
 
     try {
-      deleteMutation.mutate(dealToDelete)
+      deleteMutation.mutate(dealToDelete);
     } finally {
-      setDeleteDialogOpen(false)
-      setDealToDelete(null)
+      setDeleteDialogOpen(false);
+      setDealToDelete(null);
     }
-  }
+  };
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Skeleton component for loading state
   const TableSkeleton = () => {
@@ -263,7 +306,10 @@ export default function DealsManagement() {
         {Array(5)
           .fill(0)
           .map((_, index) => (
-            <TableRow key={index} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
+            <TableRow
+              key={index}
+              className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
+            >
               <TableCell className="py-4">
                 <Skeleton className="h-6 w-[180px]" />
               </TableCell>
@@ -291,25 +337,27 @@ export default function DealsManagement() {
             </TableRow>
           ))}
       </>
-    )
-  }
+    );
+  };
 
   const handleViewDetails = (id: string) => {
-    setSelectedDealId(id)
-    setIsDetailsModalOpen(true)
-  }
+    setSelectedDealId(id);
+    setIsDetailsModalOpen(true);
+  };
 
   const handleEdit = (id: string) => {
-    setEditDealId(id)
-    setIsEditModalOpen(true)
-  }
+    setEditDealId(id);
+    setIsEditModalOpen(true);
+  };
 
   return (
     <Layout>
       <div className="">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Deals</CardTitle>
+            <CardTitle className="text-[40px] text-[#1F2937] font-bold tracking-tigh">
+              Deals
+            </CardTitle>
             <p className="text-xl text-[#595959]">Dashboard &gt; Deals</p>
           </div>
 
@@ -329,7 +377,8 @@ export default function DealsManagement() {
                     <TableHead>Deals</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>SKU</TableHead>
-                    <TableHead>Location</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>City</TableHead>
 
                     <TableHead>Price</TableHead>
                     <TableHead>Activate</TableHead>
@@ -347,7 +396,10 @@ export default function DealsManagement() {
                     </TableRow>
                   ) : (
                     deals.map((deal) => (
-                      <TableRow key={deal._id} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
+                      <TableRow
+                        key={deal._id}
+                        className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
+                      >
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           {deal.title || "Lorem ipsum is a dummy or text."}
                         </TableCell>
@@ -355,10 +407,16 @@ export default function DealsManagement() {
                           {deal.category?.categoryName || "Restaurants"}
                         </TableCell>
                         <TableCell className="text-[#212121] text-base font-medium py-4">
-                          {`#${deal._id.substring(0, 3)}-${deal._id.substring(3, 6)}` || "#212-121"}
+                          {`#${deal._id.substring(0, 3)}-${deal._id.substring(
+                            3,
+                            6
+                          )}` || "#212-121"}
                         </TableCell>
                         <TableCell className="text-[#212121] text-base font-medium py-4">
-                          {deal.location || "Lorem ipsum dolor sit amet."}
+                          {deal.location.country}
+                        </TableCell>
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
+                          {deal.location.city}
                         </TableCell>
 
                         <TableCell className="text-[#212121] text-base font-medium py-4">
@@ -368,7 +426,9 @@ export default function DealsManagement() {
                           <div className="relative">
                             <Switch
                               checked={deal.status === "activate"}
-                              onCheckedChange={() => handleStatusToggle(deal._id, deal.status)}
+                              onCheckedChange={() =>
+                                handleStatusToggle(deal._id, deal.status)
+                              }
                               disabled={updatingStatusIds.includes(deal._id)}
                             />
                             {updatingStatusIds.includes(deal._id) && (
@@ -380,13 +440,25 @@ export default function DealsManagement() {
                         </TableCell>
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           <div className="flex space-x-2">
-                            <Button variant="ghost" size="icon" onClick={() => handleViewDetails(deal._id)}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewDetails(deal._id)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleEdit(deal._id)}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(deal._id)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(deal._id)}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(deal._id)}
+                            >
                               <Trash className="h-4 w-4" />
                             </Button>
                           </div>
@@ -414,25 +486,45 @@ export default function DealsManagement() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this deal?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Are you sure you want to delete this deal?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the deal from the database.
+              This action cannot be undone. This will permanently delete the
+              deal from the database.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <AddDealModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} categories={categories} />
+      <AddDealModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        categories={categories}
+      />
       {selectedDealId && (
-        <DealDetailsModal open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen} dealId={selectedDealId} />
+        <DealDetailsModal
+          open={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          dealId={selectedDealId}
+        />
       )}
-      {editDealId && <EditDealModal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} dealId={editDealId} />}
+      {editDealId && (
+        <EditDealModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          dealId={editDealId}
+        />
+      )}
     </Layout>
-  )
+  );
 }

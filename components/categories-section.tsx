@@ -14,14 +14,13 @@ export function CategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const axiosPublic = useAxios()
 
-  const { data: allCategory=[], isLoading } = useQuery({
+  const { data: allCategory = [], isLoading } = useQuery({
     queryKey: ["allCategory"],
     queryFn: async () => {
       const { data } = await axiosPublic("/api/categories")
       return data?.data
     },
   })
-
 
   useEffect(() => {
     if (!api) return
@@ -37,6 +36,14 @@ export function CategoriesSection() {
     }
   }, [api])
 
+  // Handle dot click to scroll to specific slide
+  const handleDotClick = (index: number) => {
+    if (api) {
+      api.scrollTo(index)
+      setCurrentIndex(index)
+    }
+  }
+
   // Create placeholder skeletons when loading
   const skeletonItems = Array(4)
     .fill(0)
@@ -47,20 +54,20 @@ export function CategoriesSection() {
     ))
 
   return (
-    <section className="mt-24 ">
+    <section className="mt-24">
       <div className="container space-y-12">
-
         <div className="space-y-4">
           <div className="flex items-center gap-2 md:gap-4">
             <div className="w-3 md:w-5 h-6 md:h-9 bg-white rounded" />
             <h1
-              className="font-benedict text-2xl md:text-[40px] font-normal text-white"
+              className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               style={{ fontFamily: "cursive" }}
             >
-              Categories
+              Kategorien
             </h1>
           </div>
-          <p className="text-xl md:text-3xl lg:text-[40px] font-bold text-white mt-1 md:mt-2">Explore Our Category</p>
+          <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Entdecke unsere Kategorien</p>
         </div>
 
         <div className="w-full">
@@ -74,40 +81,41 @@ export function CategoriesSection() {
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {isLoading
-                ? // Show skeleton items when loading
-                skeletonItems
-                : // Show actual category items when data is loaded
-                /* eslint-disable @typescript-eslint/no-explicit-any */
-                allCategory?.map((category: any, index: number) => (
-                  <CarouselItem
-                    key={category._id || index}
-                    className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4"
-                  >
-                    <CategoryCard title={category.categoryName} icon={category.image || ""} />
-                  </CarouselItem>
-                ))}
+                ? skeletonItems
+                : /* eslint-disable @typescript-eslint/no-explicit-any */
+                  allCategory?.map((category: any, index: number) => (
+                    <CarouselItem
+                      key={category._id || index}
+                      className="basis-full py-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-[25px]"
+                    >
+                      <CategoryCard title={category.categoryName} icon={category.image || ""} />
+                    </CarouselItem>
+                  ))}
             </CarouselContent>
             <div className="flex items-center justify-center gap-1 md:gap-2 mt-6 md:mt-10">
               <div className="flex gap-1 md:gap-2">
                 {isLoading
-                  ? // Show skeleton dots when loading
-                  Array(4)
-                    .fill(0)
-                    .map((_, index) => (
-                      <div
-                        key={`skeleton-dot-${index}`}
-                        className={`h-1.5 md:h-2 rounded-full transition-all ${index === 0 ? "bg-gray-600 w-4 md:w-6" : "bg-gray-700 w-1.5 md:w-2"}`}
-                      />
-                    ))
-                  : // Show actual dots when data is loaded
-                  /* eslint-disable @typescript-eslint/no-explicit-any */
-                  allCategory?.map((category: any, index: number) => (
-                    <div
-                      key={index}
-                      className={`h-1.5 md:h-2 rounded-full transition-all ${currentIndex === index ? "bg-white w-4 md:w-6" : "bg-gray-500/50 w-1.5 md:w-2"
+                  ? Array(4)
+                      .fill(0)
+                      .map((_, index) => (
+                        <div
+                          key={`skeleton-dot-${index}`}
+                          className={`h-1.5 md:h-2 rounded-full transition-all ${
+                            index === 0 ? "bg-gray-600 w-4 md:w-6" : "bg-gray-700 w-1.5 md:w-2"
+                          }`}
+                        />
+                      ))
+                  : /* eslint-disable @typescript-eslint/no-explicit-any */
+                    allCategory?.map((category: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => handleDotClick(index)}
+                        className={`h-1.5 md:h-2 rounded-full transition-all focus:outline-none ${
+                          currentIndex === index ? "bg-white w-4 md:w-6" : "bg-gray-500/50 w-1.5 md:w-2"
                         }`}
-                    />
-                  ))}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
               </div>
             </div>
           </Carousel>

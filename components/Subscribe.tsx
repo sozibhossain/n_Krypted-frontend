@@ -52,12 +52,12 @@ export default function NewsletterSubscription() {
 
     return (
         <div className="max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4 text-black">Subscribe for the latest deals</h2>
+            <h2 className="text-xl font-bold mb-4 text-black ">Jetzt anmelden und keine Angebote mehr verpassen</h2>
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 w-full">
                 <div className="bg-[#222222] flex items-center p-2 rounded-lg w-full">
                     <input
                         type="email"
-                        placeholder="Enter Your Email"
+                        placeholder="E-Mail eintragen "
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="flex-grow px-4 py-2 rounded-md bg-[#222222] text-white placeholder-gray-400 focus:outline-none w-full"
@@ -69,7 +69,7 @@ export default function NewsletterSubscription() {
                         disabled={isSubmitting}
                         className="px-4 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition-colors disabled:opacity-70 whitespace-nowrap"
                     >
-                        {isSubmitting ? "Subscribing..." : "Subscribe"}
+                        {isSubmitting ? "Anmelden ..." : "Anmelden "}
                     </button>
                 </div>
             </form>
