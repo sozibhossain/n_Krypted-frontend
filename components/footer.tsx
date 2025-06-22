@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Linkedin, Mail, MapPin, Phone } from "lucide-react"
+import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import NewsletterSubscription from "./Subscribe"
@@ -46,18 +46,18 @@ export function Footer() {
               <Instagram size={18} />
             </Link>
             <Link
+              href="https://instagram.com"
+              aria-label="Instagram"
+              className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
+            >
+              <Image src="/assets/tiktok.png" alt="Linkedin" width={20} height={20} />
+            </Link>
+            <Link
               href="https://twitter.com"
               aria-label="Twitter"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
               <Twitter size={18} />
-            </Link>
-            <Link
-              href="https://linkedin.com"
-              aria-label="LinkedIn"
-              className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
-            >
-              <Linkedin size={18} />
             </Link>
           </div>
         </div>
@@ -67,6 +67,9 @@ export function Footer() {
           <ul className="space-y-2 text-[#4E4E4E]">
             <li>
               <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/faq">FAQs</Link>
             </li>
             <li>
               <Link href="/about-us">Über uns</Link>
@@ -84,7 +87,7 @@ export function Footer() {
         </div>
 
         <div className="text-[#4E4E4E]">
-          <h3 className="text-[#4E4E4E] font-semibold text-lg mb-3">Contact</h3>
+          <h3 className="text-[#4E4E4E] font-semibold text-lg mb-3">Kontakt</h3>
           <div className="flex items-start gap-2 text-[#4E4E4E] mb-2">
             <MapPin size={16} className="mt-1" />
             <span>208 Olson Boulevard, Toyburgh</span>
@@ -111,7 +114,7 @@ export function Footer() {
       <div className="container">
         {/* Payment Methods */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-          <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted Payment Methods:</p>
+          <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p>
           <div className="flex space-x-4">
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
               <Image src="/assets/Paypal.png" alt="PayPal" width={60} height={30} className="h-6 w-auto" />

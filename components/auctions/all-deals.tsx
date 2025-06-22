@@ -512,8 +512,8 @@ function DealsPage() {
 
       {/* Locations */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">
-          Locations
+        <h3 className="text-xl font-semibold text-[#212121] mb-3 sm:mb-4">
+          Städte” and then “Alle Städte
         </h3>
         {allLocations.length === 0 ? (
           <div className="py-2 text-sm sm:text-base text-gray-500">Loading locations...</div>
@@ -523,7 +523,7 @@ function DealsPage() {
               <SelectValue placeholder="Select location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Locations</SelectItem>
+              <SelectItem value="all">Städte” and then “Alle Städte</SelectItem>
               {allLocations.map((location) => (
                 <SelectItem key={location} value={location}>
                   {location}
@@ -537,7 +537,7 @@ function DealsPage() {
       {/* Price Range Slider */}
       <div>
         <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">
-          Price Range
+          Preisspanne
         </h3>
         <div className="space-y-4 sm:space-y-6">
           {/* Price Input Fields */}
@@ -602,8 +602,8 @@ function DealsPage() {
 
           {/* Price Display */}
           <div className="flex justify-between items-center text-xs sm:text-sm text-gray-600">
-            <span>${Math.round(priceRange[0])}</span>
-            <span>${Math.round(priceRange[1])}</span>
+            <span>EUR {Math.round(priceRange[0])}</span>
+            <span>EUR {Math.round(priceRange[1])}</span>
           </div>
 
           {/* Quick Price Presets */}
@@ -626,7 +626,7 @@ function DealsPage() {
                 }}
                 className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
               >
-                ${min} - ${max}
+                EUR {min} - EUR {max}
               </button>
             ))}
           </div>

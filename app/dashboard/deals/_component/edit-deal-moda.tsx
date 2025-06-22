@@ -19,6 +19,9 @@ import dynamic from "next/dynamic"
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 import "react-quill/dist/quill.snow.css"
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useQuery } from "@tanstack/react-query"
+
 interface Location {
   country: string
   city: string
@@ -37,6 +40,25 @@ interface DealData {
   category?: string
 }
 
+interface Category {
+  _id: string
+  categoryName: string
+  image: string
+  createdAt: string
+  updatedAt: string
+}
+
+interface CategoriesResponse {
+  success: boolean
+  data: Category[]
+  pagination: {
+    currentPage: number
+    totalPages: number
+    totalItems: number
+    itemsPerPage: number
+  }
+}
+
 interface EditDealModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -52,6 +74,28 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
   const [description, setDescription] = useState("")
 
   const queryClient = useQueryClient()
+
+  const [category, setCategory] = useState("")
+
+  // Fetch categories from API
+  const { data: categoriesData } = useQuery<CategoriesResponse>({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories")
+        }
+        const data = await response.json()
+        return data
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        throw err
+      }
+    },
+  })
+
+  const categories = categoriesData?.data || []
 
   const {
     register,
@@ -81,6 +125,7 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
           setValue("location.city", data.deal.location.city)
           setValue("participationsLimit", data.deal.participationsLimit)
           setValue("time", data.deal.time)
+          setCategory(data.deal.category?._id || "")
 
           // Set offers and images
           setOffers(data.deal.offers || [])
@@ -132,6 +177,10 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
     formData.append("location[city]", data.location.city)
     formData.append("participationsLimit", data.participationsLimit.toString())
     formData.append("time", data.time.toString())
+
+    if (category) {
+      formData.append("category", category)
+    }
 
     // Add offers
     offers.forEach((offer, index) => {
@@ -223,6 +272,22 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
             </div>
 
             <div className="grid gap-2">
+              <Label htmlFor="category">Deal Category</Label>
+              <Select value={category} onValueChange={setCategory} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat._id} value={cat._id}>
+                      {cat.categoryName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-2">
               <Label htmlFor="price">Price</Label>
               <Input
                 id="price"
@@ -250,11 +315,7 @@ export default function EditDealModal({ open, onOpenChange, dealId }: EditDealMo
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  {...register("location.city", { required: "City is required" })}
-                  className="w-full"
-                />
+                <Input id="city" {...register("location.city", { required: "City is required" })} className="w-full" />
                 {errors.location?.city && <p className="text-red-500 text-sm">{errors.location.city.message}</p>}
               </div>
             </div>

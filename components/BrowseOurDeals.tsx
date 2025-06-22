@@ -57,14 +57,14 @@ export function BrowseOurDeals() {
             <div className="w-5 h-9 bg-white rounded" />
             <div>
               <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Our Deal </h1>
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">Deals</h1>
             </div>
           </div>
-          <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Browse Our Deals</p>
+          <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Stöbere durch unsere Deals</p>
         </div>
         <Link href={"/deals"}>
           <Button className="bg-white text-black">
-            Explore All <MoveRight />
+            Jetzt entdecken <MoveRight />
           </Button>
         </Link>
       </div>

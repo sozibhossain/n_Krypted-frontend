@@ -233,7 +233,7 @@ export function CategoriesAndSearchBar() {
   const getLocationDisplayText = () => {
     if (selectedCity) return selectedCity;
     if (selectedCountry) return selectedCountry;
-    return "location";
+    return "Frankfurt am Main";
   };
 
   return (
@@ -260,7 +260,7 @@ export function CategoriesAndSearchBar() {
                         onClick={() => handleCategorySelect("")}
                         className={!selectedCategory ? "bg-gray-100" : ""}
                       >
-                        All Categories
+                        Frankfurt am Main
                       </DropdownMenuItem>
                       {isLoadingCategories ? (
                         <DropdownMenuItem disabled>
@@ -343,7 +343,7 @@ export function CategoriesAndSearchBar() {
                               : ""
                           }`}
                         >
-                          All Locations
+                          Frankfurt am Main
                         </div>
 
                         {/* Countries and Cities */}
