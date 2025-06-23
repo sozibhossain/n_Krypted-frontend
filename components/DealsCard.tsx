@@ -177,7 +177,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify me"}
+          {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
       );
     }
@@ -190,7 +190,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify me"}
+          {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
       );
     }
@@ -213,7 +213,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify me"}
+          {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
       );
     }
@@ -300,7 +300,7 @@ export function DealsCard({
               />
             </p>
             <Link href={`/deals/${id}`}>
-              <div className="flex items-center gap-1 text-black font-normal cursor-pointer">
+              <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-[14px]">
                 <span>Mehr anzeigen</span>
                 <ChevronRight className="w-4 h-4" />
               </div>

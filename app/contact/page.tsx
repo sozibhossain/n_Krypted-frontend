@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div>
       <PageHeader
-        title="Contact Us"
+        title="Kontakt"
         imge="/assets/herobg.png"
      
       />
