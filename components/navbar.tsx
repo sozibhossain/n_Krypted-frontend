@@ -14,11 +14,12 @@ import Hideon from "@/Provider/Hideon"
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "About", href: "/about-us" },
+  { name: "Über uns", href: "/about-us" },
   { name: "Deals", href: "/deals" },
-  { name: "FAQ", href: "/faq" },
+
   { name: "Blog", href: "/blog" },
-  { name: "Contact", href: "/contact" },
+    { name: "FAQ", href: "/faq" },
+  { name: "Kontakt", href: "/contact" },
 ]
 
 export function Navbar() {
@@ -82,18 +83,18 @@ export function Navbar() {
           {/* Logo */}
           <div>
             <Link href="/" className="">
-              <div className="">
+              <div className="py-1">
                 <div className="flex justify-center">
                   <Image
-                    src="/assets/ml.png"
+                    src="/assets/logo-icon.png"
                     alt="Logo"
                     width={1000}
                     height={1000}
-                    className="h-[80px] w-[140px]"
+                    className="h-[60px] w-[120px]"
                   />
                 </div>
-                {/* <h1 className="text-[35px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]">Walk Throughz</h1> */}
+                <h1 className="text-[32px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]">Walk Throughz</h1>
               </div>
             </Link>
           </div>

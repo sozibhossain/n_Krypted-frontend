@@ -44,7 +44,7 @@ export function BlogsSection() {
         </div>
         <Link href={"/blog"}>
           <Button className="bg-white text-black">
-            Explore All <MoveRight />
+            Jetzt entdecken <MoveRight />
           </Button>
         </Link>
       </div>
@@ -53,7 +53,7 @@ export function BlogsSection() {
         {loading ? (
           <p className="text-center">Loading blogs...</p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             {blogs.slice(0, 4).map((blog: Blog) => (
               <BlogsCard key={blog._id} blog={blog} />
             ))}

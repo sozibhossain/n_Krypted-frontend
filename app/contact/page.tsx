@@ -19,7 +19,7 @@ const page = () => {
             alt="Auction speaker"
             height={472}
             width={370}
-            className="rounded-xl  w-full max-w-[470px] h-auto sm:h-[550px] object-cover"
+            className="rounded-xl  w-full max-w-[470px] h-auto sm:h-[550px] object-fill"
             priority
           />
         </div>

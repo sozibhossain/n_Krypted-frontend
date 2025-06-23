@@ -68,18 +68,21 @@ export function Footer() {
             <li>
               <Link href="/">Home</Link>
             </li>
-            <li>
-              <Link href="/faq">FAQs</Link>
-            </li>
-            <li>
+             <li>
               <Link href="/about-us">Über uns</Link>
             </li>
-            <li>
+             <li>
               <Link href="/deals">Deals</Link>
             </li>
             <li>
               <Link href="/blog">Blogs</Link>
             </li>
+            <li>
+              <Link href="/faq">FAQ</Link>
+            </li>
+           
+           
+            
             <li>
               <Link href="/contact">Kontakt</Link>
             </li>

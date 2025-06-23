@@ -8,7 +8,7 @@ const page = () => {
     <div>
       <PageHeader
         title="Häufige Fragen"
-        imge="/assets/faq2.png"
+        imge="/assets/faq4.jpg"
        
       />
       <div className="container">
