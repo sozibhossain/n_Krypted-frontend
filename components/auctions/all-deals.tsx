@@ -1277,7 +1277,7 @@ function DealsPage() {
     <div className="space-y-6 bg-white p-4 sm:p-5 rounded-lg shadow-sm w-full max-w-full lg:max-w-[300px]">
       {/* Categories */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Kategorien
         </h3>
         {isLoadingCategories ? (
@@ -1311,8 +1311,8 @@ function DealsPage() {
 
       {/* Locations */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">
-          Locations
+        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
+          Städte
         </h3>
         {uniqueLocations.length === 0 ? (
           <div className="py-2 text-sm sm:text-base text-gray-500">
@@ -1345,7 +1345,7 @@ function DealsPage() {
                   !selectedCountry && !selectedCity ? "bg-gray-100" : ""
                 }`}
               >
-                All Locations
+                All Städte
               </div>
               {uniqueLocations.map(({ country, cities }) => (
                 <div key={country} className="relative group w-full">
@@ -1380,7 +1380,7 @@ function DealsPage() {
 
       {/* Price Range Slider */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Preisspanne
         </h3>
         <div className="space-y-4 sm:space-y-6">
@@ -1482,7 +1482,7 @@ function DealsPage() {
             }}
             className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
-            Clear Price Filter
+            Reset
           </button>
         </div>
       </div>
