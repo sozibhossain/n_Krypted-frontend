@@ -14,7 +14,7 @@ const page = () => {
   return (
     <div className="">
       <PageHeader
-        title="About Us"
+        title="Über uns"
         imge="/assets/about-us.png"
      
       />

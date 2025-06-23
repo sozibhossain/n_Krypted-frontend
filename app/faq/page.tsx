@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div>
       <PageHeader
-        title="Frequently Asked Questions"
+        title="Häufige Fragen"
         imge="/assets/faq2.png"
        
       />
@@ -15,11 +15,11 @@ const page = () => {
         <div className="grid grid-cols-3 gap-4 pt-16">
           <div className="hidden lg:block lg:col-span-1 ">
             <Image
-              src="/assets/faq.png"
+              src="/assets/faq.jpg"
               alt=""
               width={500}
               height={500}
-              className="hidden lg:block w-[350px] h-[450px] sticky top-[190px]"
+              className="hidden object-cover lg:block w-[350px] h-[450px] sticky top-[190px]"
             />
           </div>
           <div className="col-span-3 lg:col-span-2">

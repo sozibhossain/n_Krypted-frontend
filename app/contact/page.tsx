@@ -8,18 +8,18 @@ const page = () => {
     <div>
       <PageHeader
         title="Kontakt"
-        imge="/assets/herobg.png"
+        imge="/assets/phon1.png"
      
       />
     <div className="my-20 lg:mt-28 container">
       <div className="grid grid-cols-2 items-center">
         <div className="col-span-1 hidden md:hidden lg:block">
           <Image
-            src="/assets/contact.png"
+            src="/assets/contact2.jpg"
             alt="Auction speaker"
             height={472}
             width={370}
-            className="rounded-xl w-full max-w-[470px] h-auto sm:h-[550px] object-cover"
+            className="rounded-xl  w-full max-w-[470px] h-auto sm:h-[550px] object-cover"
             priority
           />
         </div>

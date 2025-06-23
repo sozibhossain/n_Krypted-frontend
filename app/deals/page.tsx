@@ -6,8 +6,8 @@ export default function page() {
   return (
     <div className="">
       <PageHeader
-        title="Our All Deals"
-        imge="/assets/herobg.png"
+        title="Alle Deals"
+        imge="/assets/picture1.jpg"
       
       />
       <div className="lg:mt-28 container">
