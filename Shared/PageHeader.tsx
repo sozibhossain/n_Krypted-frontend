@@ -19,7 +19,7 @@ export function PageHeader({ title, imge }: PageHeaderProps) {
       } else if (window.innerWidth <= 768) {
         setHeight('300px');
       } else {
-        setHeight('400px');
+        setHeight('400px'); 
       }
     }
 
@@ -34,7 +34,7 @@ export function PageHeader({ title, imge }: PageHeaderProps) {
       style={{
         backgroundImage: `url(${imge})`,
         backgroundSize: "cover",
-        backgroundRepeat: "repeat",
+        backgroundRepeat: "no-repeat",
         backgroundPosition: "top",
         top: 0,
         left: 0,
@@ -42,9 +42,10 @@ export function PageHeader({ title, imge }: PageHeaderProps) {
       }}
     >
       <div className={cn("relative z-10 flex flex-col items-center")}>
-        <h1 className="text-[25px] lg:text-[48px] font-benedict text-white text-center mb-5 tracking-wide">
-          {title}
-        </h1>
+     <h1 className="text-[40px] font-benedict text-white text-center mb-5">
+  {title}
+</h1>
+
       
         <div className="flex items-center justify-center py-2">
           <div className="flex gap-1 justify-center">

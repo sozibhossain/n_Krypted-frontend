@@ -32,28 +32,28 @@ export function Footer() {
           {/* Social Media Icons */}
           <div className="flex space-x-4 mt-2">
             <Link
-              href="https://facebook.com"
+              href=""
               aria-label="Facebook"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
               <Facebook size={18} />
             </Link>
             <Link
-              href="https://instagram.com"
+              href=""
               aria-label="Instagram"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
               <Instagram size={18} />
             </Link>
             <Link
-              href="https://instagram.com"
+              href=""
               aria-label="Instagram"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
               <Image src="/assets/tiktok.png" alt="Linkedin" width={20} height={20} />
             </Link>
             <Link
-              href="https://twitter.com"
+              href=""
               aria-label="Twitter"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
@@ -114,7 +114,7 @@ export function Footer() {
       <div className="container">
         {/* Payment Methods */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-          <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p>
+          {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
           <div className="flex space-x-4">
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
               <Image src="/assets/Paypal.png" alt="PayPal" width={60} height={30} className="h-6 w-auto" />
