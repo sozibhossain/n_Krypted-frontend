@@ -7,7 +7,7 @@ export default function page() {
     <div className="">
       <PageHeader
         title="Alle Deals"
-        imge="/assets/picture1.jpg"
+        imge="/assets/picture1.png"
       
       />
       <div className="lg:mt-28 container">
