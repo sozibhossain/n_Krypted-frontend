@@ -1,7 +1,8 @@
-import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from "lucide-react"
+import { Facebook, Instagram, Twitter, Globe } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import NewsletterSubscription from "./Subscribe"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export function Footer() {
   return (
@@ -89,20 +90,17 @@ export function Footer() {
           </ul>
         </div>
 
-        <div className="text-[#4E4E4E]">
-          <h3 className="text-[#4E4E4E] font-semibold text-lg mb-3">Kontakt</h3>
-          <div className="flex items-start gap-2 text-[#4E4E4E] mb-2">
-            <MapPin size={16} className="mt-1" />
-            <span>208 Olson Boulevard, Toyburgh</span>
-          </div>
-          <div className="flex items-start gap-2 text-[#4E4E4E]">
-            <Phone size={16} className="mt-1" />
-            <span>(303) 555-0105</span>
-          </div>
-          <div className="flex text-[#4E4E4E] items-start gap-2 mb-2">
-            <Mail size={16} className="mt-1" />
-            <span>housing@realestate.com</span>
-          </div>
+         <div>
+          <h3 className="font-semibold text-lg mb-3 text-[#212121]">Groupon Sites</h3>
+          <Select defaultValue="usa">
+            <SelectTrigger className="w-[200px] rounded-full bg-white text-[#4E4E4E] border border-gray-300 px-4 py-2 flex items-center gap-2">
+              <Globe size={18} />
+              <SelectValue placeholder="Select a country" />
+            </SelectTrigger>
+            <SelectContent className="bg-white text-[#4E4E4E]">
+              <SelectItem value="usa">USA</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
