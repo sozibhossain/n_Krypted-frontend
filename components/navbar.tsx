@@ -78,7 +78,7 @@ export function Navbar() {
 
   return (
     <Hideon routes={HIDDEN_ROUTES}>
-      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center  flex-col">
+      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center  flex-col mt-3">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
           <div>

@@ -15,7 +15,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                         alt="Blog Image"
                         width={1000}
                         height={1000}
-                        className="h-[205px] lg:h-[305px] w-full object-cover"
+                        className="h-[205px] lg:h-[222px] rounded-md w-full object-cover"
                     />
                 </div>
 
