@@ -83,7 +83,7 @@
   font-family: 'Benedict';
   src: url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff2') format('woff2'),
     url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff') format('woff');
-  font-weight: 400;
+  font-weight: 400,500,600,700,900,1000;
   font-style: normal;
   font-display: swap;
 }
@@ -92,7 +92,10 @@
 .font-benedict {
   font-family: "Benedict" !important;
 }
-
+.bandit_font{
+  font-size: 70px;
+ 
+}
 
 /* QuillEditor custom styles */
 .list-item {

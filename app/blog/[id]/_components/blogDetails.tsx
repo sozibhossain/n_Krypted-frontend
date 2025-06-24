@@ -104,7 +104,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             alt={blog.title || "Blog image"}
             width={1000}
             height={1000}
-            className="object-cover w-full h-[630px] "
+            className="object-cover w-full h-[530px] "
             priority
           />
         </div>

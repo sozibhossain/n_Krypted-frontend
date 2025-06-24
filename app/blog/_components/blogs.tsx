@@ -35,7 +35,7 @@ function Blogs() {
         {loading ? (
           <p className="text-center text-white">Loading blogs...</p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
             {blogs.map((blog: Blog) => (
               <BlogsCard key={blog._id} blog={blog} />
             ))}
