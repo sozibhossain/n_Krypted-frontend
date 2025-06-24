@@ -146,7 +146,7 @@ export function DealsCard({
         throw new Error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Something went wrong" + (error as Error).message);
+      toast.error((error as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -349,7 +349,6 @@ export function DealsCard({
             amount={price}
             userId={session?.user?.id ?? ""}
             bookingId={bookingId ?? ""}
-           
           />
         </DialogContent>
       </Dialog>

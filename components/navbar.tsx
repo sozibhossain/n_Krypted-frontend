@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useMobile } from "@/hooks/use-mobile-nav"
-import { BellRing, Menu, UserRound } from "lucide-react"
-import { useSession } from "next-auth/react"
-import { useSocketContext } from "@/Provider/SocketProvider"
-import * as React from "react"
-import Hideon from "@/Provider/Hideon"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useMobile } from "@/hooks/use-mobile-nav";
+import { BellRing, Menu, UserRound } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useSocketContext } from "@/Provider/SocketProvider";
+import * as React from "react";
+import Hideon from "@/Provider/Hideon";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -18,53 +18,63 @@ const navLinks = [
   { name: "Deals", href: "/deals" },
 
   { name: "Blog", href: "/blog" },
-    { name: "FAQ", href: "/faq" },
+  { name: "FAQ", href: "/faq" },
   { name: "Kontakt", href: "/contact" },
-]
+];
 
 export function Navbar() {
-  const router = useRouter()
-  const [open, setOpen] = React.useState(false)
-  const isMobile = useMobile()
-  const pathname = usePathname()
-  const { status, data: sessionData } = useSession()
-  const isLoggedIn = status === "authenticated"
-  const token = sessionData?.user?.accessToken
-  const role = sessionData?.user?.role
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+  const isMobile = useMobile();
+  const pathname = usePathname();
+  const { status, data: sessionData } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const token = sessionData?.user?.accessToken;
+  const role = sessionData?.user?.role;
 
-  const session = useSession()
-  const userId = session?.data?.user?.id
+  const session = useSession();
+  const userId = session?.data?.user?.id;
 
-  const { notificationCount, setNotificationCount, isConnected } = useSocketContext()
+  const { notificationCount, setNotificationCount, isConnected } =
+    useSocketContext();
 
   const markNotificationsAsRead = async () => {
-    if (!token) return
+    if (!token) return;
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notifications/read-all?userId=${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      localStorage.removeItem("notificationCount")
-      setNotificationCount(0)
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/read-all?userId=${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.removeItem("notificationCount");
+      setNotificationCount(0);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const iconLinks = [
     { icon: BellRing, href: "/notifications", count: notificationCount },
     { icon: UserRound, href: "/profiles" },
-  ]
+  ];
 
   const getIconClasses = (href: string) => `
     relative border-2 rounded-full p-2 transition-colors
-    ${pathname.startsWith(href) ? "border-[#E6C475]" : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"}
-  `
-  const getIconColor = (href: string) => (pathname.startsWith(href) ? "text-[#E6C475]" : "text-white")
-  const isActive = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href))
+    ${
+      pathname.startsWith(href)
+        ? "border-[#E6C475]"
+        : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
+    }
+  `;
+  const getIconColor = (href: string) =>
+    pathname.startsWith(href) ? "text-[#E6C475]" : "text-white";
+  const isActive = (href: string) =>
+    href === "/" ? pathname === href : pathname.startsWith(href);
 
   const HIDDEN_ROUTES = [
     "/dashboard",
@@ -74,11 +84,11 @@ export function Navbar() {
     "/registration",
     "/reset-password",
     "/forgot-password",
-  ]
+  ];
 
   return (
     <Hideon routes={HIDDEN_ROUTES}>
-      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center  flex-col mt-3">
+      <header className="sticky top-0 z-50 w-full h-[100px] bg-[#212121] flex justify-center  flex-col">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
           <div>
@@ -90,11 +100,15 @@ export function Navbar() {
                     alt="Logo"
                     width={1000}
                     height={1000}
-                    className="h-[60px] w-[120px]"
+                    className="h-[35px] w-[90px]"
                   />
                 </div>
-                <h1 className="text-[32px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]">Walk Throughz</h1>
+                <h1
+                  className="text-[32px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                >
+                  Walk Throughz
+                </h1>
               </div>
             </Link>
           </div>
@@ -122,7 +136,10 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             {!isLoggedIn && (
               <Link href="/login" className="hidden md:block">
-                <Button variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
+                <Button
+                  variant="default"
+                  className="px-6 hidden lg:block bg-white text-[#212121]"
+                >
                   Login
                 </Button>
               </Link>
@@ -130,7 +147,10 @@ export function Navbar() {
 
             {role === "admin" && (
               <Link href="/dashboard">
-                <Button variant="default" className="px-6 hidden lg:block bg-white text-[#212121]">
+                <Button
+                  variant="default"
+                  className="px-6 hidden lg:block bg-white text-[#212121]"
+                >
                   Dashboard
                 </Button>
               </Link>
@@ -143,12 +163,14 @@ export function Navbar() {
                     <button
                       key={href}
                       onClick={async (e) => {
-                        e.preventDefault()
-                        await markNotificationsAsRead()
-                        router.push(href)
+                        e.preventDefault();
+                        await markNotificationsAsRead();
+                        router.push(href);
                       }}
                       className={getIconClasses(href)}
-                      title={`${isConnected ? "Connected" : "Disconnected"} - ${notificationCount} notifications`}
+                      title={`${
+                        isConnected ? "Connected" : "Disconnected"
+                      } - ${notificationCount} notifications`}
                     >
                       <Icon className={getIconColor(href)} size={20} />
                       {notificationCount > 0 && (
@@ -158,10 +180,14 @@ export function Navbar() {
                       )}
                     </button>
                   ) : (
-                    <Link key={href} href={href} className={getIconClasses(href)}>
+                    <Link
+                      key={href}
+                      href={href}
+                      className={getIconClasses(href)}
+                    >
                       <Icon className={getIconColor(href)} size={20} />
                     </Link>
-                  ),
+                  )
                 )}
               </div>
             )}
@@ -175,7 +201,10 @@ export function Navbar() {
                     <span className="sr-only">Toggle menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-[#f5f0e8]">
+                <SheetContent
+                  side="right"
+                  className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
+                >
                   <nav className="flex flex-col gap-4 pt-10">
                     {navLinks.map((link) => (
                       <Link
@@ -183,7 +212,9 @@ export function Navbar() {
                         href={link.href}
                         onClick={() => setOpen(false)}
                         className={`text-base font-medium transition-colors ${
-                          isActive(link.href) ? "text-foreground" : "text-muted-foreground"
+                          isActive(link.href)
+                            ? "text-foreground"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {link.name}
@@ -213,13 +244,15 @@ export function Navbar() {
                           <>
                             <button
                               onClick={async (e) => {
-                                e.preventDefault()
-                                await markNotificationsAsRead()
-                                router.push("/notifications")
-                                setOpen(false)
+                                e.preventDefault();
+                                await markNotificationsAsRead();
+                                router.push("/notifications");
+                                setOpen(false);
                               }}
                               className={`relative text-base font-medium transition-colors text-start ${
-                                isActive("/notifications") ? "text-foreground" : "text-muted-foreground"
+                                isActive("/notifications")
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
                               }`}
                             >
                               Notifications {!isConnected && "(Offline)"}
@@ -233,7 +266,9 @@ export function Navbar() {
                               href="/profiles"
                               onClick={() => setOpen(false)}
                               className={`text-base font-medium transition-colors ${
-                                isActive("/profiles") ? "text-foreground" : "text-muted-foreground"
+                                isActive("/profiles")
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
                               }`}
                             >
                               My Account
@@ -250,5 +285,5 @@ export function Navbar() {
         </div>
       </header>
     </Hideon>
-  )
+  );
 }
