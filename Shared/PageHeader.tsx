@@ -10,7 +10,7 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, imge }: PageHeaderProps) {
-  const [height, setHeight] = React.useState('400px');
+  const [height, setHeight] = React.useState('500px');
 
   React.useEffect(() => {
     function handleResize() {
@@ -19,7 +19,7 @@ export function PageHeader({ title, imge }: PageHeaderProps) {
       } else if (window.innerWidth <= 768) {
         setHeight('300px');
       } else {
-        setHeight('400px'); 
+        setHeight('500px'); 
       }
     }
 
