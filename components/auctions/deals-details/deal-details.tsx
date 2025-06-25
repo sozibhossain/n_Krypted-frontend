@@ -383,7 +383,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify me"}
+          {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
       )
     } else {
@@ -655,11 +655,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       {/* Payment Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent className="p-10  border-[#FFFFFF33] text-white">
-          {/* <PaymentForm
-            amount={auction?.price || 0}
-            bookingId={auction?.price || 0}
-            userId={session?.data?.user?.id ?? ""}
-          /> */}
+        
           <PayPalCheckout
             amount={auction?.price || 0}
             userId={session?.data?.user?.id ?? ""}
