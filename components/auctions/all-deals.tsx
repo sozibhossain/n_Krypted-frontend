@@ -496,7 +496,7 @@ function DealsPage() {
     if (selectedCountry) {
       return selectedCountry;
     }
-    return "All Locations  ";
+    return "All Städte";
   };
 
   // Count active filters

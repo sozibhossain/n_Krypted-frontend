@@ -8,18 +8,18 @@ const page = () => {
     <div>
       <PageHeader
         title="Häufige Fragen"
-        imge="/assets/faq4.jpg"
+        imge="/assets/faq1.jpg"
        
       />
       <div className="container">
         <div className="grid grid-cols-3 gap-4 pt-16">
           <div className="hidden lg:block lg:col-span-1 ">
             <Image
-              src="/assets/faq.jpg"
+              src="/assets/faq5.jpg"
               alt=""
               width={500}
               height={500}
-              className="hidden object-cover lg:block w-[350px] h-[450px] sticky top-[190px]"
+              className="hidden rounded-lg object-cover lg:block w-[350px] h-[450px] sticky top-[190px]"
             />
           </div>
           <div className="col-span-3 lg:col-span-2">
