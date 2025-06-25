@@ -91,14 +91,14 @@ export function Footer() {
         </div>
 
          <div>
-          <h3 className="font-semibold text-lg mb-3 text-[#212121]">Groupon Sites</h3>
+          <h3 className="font-semibold text-lg mb-3 text-[#212121]">Walk Throughz Sites</h3>
           <Select defaultValue="usa">
             <SelectTrigger className="w-[200px] rounded-full bg-white text-[#4E4E4E] border border-gray-300 px-4 py-2 flex items-center gap-2">
               <Globe size={18} />
               <SelectValue placeholder="Select a country" />
             </SelectTrigger>
             <SelectContent className="bg-white text-[#4E4E4E]">
-              <SelectItem value="usa">USA</SelectItem>
+              <SelectItem value="usa">Germany</SelectItem>
             </SelectContent>
           </Select>
         </div>

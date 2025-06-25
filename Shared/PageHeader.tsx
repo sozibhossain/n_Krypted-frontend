@@ -6,47 +6,47 @@ import * as React from "react";
 interface PageHeaderProps {
   title: string;
   imge?: string;
-
 }
 
 export function PageHeader({ title, imge }: PageHeaderProps) {
-  const [height, setHeight] = React.useState('500px');
+  const [height, setHeight] = React.useState("500px");
 
   React.useEffect(() => {
     function handleResize() {
       if (window.innerWidth <= 480) {
-        setHeight('200px');
+        setHeight("200px");
       } else if (window.innerWidth <= 768) {
-        setHeight('300px');
+        setHeight("300px");
       } else {
-        setHeight('500px'); 
+        setHeight("500px");
       }
     }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize(); // Set initial size
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <div
-      className={cn("relative w-full flex flex-col items-center justify-center bg-black pt-10 ")}
+      className={cn(
+        "relative w-full flex flex-col items-center justify-center bg-black pt-10 "
+      )}
       style={{
         backgroundImage: `url(${imge})`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top",
         top: 0,
         left: 0,
-        height: height
+        height: height,
       }}
     >
       <div className={cn("relative z-10 flex flex-col items-center")}>
-     <h1 className="bandit_font [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] font-benedict text-white text-center mb-5">
-  {title}
-</h1>
+        <h1 className="bandit_font [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] font-benedict text-white text-center mb-5">
+          {title}
+        </h1>
 
-      
         <div className="flex items-center justify-center py-2">
           <div className="flex gap-1 justify-center">
             <div className="w-3 h-1 bg-[#E6EEF6] opacity-30 dark:bg-[#C8B9DF]" />
