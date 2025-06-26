@@ -252,7 +252,7 @@ export function DealsCard({
             />
 
             {/* Timer - Only show if deal has time and isn't expired */}
-            {shouldShowParticipants && (
+            {shouldShowParticipants && status === "activate" && (
               <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-2 font-semibold text-white">
                 <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded">
                   <div className="text-center">
