@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-import DatePicker from "react-datepicker"; // Using react-datepicker for calendar
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import {
@@ -67,7 +67,7 @@ interface Deal {
   category: string;
   createdAt: string;
   updatedAt: string;
-  scheduleDates: string[];
+  scheduleDates: { active: boolean; day: string; _id?: string }[];
 }
 
 export default function AddDealModal({
@@ -85,12 +85,12 @@ export default function AddDealModal({
   const [images, setImages] = useState<File[]>([]);
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([]);
   const [participationsLimit, setParticipationsLimit] = useState("");
-  const [scheduleDates, setScheduleDates] = useState<Date[]>([]); // State for scheduleDates
+  const [scheduleDates, setScheduleDates] = useState<{ day: Date; active: boolean }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
-  const addDealMutation = useMutation({
+  const addDealMutation = useMutation<Deal, Error, FormData>({
     mutationFn: async (formData: FormData) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/deals`,
@@ -101,12 +101,13 @@ export default function AddDealModal({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create deal");
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to create deal");
       }
 
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: Deal) => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
 
       queryClient.setQueryData(
@@ -137,9 +138,13 @@ export default function AddDealModal({
       resetForm();
       onOpenChange(false);
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error("Error creating deal:", error);
-      toast.error("Failed to create deal", { position: "top-right" });
+      const errorMessage =
+        error.message.includes("scheduleDates")
+          ? "Invalid schedule dates format"
+          : error.message || "Failed to create deal";
+      toast.error(errorMessage, { position: "top-right" });
     },
   });
 
@@ -206,6 +211,13 @@ export default function AddDealModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (scheduleDates.length === 0) {
+      toast.error("Please select at least one schedule date", {
+        position: "top-right",
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -220,8 +232,13 @@ export default function AddDealModal({
     );
     formData.append(
       "scheduleDates",
-      JSON.stringify(scheduleDates.map((date) => date.toISOString()))
-    ); // Add scheduleDates to formData
+      JSON.stringify(
+        scheduleDates.map((dateObj) => ({
+          day: dateObj.day.toISOString(),
+          active: dateObj.active,
+        }))
+      )
+    );
     images.forEach((image) => {
       formData.append("images", image);
     });
@@ -240,7 +257,7 @@ export default function AddDealModal({
     setImages([]);
     setImagesPreviews([]);
     setParticipationsLimit("");
-    setScheduleDates([]); // Reset scheduleDates
+    setScheduleDates([]);
   };
 
   return (
@@ -264,7 +281,7 @@ export default function AddDealModal({
               <Label htmlFor="dealName">Deal Name</Label>
               <Input
                 id="dealName"
-                placeholder="Type category name here..."
+                placeholder="Type deal name here..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -279,7 +296,7 @@ export default function AddDealModal({
                   theme="snow"
                   value={description}
                   onChange={setDescription}
-                  placeholder="Type Deal description here..."
+                  placeholder="Type deal description here..."
                   className=""
                 />
               </div>
@@ -341,22 +358,40 @@ export default function AddDealModal({
                 selected={null}
                 onChange={(date: Date | null) => {
                   if (date) {
-                    setScheduleDates((prev) => [...prev, date]);
+                    const isDuplicate = scheduleDates.some(
+                      (existingDate) =>
+                        existingDate.day.toISOString().split("T")[0] ===
+                        date.toISOString().split("T")[0]
+                    );
+                    if (!isDuplicate) {
+                      setScheduleDates((prev) => [
+                        ...prev,
+                        { day: date, active: true },
+                      ]);
+                    } else {
+                      toast.error("This date is already selected", {
+                        position: "top-right",
+                      });
+                    }
                   }
                 }}
                 placeholderText="Select schedule dates..."
+                minDate={new Date()}
                 inline={false}
-                className="w-full border rounded p-2 bg-[#f5f1eb] ml-2 "
+                className="w-full border rounded p-2 bg-[#f5f1eb] ml-2"
               />
               <div className="mt-2">
+                {scheduleDates.length === 0 && (
+                  <p className="text-sm text-gray-500">No dates selected</p>
+                )}
                 {scheduleDates.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {scheduleDates.map((date, index) => (
+                    {scheduleDates.map((dateObj, index) => (
                       <div
                         key={index}
                         className="flex items-center gap-1 bg-gray-100 p-2 rounded"
                       >
-                        <span>{date.toISOString().split("T")[0]}</span>
+                        <span>{dateObj.day.toISOString().split("T")[0]}</span>
                         <Button
                           type="button"
                           variant="ghost"
@@ -526,4 +561,4 @@ export default function AddDealModal({
       </DialogContent>
     </Dialog>
   );
-}
+};
