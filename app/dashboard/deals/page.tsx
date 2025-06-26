@@ -102,6 +102,9 @@ export default function DealsManagement() {
     },
   });
 
+
+  console.log(data, "Deals Data");
+
  
 
   // Fetch categories from API
