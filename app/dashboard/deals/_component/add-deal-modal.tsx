@@ -1,12 +1,13 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import DatePicker from "react-datepicker"; // Using react-datepicker for calendar
+import "react-datepicker/dist/react-datepicker.css";
 
 import {
   Dialog,
@@ -59,13 +60,14 @@ interface Deal {
   description: string;
   participations: number;
   price: number;
-  location: Location;
+  location: LocationData;
   images: string[];
   offers: string[];
   status: string;
   category: string;
   createdAt: string;
   updatedAt: string;
+  scheduleDates: string[];
 }
 
 export default function AddDealModal({
@@ -76,16 +78,14 @@ export default function AddDealModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [location, setLocation] = useState<LocationData>({
-    country: "",
-    city: ""
-  });
+  const [location, setLocation] = useState<LocationData>({ country: "", city: "" });
   const [time, setTime] = useState("");
   const [category, setCategory] = useState("");
   const [offers, setOffers] = useState<string[]>([""]);
   const [images, setImages] = useState<File[]>([]);
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([]);
   const [participationsLimit, setParticipationsLimit] = useState("");
+  const [scheduleDates, setScheduleDates] = useState<Date[]>([]); // State for scheduleDates
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
@@ -214,12 +214,14 @@ export default function AddDealModal({
     formData.append("time", time);
     formData.append("category", category);
     formData.append("participationsLimit", participationsLimit);
-
     formData.append(
       "offers",
       JSON.stringify(offers.filter((offer) => offer.trim() !== ""))
     );
-
+    formData.append(
+      "scheduleDates",
+      JSON.stringify(scheduleDates.map((date) => date.toISOString()))
+    ); // Add scheduleDates to formData
     images.forEach((image) => {
       formData.append("images", image);
     });
@@ -231,16 +233,14 @@ export default function AddDealModal({
     setTitle("");
     setDescription("");
     setPrice("");
-    setLocation({
-      country: "",
-      city: ""
-    });
+    setLocation({ country: "", city: "" });
     setTime("");
     setCategory("");
     setOffers([""]);
     setImages([]);
     setImagesPreviews([]);
     setParticipationsLimit("");
+    setScheduleDates([]); // Reset scheduleDates
   };
 
   return (
@@ -250,7 +250,7 @@ export default function AddDealModal({
           <DialogTitle className="text-2xl font-bold">
             Deals
             <div className="text-base font-normal text-[#595959] mt-1">
-              Dashboard &gt; Deals &gt; Add Deal
+              Dashboard Deals  Add Deal
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -303,7 +303,9 @@ export default function AddDealModal({
                 id="country"
                 placeholder="Type country here..."
                 value={location.country}
-                onChange={(e) => setLocation({...location, country: e.target.value})}
+                onChange={(e) =>
+                  setLocation({ ...location, country: e.target.value })
+                }
                 required
               />
             </div>
@@ -313,7 +315,9 @@ export default function AddDealModal({
                 id="city"
                 placeholder="Type city here..."
                 value={location.city}
-                onChange={(e) => setLocation({...location, city: e.target.value})}
+                onChange={(e) =>
+                  setLocation({ ...location, city: e.target.value })
+                }
               />
             </div>
 
@@ -328,6 +332,48 @@ export default function AddDealModal({
                 onChange={(e) => setTime(e.target.value)}
                 required
               />
+            </div>
+
+            <div>
+              <Label htmlFor="scheduleDates">Schedule Dates</Label>
+              <DatePicker
+                id="scheduleDates"
+                selected={null}
+                onChange={(date: Date | null) => {
+                  if (date) {
+                    setScheduleDates((prev) => [...prev, date]);
+                  }
+                }}
+                placeholderText="Select schedule dates..."
+                inline={false}
+                className="w-full border rounded p-2 bg-[#f5f1eb] ml-2 "
+              />
+              <div className="mt-2">
+                {scheduleDates.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {scheduleDates.map((date, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-gray-100 p-2 rounded"
+                      >
+                        <span>{date.toISOString().split("T")[0]}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() =>
+                            setScheduleDates((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            )
+                          }
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
