@@ -39,7 +39,7 @@ interface Deal {
   updatedAt: string;
   __v: number;
   bookingCount?: number;
-  scheduleDates?: string[]; // Added to match API response
+  scheduleDates?: { active: boolean; day: string; _id?: string }[];
 }
 
 interface ApiResponse {
@@ -111,14 +111,14 @@ export default function DealDetailsModal({
           </div>
         ) : error ? (
           <div className="p-4 text-center text-red-500">
-            Failed to load deal details. Please try again.
+            Failed to load deal details. Please check the deal ID or try again later.
           </div>
         ) : deal ? (
           <div className="space-y-6">
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-2xl font-bold">{deal.title}</h2>
-                <p className="text-gray-500">ID: {deal._id}</p>
+                <p className="text-gray-500 text-sm">ID: {deal._id}</p>
               </div>
               <Badge variant={deal.status === "activate" ? "default" : "outline"}>
                 {deal.status === "activate" ? "Active" : "Inactive"}
@@ -145,9 +145,9 @@ export default function DealDetailsModal({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Description</h3>
               <div
-                className="list-item list-none"
+                className="list-item list-none text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: deal?.description ?? "deal Description",
+                  __html: deal?.description ?? "No description available",
                 }}
               />
             </div>
@@ -209,16 +209,29 @@ export default function DealDetailsModal({
                       <span className="text-[#212121]">Last Updated:</span>
                       <span className="font-medium">{formatDate(deal.updatedAt)}</span>
                     </div>
-                    {deal.scheduleDates && deal.scheduleDates.length > 0 && (
+                    {deal.scheduleDates && deal.scheduleDates.length > 0 ? (
                       <div className="space-y-2">
                         <span className="text-[#212121]">Schedule Dates:</span>
                         <ul className="list-disc pl-5">
-                          {deal.scheduleDates.map((date, index) => (
+                          {deal.scheduleDates.map((dateObj, index) => (
                             <li key={index} className="font-medium">
-                              {formatDate(date)}
+                              {formatDate(dateObj.day)}{" "}
+                              {dateObj.active ? (
+                                <Badge variant="default" className="ml-2">
+                                  Active
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="ml-2">
+                                  Inactive
+                                </Badge>
+                              )}
                             </li>
                           ))}
                         </ul>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-500">
+                        No schedule dates available
                       </div>
                     )}
                   </div>
@@ -254,43 +267,11 @@ export default function DealDetailsModal({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Offers</h3>
                 <ul className="list-disc pl-5 space-y-1">
-                  {deal.offers.map((offerStr, index) => {
-                    // eslint-disable-next-line
-                    let parsedOffers: any[] = [];
-                    try {
-                      if (typeof offerStr === "string") {
-                        if (offerStr.startsWith("[") && offerStr.endsWith("]")) {
-                          parsedOffers = JSON.parse(offerStr);
-                        } else if (
-                          offerStr.startsWith("{") &&
-                          offerStr.endsWith("}")
-                        ) {
-                          parsedOffers = [JSON.parse(offerStr)];
-                        } else {
-                          parsedOffers = [offerStr];
-                        }
-                      } else {
-                        parsedOffers = [offerStr];
-                      }
-                    } catch (e) {
-                      parsedOffers = [offerStr];
-                      console.error("Error parsing offer:", e);
-                    }
-
-                    return parsedOffers.map((offer, i) => {
-                      // Convert offer to a string for rendering
-                      const offerText =
-                        typeof offer === "object" && offer !== null
-                          ? JSON.stringify(offer)
-                          : String(offer);
-
-                      return (
-                        <li key={`${index}-${i}`} className="text-gray-700">
-                          {offerText}
-                        </li>
-                      );
-                    });
-                  })}
+                  {deal.offers.map((offer, index) => (
+                    <li key={index} className="text-gray-700">
+                      {offer}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}

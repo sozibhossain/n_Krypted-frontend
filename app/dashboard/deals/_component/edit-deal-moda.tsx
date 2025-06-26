@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { X, Upload } from "lucide-react";
-import DatePicker from "react-datepicker"; // Added for calendar
-import "react-datepicker/dist/react-datepicker.css"; // Calendar styles
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,7 @@ interface DealData {
   time: number;
   status?: string;
   category?: string;
-  scheduleDates?: string[]; // Added for scheduleDates
+  scheduleDates: { active: boolean; day: string; _id?: string }[];
 }
 
 interface Category {
@@ -89,7 +89,7 @@ export default function EditDealModal({
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [scheduleDates, setScheduleDates] = useState<Date[]>([]); // State for scheduleDates
+  const [scheduleDates, setScheduleDates] = useState<{ day: Date; active: boolean }[]>([]);
 
   const queryClient = useQueryClient();
 
@@ -147,10 +147,13 @@ export default function EditDealModal({
           setCategory(data.deal.category?._id || "");
           setOffers(data.deal.offers || []);
           setExistingImages(data.deal.images || []);
-          // Set scheduleDates (convert ISO strings to Date objects)
+          // Set scheduleDates (convert backend objects to state format)
           setScheduleDates(
             data.deal.scheduleDates
-              ? data.deal.scheduleDates.map((date: string) => new Date(date))
+              ? data.deal.scheduleDates.map((dateObj: { day: string; active: boolean }) => ({
+                  day: new Date(dateObj.day),
+                  active: dateObj.active,
+                }))
               : []
           );
         } catch (error) {
@@ -188,12 +191,23 @@ export default function EditDealModal({
     },
     onError: (error) => {
       console.error("Error updating deal:", error);
-      toast.error("Failed to update deal", { position: "top-right" });
+      const errorMessage =
+        error.message.includes("scheduleDates")
+          ? "Invalid schedule dates format"
+          : "Failed to update deal";
+      toast.error(errorMessage, { position: "top-right" });
     },
   });
 
   const onSubmit = async (data: DealData) => {
     if (!dealId) return;
+
+    if (scheduleDates.length === 0) {
+      toast.error("Please select at least one schedule date", {
+        position: "top-right",
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("title", data.title);
@@ -221,7 +235,12 @@ export default function EditDealModal({
     // Add scheduleDates
     formData.append(
       "scheduleDates",
-      JSON.stringify(scheduleDates.map((date) => date.toISOString()))
+      JSON.stringify(
+        scheduleDates.map((dateObj) => ({
+          day: dateObj.day.toISOString(),
+          active: dateObj.active,
+        }))
+      )
     );
 
     updateMutation.mutate(formData);
@@ -337,9 +356,7 @@ export default function EditDealModal({
               />
               {errors.price && (
                 <p className="text-red-500 text-sm">{errors.price.message}</p>
-             
-
- )}
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -351,7 +368,7 @@ export default function EditDealModal({
                     required: "Country is required",
                   })}
                   className="w-full"
-                />
+    />
                 {errors.location?.country && (
                   <p className="text-red-500 text-sm">
                     {errors.location.country.message}
@@ -381,7 +398,7 @@ export default function EditDealModal({
                 {...register("participationsLimit", {
                   required: "Participation limit is required",
                   valueAsNumber: true,
-                  min: { value: 1, message: "Participation cit must be at least 1" },
+                  min: { value: 1, message: "Participation limit must be at least 1" },
                 })}
                 className="w-full"
               />
@@ -417,35 +434,57 @@ export default function EditDealModal({
                 selected={null}
                 onChange={(date: Date | null) => {
                   if (date) {
-                    setScheduleDates((prev) => [...prev, date]);
+                    const isDuplicate = scheduleDates.some(
+                      (existingDate) =>
+                        existingDate.day.toISOString().split("T")[0] ===
+                        date.toISOString().split("T")[0]
+                    );
+                    if (!isDuplicate) {
+                      setScheduleDates((prev) => [
+                        ...prev,
+                        { day: date, active: true },
+                      ]);
+                    } else {
+                      toast.error("This date is already selected", {
+                        position: "top-right",
+                      });
+                    }
                   }
                 }}
                 placeholderText="Select schedule dates..."
-                className="w-full border rounded p-2 bg-[#f5f1eb] ml-2 "
+                minDate={new Date()}
+                className="w-full border rounded p-2 bg-[#f5f1eb] ml-2"
               />
-              <div className="flex flex-wrap gap-2 mt-2">
-                {scheduleDates.map((date, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full"
-                  >
-                    <span>{date.toISOString().split("T")[0]}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-1"
-                      onClick={() =>
-                        setScheduleDates((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        )
-                      }
-                    >
-                      <X className="h-3 w-3" />
-                      <span className="sr-only">Remove</span>
-                    </Button>
+              <div className="mt-2">
+                {scheduleDates.length === 0 && (
+                  <p className="text-sm text-gray-500">No dates selected</p>
+                )}
+                {scheduleDates.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {scheduleDates.map((dateObj, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full"
+                      >
+                        <span>{dateObj.day.toISOString().split("T")[0]}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-1"
+                          onClick={() =>
+                            setScheduleDates((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            )
+                          }
+                        >
+                          <X className="h-3 w-3" />
+                          <span className="sr-only">Remove</span>
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
               {errors.scheduleDates && (
                 <p className="text-red-500 text-sm">{errors.scheduleDates.message}</p>
