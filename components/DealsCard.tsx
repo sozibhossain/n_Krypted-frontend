@@ -139,6 +139,13 @@ export function DealsCard({
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
+        if (data.booking.notifyMe) {
+          throw new Error(
+            "You have already Notify this deal and you have been notified"
+          );
+        }
+
         setBookingId(data.booking._id);
         setIsModalOpen(true);
       } else {
