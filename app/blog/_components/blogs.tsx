@@ -29,7 +29,8 @@ function Blogs() {
       <PageHeader
         title="Our Latest Blogs"
         imge="/assets/blogs.jpg"
-       
+        backgroundSize="cover"
+        height="500px"
       />
       <div className="container my-24">
         {loading ? (

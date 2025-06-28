@@ -78,14 +78,19 @@ export default function AddDealModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [location, setLocation] = useState<LocationData>({ country: "", city: "" });
+  const [location, setLocation] = useState<LocationData>({
+    country: "",
+    city: "",
+  });
   const [time, setTime] = useState("");
   const [category, setCategory] = useState("");
   const [offers, setOffers] = useState<string[]>([""]);
   const [images, setImages] = useState<File[]>([]);
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([]);
   const [participationsLimit, setParticipationsLimit] = useState("");
-  const [scheduleDates, setScheduleDates] = useState<{ day: Date; active: boolean }[]>([]);
+  const [scheduleDates, setScheduleDates] = useState<
+    { day: Date; active: boolean }[]
+  >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
@@ -140,10 +145,9 @@ export default function AddDealModal({
     },
     onError: (error: Error) => {
       console.error("Error creating deal:", error);
-      const errorMessage =
-        error.message.includes("scheduleDates")
-          ? "Invalid schedule dates format"
-          : error.message || "Failed to create deal";
+      const errorMessage = error.message.includes("scheduleDates")
+        ? "Invalid schedule dates format"
+        : error.message || "Failed to create deal";
       toast.error(errorMessage, { position: "top-right" });
     },
   });
@@ -267,7 +271,7 @@ export default function AddDealModal({
           <DialogTitle className="text-2xl font-bold">
             Deals
             <div className="text-base font-normal text-[#595959] mt-1">
-              Dashboard Deals  Add Deal
+              Dashboard Deals Add Deal
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -339,14 +343,19 @@ export default function AddDealModal({
             </div>
 
             <div>
-              <Label htmlFor="time">Time (minutes)</Label>
+              <Label htmlFor="time">Time (hours)</Label>
               <Input
                 id="time"
                 type="number"
-                min="1"
-                placeholder="Enter time in minutes..."
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                min="0"
+                max="24"
+                step="0.25" // allows 15-minute increments (0.25 hours)
+                placeholder="Enter time in hours..."
+                value={time ? Number(time) / 3600 : ""} // convert stored seconds back to hours for display
+                onChange={(e) => {
+                  const hours = parseFloat(e.target.value);
+                  setTime(String(Math.round(hours * 3600)));
+                }}
                 required
               />
             </div>
@@ -561,4 +570,4 @@ export default function AddDealModal({
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -9,7 +9,7 @@ const page = () => {
       <PageHeader
         title="Häufige Fragen"
         imge="/assets/faq1.jpg"
-       
+        backgroundSize="contain"
       />
       <div className="container">
         <div className="grid grid-cols-3 gap-4 pt-16">
@@ -27,7 +27,7 @@ const page = () => {
           </div>
         </div>
         <div>
-          <ContactUsForm/>
+          <ContactUsForm />
         </div>
       </div>
     </div>

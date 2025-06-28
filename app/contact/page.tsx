@@ -6,7 +6,11 @@ import Image from "next/image";
 const page = () => {
   return (
     <div>
-      <PageHeader title="Kontakt" imge="/assets/app4.png" />
+      <PageHeader
+        title="Kontakt"
+        imge="/assets/app4.png"
+        backgroundSize="contain"
+      />
       <div className="my-20 lg:mt-28 container">
         <div className="grid grid-cols-2 items-center">
           <div className="col-span-1 hidden md:hidden lg:block">

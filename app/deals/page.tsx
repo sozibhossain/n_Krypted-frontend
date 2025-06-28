@@ -8,9 +8,10 @@ export default function page() {
       <PageHeader
         title="Alle Deals"
         imge="/assets/picture1.png"
-      
+        backgroundSize="cover"
+        height="550px"
       />
-      <div className="lg:mt-28 container">
+      <div className=" container">
         <Suspense fallback={<div>Loading...</div>}>
           <AllAuction />
         </Suspense>
