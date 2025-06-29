@@ -145,7 +145,7 @@ export default function DealDetailsModal({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Description</h3>
               <div
-                className="list-item list-none text-gray-700"
+                className=" list-none text-gray-700"
                 dangerouslySetInnerHTML={{
                   __html: deal?.description ?? "No description available",
                 }}

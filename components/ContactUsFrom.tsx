@@ -23,6 +23,12 @@ export default function ContactUsForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
+    if (name === "message") {
+      const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 100) return; // Prevent setting value if over 300 words
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
