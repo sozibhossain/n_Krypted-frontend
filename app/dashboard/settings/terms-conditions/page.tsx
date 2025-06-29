@@ -92,7 +92,7 @@ export default function TermsConditionsPage() {
           <div className="space-y-2">
             <Label htmlFor="content">Description</Label>
             <div className="rounded-md border">
-              <QuillEditor id="content" value={content} onChange={setContent} />
+              <QuillEditor value={content} onChange={setContent} />
             </div>
           </div>
 
