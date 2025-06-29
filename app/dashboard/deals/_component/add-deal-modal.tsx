@@ -212,6 +212,27 @@ export default function AddDealModal({
     setOffers(newOffers);
   };
 
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty input or valid decimal number (e.g., 2, 2.5, 2.30)
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setTime(value);
+    }
+  };
+
+  const convertToMinutes = (timeString: string): number => {
+    if (!timeString) return 0;
+    const [hours, minutes] = timeString.split(".").map(Number);
+    return (hours || 0) * 60 + (minutes || 0);
+  };
+
+  // const formatToDecimalHours = (minutes: number): string => {
+  //   if (!minutes) return "";
+  //   const hours = Math.floor(minutes / 60);
+  //   const mins = minutes % 60;
+  //   return `${hours}.${mins.toString().padStart(2, "0")}`;
+  // };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -227,7 +248,7 @@ export default function AddDealModal({
     formData.append("description", description);
     formData.append("price", price);
     formData.append("location", JSON.stringify(location));
-    formData.append("time", time);
+    formData.append("time", String(convertToMinutes(time))); // Send time in total minutes
     formData.append("category", category);
     formData.append("participationsLimit", participationsLimit);
     formData.append(
@@ -343,19 +364,14 @@ export default function AddDealModal({
             </div>
 
             <div>
-              <Label htmlFor="time">Time (hours)</Label>
+              <Label htmlFor="time">Time (hours.minutes)</Label>
               <Input
                 id="time"
-                type="number"
-                min="0"
-                max="24"
-                step="0.25" // allows 15-minute increments (0.25 hours)
-                placeholder="Enter time in hours..."
-                value={time ? Number(time) / 3600 : ""} // convert stored seconds back to hours for display
-                onChange={(e) => {
-                  const hours = parseFloat(e.target.value);
-                  setTime(String(Math.round(hours * 3600)));
-                }}
+                type="text"
+                placeholder="e.g., 2.30 (2 hours 30 minutes)"
+                value={time}
+                onChange={handleTimeChange}
+                pattern="\d*\.?\d*"
                 required
               />
             </div>
