@@ -146,6 +146,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     enabled: !!auctionId,
   })
 
+
+
   // Submit review mutation
   const submitReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData) => {
@@ -443,7 +445,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </h1>
             <p className="text-lg md:text-xl text-[#E0E0E0] font-normal leading-[150%]">
               <div
-                className="text-white truncate max-w-full"
+                className="text-white truncate max-w-full list-item"
                 style={{
                   display: "-webkit-box",
                   WebkitBoxOrient: "vertical",

@@ -53,6 +53,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     fetchBlog();
   }, [blogId]);
 
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
