@@ -70,6 +70,7 @@ function AddEditBlogs({
             {" "}
             {/* Container for editor with border */}
             <QuillEditor
+              id="description"
               value={newBlog.description}
               onChange={(value) => setNewBlog({ ...newBlog, description: value })}
             />

@@ -93,7 +93,7 @@ export default function PrivacyPolicyPage() {
           <div className="space-y-2">
             <Label htmlFor="content">Description</Label>
             <div className="rounded-md border">
-              <QuillEditor value={content} onChange={setContent} />
+              <QuillEditor id="content" value={content} onChange={setContent} />
             </div>
           </div>
 
