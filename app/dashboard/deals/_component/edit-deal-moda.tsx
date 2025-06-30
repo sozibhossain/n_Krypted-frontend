@@ -46,7 +46,7 @@ interface DealData {
   offers: string[];
   images: string[];
   participationsLimit: number;
-  time: number;
+  time: string; // Changed to string for decimal format
   status?: string;
   category?: string;
   scheduleDates: { active: boolean; day: string; _id?: string }[];
@@ -121,6 +121,19 @@ export default function EditDealModal({
     formState: { errors },
   } = useForm<DealData>();
 
+  const convertMinutesToDecimalHours = (minutes: number): string => {
+    if (!minutes) return "";
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}.${mins.toString().padStart(2, "0")}`;
+  };
+
+  const convertDecimalHoursToMinutes = (timeString: string): number => {
+    if (!timeString) return 0;
+    const [hours, minutes] = timeString.split(".").map(Number);
+    return (hours || 0) * 60 + (minutes || 0);
+  };
+
   // Fetch deal data when modal opens
   useEffect(() => {
     if (open && dealId) {
@@ -143,11 +156,11 @@ export default function EditDealModal({
           setValue("location.country", data.deal.location.country);
           setValue("location.city", data.deal.location.city);
           setValue("participationsLimit", data.deal.participationsLimit);
-          setValue("time", data.deal.time);
+          setValue("time", convertMinutesToDecimalHours(data.deal.time)); // Convert minutes to decimal hours
           setCategory(data.deal.category?._id || "");
           setOffers(data.deal.offers || []);
           setExistingImages(data.deal.images || []);
-          // Set scheduleDates (convert backend objects to state format)
+          // Set scheduleDates
           setScheduleDates(
             data.deal.scheduleDates
               ? data.deal.scheduleDates.map((dateObj: { day: string; active: boolean }) => ({
@@ -216,7 +229,7 @@ export default function EditDealModal({
     formData.append("location[country]", data.location.country);
     formData.append("location[city]", data.location.city);
     formData.append("participationsLimit", data.participationsLimit.toString());
-    formData.append("time", data.time.toString());
+    formData.append("time", String(convertDecimalHoursToMinutes(data.time))); // Convert decimal hours to minutes
     if (category) {
       formData.append("category", category);
     }
@@ -376,7 +389,7 @@ export default function EditDealModal({
                     required: "Country is required",
                   })}
                   className="w-full"
-    />
+                />
                 {errors.location?.country && (
                   <p className="text-red-500 text-sm">
                     {errors.location.country.message}
@@ -418,17 +431,19 @@ export default function EditDealModal({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="time">Deal Time (minutes)</Label>
+              <Label htmlFor="time">Deal Time (hours.minutes)</Label>
               <Input
                 id="time"
-                type="number"
+                type="text"
                 {...register("time", {
                   required: "Deal time is required",
-                  valueAsNumber: true,
-                  min: { value: 1, message: "Deal time must be at least 1 minute" },
+                  pattern: {
+                    value: /^\d*\.?\d*$/,
+                    message: "Enter time in hours.minutes format (e.g., 2.30)",
+                  },
                 })}
                 className="w-full"
-                placeholder="Enter deal time in minutes"
+                placeholder="e.g., 2.30 (2 hours 30 minutes)"
               />
               {errors.time && (
                 <p className="text-red-500 text-sm">{errors.time.message}</p>
