@@ -7,7 +7,7 @@ const OurVision = () => {
         {/* Image Section */}
         <div className="flex-1 flex justify-center lg:justify-start relative">
           <Image
-            src="/assets/newcontact2.jpg"
+            src="/assets/newcontact1.jpg"
             alt="Auction speaker"
             height={468}
             width={400}
@@ -15,11 +15,11 @@ const OurVision = () => {
             priority
           />
           <Image
-            src="/assets/newcontact1.jpg"
+            src="/assets/newcontact2.jpg"
             alt="Auction speaker"
-            height={338}
-            width={330}
-            className="rounded-xl hidden lg:block absolute z-10 bottom-[-100px] -left-[-150px] lg:-left-[-200px] w-[200px] lg:w-[300px] h-auto"
+            height={1000}
+            width={1000}
+            className="rounded-xl hidden lg:block absolute z-10 bottom-[-100px] -left-[-150px] lg:left-[250px] w-[200px] lg:w-[300px] h-[400px] object-cover"
           />
         </div>
 
