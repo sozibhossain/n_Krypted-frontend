@@ -37,7 +37,7 @@ export function SignInForm() {
 
       const role = session?.user?.role;
 
-      toast.success("Login successful");
+      toast.success("Anmeldung erfolgreich");
 
       if (role === "admin") {
         window.location.href = "/dashboard";
@@ -46,7 +46,7 @@ export function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Login failed");
+      toast.error("Fehler bei der Anmeldung");
     } finally {
       setIsLoading(false);
     }

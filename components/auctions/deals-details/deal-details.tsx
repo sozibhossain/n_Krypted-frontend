@@ -174,7 +174,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       return response.json()
     },
     onSuccess: () => {
-      toast.success("Review submitted successfully", { position: "top-right" })
+      toast.success("Bewertung erfolgreich übermittelt", { position: "top-right" })
 
       // Refetch reviews to show the new review
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] })
@@ -186,7 +186,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEmail("")
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to submit review", {
+      toast.error(error.message || "Bewertung konnte nicht übermittelt werden", {
         position: "top-right",
       })
     },
@@ -196,7 +196,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const deleteReviewMutation = useMutation({
     mutationFn: async ({ reviewId }: DeleteReviewData) => {
       if (!token) {
-        throw new Error("Authentication required. Please log in.")
+        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.")
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`, {
@@ -208,13 +208,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to delete review")
+        throw new Error(errorData.message || "Die Bewertung konnte nicht gelöscht werden.")
       }
 
       return response.json()
     },
     onSuccess: () => {
-      toast.success("Review deleted successfully", { position: "top-right" })
+      toast.success("Bewertung erfolgreich gelöscht", { position: "top-right" })
 
       // Close the modal
       setIsDeleteModalOpen(false)
@@ -224,7 +224,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] })
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete review", {
+      toast.error(error.message || "Die Bewertung konnte nicht gelöscht werden.", {
         position: "top-right",
       })
       setIsDeleteModalOpen(false)
@@ -253,7 +253,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to update review")
+        throw new Error(errorData.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.")
       }
 
       return response.json()
@@ -269,7 +269,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditRating(0)
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update review", {
+      toast.error(error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.", {
         position: "top-right",
       })
     },

@@ -489,7 +489,7 @@ export function DealsCard({
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Please log in to book this deal");
+      toast.success("Bitte melden Sie sich an, um dieses Angebot zu buchen");
       return;
     }
 
@@ -516,7 +516,7 @@ export function DealsCard({
         console.log(data);
         if (data.booking.notifyMe) {
           throw new Error(
-            "You have already Notify this deal and you have been notified"
+            "Sie haben diesen Deal bereits gemeldet und wurden benachrichtigt"
           );
         }
 
