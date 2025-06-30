@@ -440,7 +440,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         {/* Auction Details - Right Side */}
         <div className="md:col-span-6 order-3">
           <div className="space-y-4">
-            <h1 className="text-2xl md:text-3xl lg:text-[40px] font-semibold text-[#FFFFFF]">
+            <h1 className="text-2xl md:text-3xl lg:text-[30px] font-semibold text-[#FFFFFF]">
               {auction?.title || "Property Title"}
             </h1>
             <p className="text-lg md:text-xl text-[#E0E0E0] font-normal leading-[150%]">
@@ -449,7 +449,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 style={{
                   display: "-webkit-box",
                   WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 4, // Adjust for number of lines
+                  WebkitLineClamp: 3, // Adjust for number of lines
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 }}

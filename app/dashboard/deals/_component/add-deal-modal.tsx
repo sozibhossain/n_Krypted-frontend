@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
-import dynamic from "next/dynamic";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -27,8 +27,9 @@ import {
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-import "react-quill/dist/quill.snow.css";
+// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+// import "react-quill/dist/quill.snow.css";
+import QuillEditor from "../../blogs/_components/QuillEditor";
 
 interface Category {
   _id: string;
@@ -295,13 +296,18 @@ export default function AddDealModal({
             <div>
               <Label htmlFor="description">Description</Label>
               <div className="mt-1">
-                <ReactQuill
+                {/* <ReactQuill
                   id="description"
                   theme="snow"
                   value={description}
                   onChange={setDescription}
                   placeholder="Type deal description here..."
                   className=""
+                /> */}
+                <QuillEditor
+                  id="description"
+                  value={description}
+                  onChange={setDescription}
                 />
               </div>
             </div>

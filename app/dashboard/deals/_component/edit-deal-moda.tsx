@@ -21,9 +21,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-import "react-quill/dist/quill.snow.css";
+
+
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
+import QuillEditor from "../../blogs/_components/QuillEditor";
 
 interface Location {
   country: string;
@@ -309,7 +309,7 @@ export default function EditDealModal({
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
               <div className="border rounded-md">
-                <ReactQuill
+                {/* <ReactQuill
                   id="description"
                   value={description}
                   onChange={(content) => {
@@ -318,6 +318,14 @@ export default function EditDealModal({
                   }}
                   className=""
                   theme="snow"
+                /> */}
+                <QuillEditor
+                  id="description"
+                  value={description}
+                  onChange={(content) => {
+                    setValue("description", content);
+                    setDescription(content);
+                  }}
                 />
               </div>
               {errors.description && (
