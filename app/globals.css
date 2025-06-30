@@ -97,6 +97,10 @@
  
 }
 
+.ql-align-justify {
+  text-align: justify;
+}
+
 /* QuillEditor custom styles */
 .list-item {
   @apply text-base leading-relaxed text-white;
