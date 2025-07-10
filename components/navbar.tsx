@@ -100,12 +100,12 @@ export function Navbar() {
                     alt="Logo"
                     width={1000}
                     height={1000}
-                    className="h-[35px] w-[90px]"
+                    className="h-[30px] w-[80px]"
                   />
                 </div>
                 <h1
-                  className="text-[32px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                  className="text-[32px] font-normal font-benedict text-white leading-[120%]
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[4px]"
                 >
                   Walk Throughz
                 </h1>

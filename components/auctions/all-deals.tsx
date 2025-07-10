@@ -1,5 +1,12 @@
 "use client";
-import React, { useState, useEffect, useMemo, Suspense, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  Suspense,
+  useCallback,
+  useRef,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FilterIcon, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -218,7 +225,13 @@ const ManualSlider = React.memo(
           window.removeEventListener("touchend", handleTouchEnd);
         };
       }
-    }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+    }, [
+      isDragging,
+      handleMouseMove,
+      handleMouseUp,
+      handleTouchMove,
+      handleTouchEnd,
+    ]);
 
     const minPosition = getPositionFromValue(localValue[0]);
     const maxPosition = getPositionFromValue(localValue[1]);
@@ -321,14 +334,17 @@ function DealsPage() {
   const search = searchParams.get("search") || "";
 
   // Local state for filters
-  const [selectedCategory, setSelectedCategory] = useState<string>(currentCategory);
-  const [selectedCountry, setSelectedCountry] = useState<string>(currentCountry);
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>(currentCategory);
+  const [selectedCountry, setSelectedCountry] =
+    useState<string>(currentCountry);
   const [selectedCity, setSelectedCity] = useState<string>(currentCity);
   const [priceRange, setPriceRange] = useState<[number, number]>([
     Number.parseInt(currentMinPrice) || 0,
     Number.parseInt(currentMaxPrice) || 100,
   ]);
-  const [selectedDealType, setSelectedDealType] = useState<string>(currentDealType);
+  const [selectedDealType, setSelectedDealType] =
+    useState<string>(currentDealType);
 
   // Sync local state with URL params
   useEffect(() => {
@@ -340,7 +356,14 @@ function DealsPage() {
       Number.parseInt(currentMaxPrice) || 100,
     ]);
     setSelectedDealType(currentDealType);
-  }, [currentCategory, currentCountry, currentCity, currentMinPrice, currentMaxPrice, currentDealType]);
+  }, [
+    currentCategory,
+    currentCountry,
+    currentCity,
+    currentMinPrice,
+    currentMaxPrice,
+    currentDealType,
+  ]);
 
   // Fetch all deals to get unique locations
   const { data: allDealsData } = useQuery({
@@ -389,7 +412,9 @@ function DealsPage() {
       console.log("API Request Params:", params.toString()); // Debug log
 
       try {
-        const { data } = await axiosInstance.get(`/api/deals?${params.toString()}`);
+        const { data } = await axiosInstance.get(
+          `/api/deals?${params.toString()}`
+        );
         console.log("API Response:", data); // Debug log
         return data;
       } catch (error) {
@@ -400,7 +425,10 @@ function DealsPage() {
   });
 
   // Memoize deals data
-  const filteredDealsData = useMemo(() => response?.deals || [], [response?.deals]);
+  const filteredDealsData = useMemo(
+    () => response?.deals || [],
+    [response?.deals]
+  );
   const totalPages: number = response?.pagination?.totalPages || 5;
 
   // Fetch categories
@@ -408,7 +436,9 @@ function DealsPage() {
     const fetchCategories = async () => {
       try {
         setIsLoadingCategories(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
+        );
         if (!response.ok) {
           throw new Error(`Failed to fetch categories: ${response.status}`);
         }
@@ -419,7 +449,9 @@ function DealsPage() {
           throw new Error("Invalid data format received from API");
         }
       } catch (err) {
-        setCategoryError(err instanceof Error ? err.message : "An unknown error occurred");
+        setCategoryError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
         console.error("Error fetching categories:", err);
       } finally {
         setIsLoadingCategories(false);
@@ -456,9 +488,16 @@ function DealsPage() {
   }, [allDealsData]);
 
   // Handle filter changes
-  const handleCategoryChange = (categoryName: string, checked: boolean | "indeterminate") => {
+  const handleCategoryChange = (
+    categoryName: string,
+    checked: boolean | "indeterminate"
+  ) => {
     const isChecked = checked === true;
-    const newCategory = isChecked ? categoryName : selectedCategory === categoryName ? "" : categoryName;
+    const newCategory = isChecked
+      ? categoryName
+      : selectedCategory === categoryName
+      ? ""
+      : categoryName;
     setSelectedCategory(newCategory);
     updateParams({ categoryName: newCategory });
     setIsFilterOpen(false);
@@ -512,7 +551,10 @@ function DealsPage() {
   const activeFiltersCount = getActiveFiltersCount();
 
   // Debounced version of updateParams for price inputs
-  const debouncedUpdateParams = useMemo(() => debounce(updateParams, 300), [updateParams]);
+  const debouncedUpdateParams = useMemo(
+    () => debounce(updateParams, 300),
+    [updateParams]
+  );
 
   // Filter Sidebar Component
   const FilterSidebar = () => (
@@ -525,9 +567,13 @@ function DealsPage() {
         {isLoadingCategories ? (
           <div className="py-2 text-sm sm:text-base">Loading categories...</div>
         ) : categoryError ? (
-          <div className="text-red-500 py-2 text-sm sm:text-base">Error: {categoryError}</div>
+          <div className="text-red-500 py-2 text-sm sm:text-base">
+            Error: {categoryError}
+          </div>
         ) : categories.length === 0 ? (
-          <div className="py-2 text-sm sm:text-base text-gray-500">No categories available</div>
+          <div className="py-2 text-sm sm:text-base text-gray-500">
+            No categories available
+          </div>
         ) : (
           <div className="space-y-2 sm:space-y-3">
             {categories.map((category) => (
@@ -535,7 +581,9 @@ function DealsPage() {
                 <Checkbox
                   id={`category-${category.categoryName}`}
                   checked={selectedCategory === category.categoryName}
-                  onCheckedChange={(checked) => handleCategoryChange(category.categoryName, checked)}
+                  onCheckedChange={(checked) =>
+                    handleCategoryChange(category.categoryName, checked)
+                  }
                 />
                 <div className="flex items-center gap-2">
                   <Label
@@ -569,7 +617,9 @@ function DealsPage() {
               >
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span className="text-sm sm:text-base lg:text-xl cursor-pointer text-[#4E4E4E] font-medium">{getLocationDisplayText()}</span>
+                  <span className="text-sm sm:text-base lg:text-xl cursor-pointer text-[#4E4E4E] font-medium">
+                    {getLocationDisplayText()}
+                  </span>
                 </div>
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -594,7 +644,9 @@ function DealsPage() {
                   <div
                     onClick={() => handleCountrySelect(country)}
                     className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-                      selectedCountry === country && !selectedCity ? "bg-gray-100" : ""
+                      selectedCountry === country && !selectedCity
+                        ? "bg-gray-100"
+                        : ""
                     }`}
                   >
                     <span>{country}</span>
@@ -628,7 +680,9 @@ function DealsPage() {
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <label className="text-sm text-gray-600 mb-1 block">Min Price</label>
+              <label className="text-sm text-gray-600 mb-1 block">
+                Min Price
+              </label>
               <input
                 type="number"
                 min="0"
@@ -636,7 +690,10 @@ function DealsPage() {
                 step="1"
                 value={Math.round(priceRange[0])}
                 onChange={(e) => {
-                  const newMin = Math.max(0, Math.min(Number(e.target.value), priceRange[1] - 1));
+                  const newMin = Math.max(
+                    0,
+                    Math.min(Number(e.target.value), priceRange[1] - 1)
+                  );
                   const newRange: [number, number] = [newMin, priceRange[1]];
                   setPriceRange(newRange);
                   debouncedUpdateParams({
@@ -650,7 +707,9 @@ function DealsPage() {
             </div>
             <span className="text-gray-400 mt-6">-</span>
             <div className="flex-1">
-              <label className="text-sm text-gray-600 mb-1 block">Max Price</label>
+              <label className="text-sm text-gray-600 mb-1 block">
+                Max Price
+              </label>
               <input
                 type="number"
                 min="0"
@@ -658,7 +717,10 @@ function DealsPage() {
                 step="1"
                 value={Math.round(priceRange[1])}
                 onChange={(e) => {
-                  const newMax = Math.min(100, Math.max(Number(e.target.value), priceRange[0] + 1));
+                  const newMax = Math.min(
+                    100,
+                    Math.max(Number(e.target.value), priceRange[0] + 1)
+                  );
                   const newRange: [number, number] = [priceRange[0], newMax];
                   setPriceRange(newRange);
                   debouncedUpdateParams({
@@ -733,6 +795,7 @@ function DealsPage() {
 
   FilterSidebar.displayName = "FilterSidebar";
 
+  console.log(filteredDealsData);
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="container mx-auto px-4 py-8">
@@ -779,7 +842,9 @@ function DealsPage() {
               </div>
             ) : dealsError ? (
               <div className="col-span-full text-center py-10">
-                <p className="text-red-500">Error loading deals. Please try again later.</p>
+                <p className="text-red-500">
+                  Error loading deals. Please try again later.
+                </p>
               </div>
             ) : (
               <>
@@ -799,11 +864,15 @@ function DealsPage() {
                         updatedAt={deal.updatedAt}
                         participations={deal.bookingCount}
                         maxParticipants={deal.participationsLimit}
+                        scheduleDates={deal.scheduleDates}
+                        location={deal.location}
                       />
                     ))
                   ) : (
                     <div className="col-span-full text-center py-10">
-                      <p className="text-gray-500">No deals found matching your filters.</p>
+                      <p className="text-gray-500">
+                        No deals found matching your filters.
+                      </p>
                     </div>
                   )}
                 </div>

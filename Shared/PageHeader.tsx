@@ -13,10 +13,10 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   imge,
-  height = "500px",
+  height = "300px",
   backgroundSize = "cover",
 }: PageHeaderProps) {
-  const [currentHeight, setCurrentHeight] = React.useState("500px");
+  const [currentHeight, setCurrentHeight] = React.useState("300px");
 
   React.useEffect(() => {
     function handleResize() {
