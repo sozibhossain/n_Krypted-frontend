@@ -1,6 +1,6 @@
-import Image from "next/image"
-import { ForgotPasswordForm } from "@/components/ForgotPasswordForm"
-import { Suspense } from "react"
+import Image from "next/image";
+import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
+import { Suspense } from "react";
 
 export default function ForgotPasswordPage() {
   return (
@@ -34,9 +34,12 @@ export default function ForgotPasswordPage() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">Recover your password</h2>
+            <h2 className="mb-2 text-4xl font-bold">
+              Stellen Sie Ihr Passwort wieder her
+            </h2>
             <p className="max-w-md text-gray-300">
-              Discover amazing products and enjoy a seamless shopping experience with us.
+              Entdecken Sie tolle Produkte und genießen Sie bei uns ein
+              nahtloses Einkaufserlebnis.
             </p>
           </div>
         </div>
@@ -44,12 +47,18 @@ export default function ForgotPasswordPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
-            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Enter Email</h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">Enter your email to receive the link</p>
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
+              Geben Sie die E-Mail-Adresse ein
+            </h1>
+            <p className="text-white text-[14px] lg:text-[16px] font-normal">
+              Geben Sie Ihre E-Mail-Adresse ein, um den Link zu erhalten
+            </p>
           </div>
-          <Suspense fallback={<div>Loading...</div>}><ForgotPasswordForm /></Suspense>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ForgotPasswordForm />
+          </Suspense>
         </div>
       </div>
     </div>
-  )
+  );
 }

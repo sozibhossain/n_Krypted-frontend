@@ -1,16 +1,19 @@
-import { RegisterForm } from "@/components/RegistrationFrom"
-import Image from "next/image"
-import { Suspense } from "react"
+import { RegisterForm } from "@/components/RegistrationFrom";
+import Image from "next/image";
+import { Suspense } from "react";
 
 export default function SignUpPage() {
   return (
     <div className="flex min-h-screen">
-      
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 rounded-lg  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Create Your Account</h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">Join us and start shopping today</p>
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
+              Erstellen Sie Ihr Konto
+            </h1>
+            <p className="text-white text-[14px] lg:text-[16px] font-normal">
+              Werden Sie noch heute Mitglied und beginnen Sie mit dem Einkaufen
+            </p>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             <RegisterForm />
@@ -47,11 +50,15 @@ export default function SignUpPage() {
                 <path d="M6 12h12"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">Welcome to Walk Throughz</h2>
-            <p className="max-w-md text-gray-300">Registriere Dich und erhalte einen 10% Gutschein per E-Mail.</p>
+            <h2 className="mb-2 text-4xl font-bold">
+              Welcome to Walk Throughz
+            </h2>
+            <p className="max-w-md text-gray-300">
+              Registriere Dich und erhalte einen 10% Gutschein per E-Mail.
+            </p>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
