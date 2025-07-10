@@ -82,7 +82,7 @@ const StripeCheckout = () => {
     <form
       id="payment-form"
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-gray-800 rounded-lg shadow-lg"
+      className="max-w-full mx-auto p-6 bg-gray-800 rounded-lg shadow-lg"
     >
       <h2 className="text-xl font-bold mb-4 text-white">Complete Payment</h2>
       <PaymentElement

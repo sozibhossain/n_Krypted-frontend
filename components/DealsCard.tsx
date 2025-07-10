@@ -561,7 +561,6 @@ export function DealsCard({
   time = 0,
   scheduleDates,
   location,
-  timer,
 }: DealsCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -702,6 +701,8 @@ export function DealsCard({
 
   const bookingPayment = async (notifyMe = false) => {
     setIsLoading(true);
+
+    console.log(notifyMe)
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
@@ -749,7 +750,7 @@ export function DealsCard({
     ? participations >= maxParticipants
     : false;
   const hasTimeLimit = time > 0;
-  const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true;
+  // const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true;
 
   const getFirstActiveDate = () => {
     if (!scheduleDates || scheduleDates.length === 0) return null;

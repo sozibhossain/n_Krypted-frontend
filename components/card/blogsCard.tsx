@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { Calendar, UserRound, ArrowUpRight } from "lucide-react";
+import { Calendar, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 interface Blog {
