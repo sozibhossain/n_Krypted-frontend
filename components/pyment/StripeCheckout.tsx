@@ -1,128 +1,125 @@
+
+
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface StripeCheckoutProps {
-  userId: string;
-  bookingId: string;
-  amount: number;
-}
-
-const StripeCheckout: React.FC<StripeCheckoutProps> = ({ userId, bookingId, amount }) => {
-  console.log("StripeCheckout", { userId, bookingId, amount });
+const StripeCheckout = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [clientSecret, setClientSecret] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-
-  // Mutation for creating payment intent
-  const createPaymentIntent = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, bookingId, price:amount }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create payment intent");
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      setClientSecret(data.clientSecret);
-    },
-    onError: (error: Error) => {
-      setMessage("Failed to create payment. Please try again.");
-      toast.error(error.message);
-    },
-  });
-
-  // Mutation for confirming payment
-  const confirmPayment = useMutation({
-    mutationFn: async (paymentIntentId: string) => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/confirm-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ paymentIntentId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to confirm payment");
-      }
-
-      return response.json();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+  const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Only trigger the mutation if clientSecret is not already set
-    if (!clientSecret && createPaymentIntent.status !== "pending") {
-      createPaymentIntent.mutate();
+    if (!stripe) {
+      return;
     }
-  }, [clientSecret, createPaymentIntent.status]);
+
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
+
+    if (!clientSecret) {
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+      switch (paymentIntent?.status) {
+        case "succeeded":
+          setMessage("Payment succeeded!");
+          toast.success("Payment succeeded!");
+          router.push("/payment-success");
+          break;
+        case "processing":
+          setMessage("Your payment is processing.");
+          toast.info("Your payment is processing.");
+          break;
+        case "requires_payment_method":
+          setMessage("Your payment was not successful, please try again.");
+          toast.error("Payment failed. Please try again.");
+          break;
+        default:
+          setMessage("Something went wrong.");
+          toast.error("Something went wrong.");
+          break;
+      }
+    });
+  }, [stripe, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements || !clientSecret) return;
 
-    setLoading(true);
-    setMessage("");
+    if (!stripe || !elements) {
+      return;
+    }
 
-    const { error, paymentIntent } = await stripe.confirmPayment({
+    setIsLoading(true);
+
+    const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/payment-success`,
       },
-      redirect: "if_required",
     });
 
-    if (error) {
+    if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error.message || "Payment failed");
-      toast.error(error.message);
-    } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      setMessage("Payment succeeded!");
-      toast.success("Payment succeeded!");
-      confirmPayment.mutate(paymentIntent.id);
+      toast.error(error.message || "Payment failed");
     } else {
-      setMessage(`Payment status: ${paymentIntent?.status}`);
-      toast.info(`Payment status: ${paymentIntent?.status}`);
+      setMessage("An unexpected error occurred.");
+      toast.error("An unexpected error occurred.");
     }
 
-    setLoading(false);
+    setIsLoading(false);
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 border rounded-lg bg-white shadow-lg">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Complete Your Payment</h2>
-      {clientSecret && (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <PaymentElement />
-          <button
-            type="submit"
-            disabled={!stripe || loading}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
-          >
-            {loading ? "Processing..." : "Pay Now"}
-          </button>
-        </form>
+    <form
+      id="payment-form"
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto p-6 bg-gray-800 rounded-lg shadow-lg"
+    >
+      <h2 className="text-xl font-bold mb-4 text-white">Complete Payment</h2>
+      <PaymentElement
+        id="payment-element"
+        options={{
+          layout: "tabs",
+        }}
+        className="mb-4"
+      />
+      <button
+        disabled={isLoading || !stripe || !elements}
+        id="submit"
+        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        <span id="button-text">
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              Processing...
+            </div>
+          ) : (
+            "Pay now"
+          )}
+        </span>
+      </button>
+      {message && (
+        <div
+          id="payment-message"
+          className={`mt-4 text-sm ${
+            message.includes("succeeded") ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          {message}
+        </div>
       )}
-      {message && <p className="mt-4 text-red-500">{message}</p>}
-    </div>
+    </form>
   );
 };
 
 export default StripeCheckout;
-
