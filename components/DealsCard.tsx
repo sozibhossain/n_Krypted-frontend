@@ -1,50 +1,50 @@
-"use client"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ChevronRight, Users, MapPin, Calendar, X } from "lucide-react"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { toast } from "sonner"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import PayPalCheckout from "./PayPalCheckout"
+"use client";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ChevronRight, Users, MapPin, Calendar, X } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import PayPalCheckout from "./PayPalCheckout";
 
 interface ScheduleDate {
-  date: string
-  active: boolean
-  participationsLimit: number
-  bookedCount: number
-  _id: string
+  date: string;
+  active: boolean;
+  participationsLimit: number;
+  bookedCount: number;
+  _id: string;
 }
 
 interface Location {
-  country: string
-  city: string
+  country: string;
+  city: string;
 }
 
 interface DealsCardProps {
-  id: string
-  title: string
-  description: string
-  price: number
-  participations: number
-  maxParticipants?: number
-  image?: string
-  status?: string
-  time?: number // in minutes
-  createdAt?: string | Date
-  updatedAt?: string | Date
-  scheduleDates?: ScheduleDate[]
-  location?: Location
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  participations: number;
+  maxParticipants?: number;
+  image?: string;
+  status?: string;
+  time?: number; // in minutes
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  scheduleDates?: ScheduleDate[];
+  location?: Location;
 }
 
 interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-  isExpired: boolean
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  isExpired: boolean;
 }
 
 export function DealsCard({
@@ -62,21 +62,22 @@ export function DealsCard({
   scheduleDates,
   location,
 }: DealsCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { data: session } = useSession()
-  const [bookingId, setBookingId] = useState<string | null>(null)
-  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false)
-  const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session } = useSession();
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
+  const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
     isExpired: false,
-  })
+  });
+  console.log(time, "timeeeeeeeeeeeeeeeeeeeeeeeee");
 
-  const token = session?.user?.accessToken ?? ""
+  const token = session?.user?.accessToken ?? "";
 
   // Timer logic
   useEffect(() => {
@@ -87,44 +88,46 @@ export function DealsCard({
         minutes: 0,
         seconds: 0,
         isExpired: true,
-      })
-      return
+      });
+      return;
     }
 
     const timer = setInterval(() => {
-      const startTime = updatedAt || createdAt
+      const startTime = updatedAt || createdAt;
       if (!startTime) {
-        clearInterval(timer)
+        clearInterval(timer);
         setTimeLeft({
           days: 0,
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const endTime = new Date(new Date(startTime).getTime() + time * 60000)
-      const now = new Date().getTime()
-      const difference = endTime.getTime() - now
+      const endTime = new Date(new Date(startTime).getTime() + time * 60000);
+      const now = new Date().getTime();
+      const difference = endTime.getTime() - now;
 
       if (difference <= 0) {
-        clearInterval(timer)
+        clearInterval(timer);
         setTimeLeft({
           days: 0,
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
       setTimeLeft({
         days,
@@ -132,87 +135,95 @@ export function DealsCard({
         minutes,
         seconds,
         isExpired: false,
-      })
-    }, 1000)
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [time, createdAt, updatedAt])
+    return () => clearInterval(timer);
+  }, [time, createdAt, updatedAt]);
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Bitte melden Sie sich an, um dieses Angebot zu buchen")
-      return
+      toast.success("Bitte melden Sie sich an, um dieses Angebot zu buchen");
+      return;
     }
 
     if (!notifyMe && status === "activate") {
       // Show booking summary modal first
-      setIsBookingSummaryOpen(true)
+      setIsBookingSummaryOpen(true);
     } else {
       // For notify me cases, proceed directly
-      await bookingPayment(notifyMe)
+      await bookingPayment(notifyMe);
     }
-  }
+  };
 
   const bookingPayment = async (notifyMe = false) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          dealsId: id,
-          notifyMe: notifyMe,
-          scheduleDate: scheduleDates?.[0]?.date,
-          scheduleId: scheduleDates?.[0]?._id
-          
-        }),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            dealsId: id,
+            notifyMe: notifyMe,
+            scheduleDate: scheduleDates?.[0]?.date,
+            scheduleId: scheduleDates?.[0]?._id,
+          }),
+        }
+      );
 
       if (response.ok) {
-        const data = await response.json()
-        console.log(data)
+        const data = await response.json();
+        console.log(data);
         if (data.booking.notifyMe) {
-          throw new Error("Sie haben diesen Deal bereits gemeldet und wurden benachrichtigt")
+          throw new Error(
+            "Sie haben diesen Deal bereits gemeldet und wurden benachrichtigt"
+          );
         }
-        setBookingId(data.booking._id)
-        setIsBookingSummaryOpen(false)
-        setIsPayPalModalOpen(true)
+        setBookingId(data.booking._id);
+        setIsBookingSummaryOpen(false);
+        setIsPayPalModalOpen(true);
       } else {
-        const error = await response.json()
-        throw new Error(error.message || "Something went wrong")
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error((error as Error).message)
+      toast.error((error as Error).message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Helper functions for better readability
-  const isDealExpired = timeLeft.isExpired
-  const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false
-  const hasTimeLimit = time > 0
-  const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true
+  const isDealExpired = timeLeft.isExpired;
+  const isDealAtCapacity = maxParticipants
+    ? participations >= maxParticipants
+    : false;
+  const hasTimeLimit = time > 0;
+  const hasAvailableSpots = maxParticipants
+    ? participations < maxParticipants
+    : true;
   // const shouldShowParticipants = hasTimeLimit && !isDealExpired && maxParticipants && hasAvailableSpots
 
   // Get the first active schedule date
   const getFirstActiveDate = () => {
-    if (!scheduleDates || scheduleDates.length === 0) return null
-    return scheduleDates.find((date) => date.active) || scheduleDates[0]
-  }
+    if (!scheduleDates || scheduleDates.length === 0) return null;
+    return scheduleDates.find((date) => date.active) || scheduleDates[0];
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("de-DE", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   const renderActionButton = () => {
     if (isDealExpired) {
@@ -224,7 +235,7 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
-      )
+      );
     }
 
     if (isDealAtCapacity) {
@@ -236,7 +247,7 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
-      )
+      );
     }
 
     if (status === "activate") {
@@ -248,7 +259,7 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Book now"}
         </Button>
-      )
+      );
     } else if (status === "deactivate") {
       return (
         <Button
@@ -258,15 +269,18 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Benachrichtige mich"}
         </Button>
-      )
+      );
     }
 
     return (
-      <Button className="w-full bg-gray-400 text-white font-semibold mt-2" disabled>
+      <Button
+        className="w-full bg-gray-400 text-white font-semibold mt-2"
+        disabled
+      >
         Unavailable
       </Button>
-    )
-  }
+    );
+  };
 
   const formatTimeUnit = (value: number, label: string) => (
     <div className="text-center">
@@ -275,9 +289,9 @@ export function DealsCard({
       </div>
       <h1 className="text-xs">{label}</h1>
     </div>
-  )
+  );
 
-  const firstActiveDate = getFirstActiveDate()
+  const firstActiveDate = getFirstActiveDate();
 
   return (
     <>
@@ -289,7 +303,11 @@ export function DealsCard({
             onMouseLeave={() => setIsHovered(false)}
           >
             <Image
-              src={image || "/placeholder.svg?height=222&width=370&query=deal image" || "/placeholder.svg"}
+              src={
+                image ||
+                "/placeholder.svg?height=222&width=370&query=deal image" ||
+                "/placeholder.svg"
+              }
               alt={title || "Deal Image"}
               width={600}
               height={400}
@@ -312,7 +330,9 @@ export function DealsCard({
           <CardContent className="space-y-2 pt-4">
             <div className="grid grid-cols-3">
               <div className="col-span-2">
-                <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
+                <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">
+                  {title}
+                </h3>
                 <p className="text-[16px] font-normal text-[#737373]">
                   <div
                     className="text-[#737373] truncate max-w-full"
@@ -375,7 +395,10 @@ export function DealsCard({
       </Card>
 
       {/* Booking Summary Modal */}
-      <Dialog open={isBookingSummaryOpen} onOpenChange={setIsBookingSummaryOpen}>
+      <Dialog
+        open={isBookingSummaryOpen}
+        onOpenChange={setIsBookingSummaryOpen}
+      >
         <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -418,7 +441,9 @@ export function DealsCard({
                     </div>
                   )}
                 </div>
-                <div className="text-lg font-semibold text-white mt-2">${price?.toFixed(2)}</div>
+                <div className="text-lg font-semibold text-white mt-2">
+                  ${price?.toFixed(2)}
+                </div>
               </div>
             </div>
 
@@ -464,9 +489,13 @@ export function DealsCard({
       {/* PayPal Checkout Modal */}
       <Dialog open={isPayPalModalOpen} onOpenChange={setIsPayPalModalOpen}>
         <DialogContent className="p-5 w-full">
-          <PayPalCheckout amount={price} userId={session?.user?.id ?? ""} bookingId={bookingId ?? ""} />
+          <PayPalCheckout
+            amount={price}
+            userId={session?.user?.id ?? ""}
+            bookingId={bookingId ?? ""}
+          />
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

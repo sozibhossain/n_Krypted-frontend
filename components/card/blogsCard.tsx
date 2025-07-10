@@ -8,7 +8,7 @@ import Link from "next/link";
 function BlogsCard({ blog }: { blog: Blog }) {
   return (
     <Link href={`/blog/${blog?._id}`}>
-      <Card className="overflow-hidden border-none text-white bg-[#212121] hover:bg-[#2a2a2a] transition-colors duration-300">
+      <Card className="overflow-hidden border-none bg-white p-2 max-w-[370px] hover:shadow-[0px_0px_10px_2px_#FFFFFF] transition-shadow duration-300">
         <div className="relative overflow-hidden">
           <Image
             src={blog?.image || "/assets/manCard.png"}
@@ -23,12 +23,12 @@ function BlogsCard({ blog }: { blog: Blog }) {
           <CardContent className="p-0">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
-                <UserRound className="w-[15px] h-[15px] text-white/80" />
-                <p className="text-xs text-white/80">admin</p>
+                <UserRound className="w-[15px] h-[15px]" />
+                <p className="text-xs black">admin</p>
               </div>
               <div className="text-[12px] flex items-center space-x-2">
-                <Calendar className="w-[15px] h-[15px] text-white/80" />
-                <div className="text-white/80">
+                <Calendar className="w-[15px] h-[15px]" />
+                <div className="">
                   {new Date(blog?.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -37,7 +37,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
                 </div>
               </div>
             </div>
-            <h3 className="mt-2 font-medium text-[18px] text-white">
+            <h3 className="mt-2 font-medium text-[18px]">
               {blog?.title?.slice(0, 55)}...
             </h3>
           </CardContent>
