@@ -26,12 +26,7 @@ function Blogs() {
 
   return (
     <section>
-      <PageHeader
-        title="Our Latest Blogs"
-        imge="/assets/blogs.jpg"
-        backgroundSize="cover"
-        height="500px"
-      />
+      <PageHeader title="Our Latest Blogs" imge="/assets/Blogbanner.jpg" />
       <div className="container my-24">
         {loading ? (
           <p className="text-center text-white">Loading blogs...</p>
