@@ -5,6 +5,7 @@ import LayoutShell from "./layout-shell";
 import { SocketProvider } from "@/Provider/SocketProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script"; // Import Script
+import StripeProvider from "@/components/pyment/StripeProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -39,7 +40,11 @@ export default function RootLayout({
         <AppProvider>
           <SocketProvider>
             <Toaster position="top-right" />
-            <LayoutShell>{children}</LayoutShell>
+            <LayoutShell>
+              <StripeProvider>
+              {children}
+              </StripeProvider>
+              </LayoutShell>
           </SocketProvider>
         </AppProvider>
       </body>
