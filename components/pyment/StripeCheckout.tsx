@@ -33,7 +33,7 @@ const StripeCheckout = () => {
         case "succeeded":
           setMessage("Payment succeeded!");
           toast.success("Payment succeeded!");
-          router.push("/payment-success");
+          router.push("/success");
           break;
         case "processing":
           setMessage("Your payment is processing.");
@@ -63,7 +63,7 @@ const StripeCheckout = () => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/payment-success`,
+        return_url: `${window.location.origin}/success`,
       },
     });
 
