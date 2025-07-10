@@ -1,6 +1,6 @@
-import Image from "next/image"
-import { ResetPasswordForm } from "@/components/ResetPasswordForm"
-import { Suspense } from "react"
+import Image from "next/image";
+import { ResetPasswordForm } from "@/components/ResetPasswordForm";
+import { Suspense } from "react";
 
 export default function ResetPasswordPage() {
   return (
@@ -34,9 +34,12 @@ export default function ResetPasswordPage() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">Recover your password</h2>
+            <h2 className="mb-2 text-4xl font-bold">
+              Stellen Sie Ihr Passwort wieder her
+            </h2>
             <p className="max-w-md text-gray-300">
-              Discover amazing products and enjoy a seamless shopping experience with us.
+              Entdecken Sie tolle Produkte und genießen Sie bei uns ein
+              nahtloses Einkaufserlebnis.
             </p>
           </div>
         </div>
@@ -44,8 +47,12 @@ export default function ResetPasswordPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 rounded-lg bg-gray-800 p-8 text-white">
           <div className="text-center">
-            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">Reset password</h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">Please set your new password.</p>
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
+              Passwort zurücksetzen
+            </h1>
+            <p className="text-white text-[14px] lg:text-[16px] font-normal">
+              Bitte legen Sie Ihr neues Passwort fest.
+            </p>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             <ResetPasswordForm />
@@ -53,5 +60,5 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

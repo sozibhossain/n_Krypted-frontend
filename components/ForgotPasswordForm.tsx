@@ -1,58 +1,67 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        toast.success("OTP erfolgreich gesendet")
-        setEmailSent(true)
+        toast.success("OTP erfolgreich gesendet");
+        setEmailSent(true);
       } else {
-        toast.error(data.message)
+        toast.error(data.message);
       }
     } catch {
-      toast.error("OTP konnte nicht gesendet werden")
+      toast.error("OTP konnte nicht gesendet werden");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (emailSent) {
     return (
       <div className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg text-center">
         <div className="space-y-2">
-          <h3 className="text-xl font-medium text-white">Check your email</h3>
+          <h3 className="text-xl font-medium text-white">
+            Überprüfen Sie Ihre E-Mails
+          </h3>
           <p className="text-gray-400">
-            We&apos;ve sent a password reset link to {email}
+            Wir haben einen Link zum Zurücksetzen des Passworts an {email}{" "}
+            gesendet
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg"
+    >
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <div className="relative">
@@ -69,9 +78,13 @@ export function ForgotPasswordForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-200" disabled={isLoading}>
+      <Button
+        type="submit"
+        className="w-full bg-white text-gray-900 hover:bg-gray-200"
+        disabled={isLoading}
+      >
         {isLoading ? "Sending email..." : "Send email"}
       </Button>
     </form>
-  )
+  );
 }

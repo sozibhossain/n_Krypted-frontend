@@ -505,7 +505,9 @@ import StripeCheckout from "./pyment/StripeCheckout";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 
 interface ScheduleDate {
   date: string;
@@ -534,6 +536,7 @@ interface DealsCardProps {
   updatedAt?: string | Date;
   scheduleDates?: ScheduleDate[];
   location?: Location;
+  timer?: string;
 }
 
 interface TimeLeft {
@@ -566,7 +569,9 @@ export function DealsCard({
   const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
   const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"paypal" | "stripe" | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "paypal" | "stripe" | null
+  >(null);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -622,7 +627,9 @@ export function DealsCard({
       }
 
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
@@ -640,21 +647,24 @@ export function DealsCard({
 
   const createPaymentIntent = async () => {
     if (!bookingId) return;
-    
+
     setStripeLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          bookingId: bookingId,
-          price: price,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            bookingId: bookingId,
+            price: price,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to create payment intent");
@@ -691,24 +701,29 @@ export function DealsCard({
 
   const bookingPayment = async (notifyMe = false) => {
     setIsLoading(true);
+
+    console.log(notifyMe)
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          dealsId: id,
-          notifyMe: notifyMe,
-          scheduleDate: scheduleDates?.[0]?.date,
-          scheduleId: scheduleDates?.[0]?._id,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            dealsId: id,
+            scheduleDate: scheduleDates?.[0]?.date,
+            scheduleId: scheduleDates?.[0]?._id,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         if (data.booking.notifyMe) {
           throw new Error("You have already notified for this deal");
         }
@@ -731,9 +746,11 @@ export function DealsCard({
   };
 
   const isDealExpired = timeLeft.isExpired;
-  const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false;
+  const isDealAtCapacity = maxParticipants
+    ? participations >= maxParticipants
+    : false;
   const hasTimeLimit = time > 0;
-  const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true;
+  // const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true;
 
   const getFirstActiveDate = () => {
     if (!scheduleDates || scheduleDates.length === 0) return null;
@@ -784,7 +801,10 @@ export function DealsCard({
     }
 
     return (
-      <Button className="w-full bg-gray-400 text-white font-semibold mt-2" disabled>
+      <Button
+        className="w-full bg-gray-400 text-white font-semibold mt-2"
+        disabled
+      >
         Unavailable
       </Button>
     );
@@ -802,7 +822,10 @@ export function DealsCard({
             onMouseLeave={() => setIsHovered(false)}
           >
             <Image
-              src={image || "/placeholder.svg?height=222&width=370&query=deal image"}
+              src={
+                image ||
+                "/placeholder.svg?height=222&width=370&query=deal image"
+              }
               alt={title || "Deal Image"}
               width={600}
               height={400}
@@ -825,7 +848,9 @@ export function DealsCard({
           <CardContent className="space-y-2 pt-4">
             <div className="grid grid-cols-3">
               <div className="col-span-2">
-                <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
+                <h3 className="font-bold text-[18px] my-1 line-clamp-1 text-[#212121]">
+                  {title}
+                </h3>
                 <p className="text-[16px] font-normal text-[#737373]">
                   <div
                     className="text-[#737373] truncate max-w-full"
@@ -880,7 +905,10 @@ export function DealsCard({
       </Card>
 
       {/* Booking Summary Modal */}
-      <Dialog open={isBookingSummaryOpen} onOpenChange={setIsBookingSummaryOpen}>
+      <Dialog
+        open={isBookingSummaryOpen}
+        onOpenChange={setIsBookingSummaryOpen}
+      >
         <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -923,7 +951,9 @@ export function DealsCard({
                     </div>
                   )}
                 </div>
-                <div className="text-lg font-semibold text-white mt-2">{price?.toFixed(2)} EUR</div>
+                <div className="text-lg font-semibold text-white mt-2">
+                  {price?.toFixed(2)} EUR
+                </div>
               </div>
             </div>
 
@@ -946,13 +976,17 @@ export function DealsCard({
             <div className="space-y-3 mb-6">
               <div
                 className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "paypal" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "paypal"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("paypal")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "paypal" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "paypal"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "paypal" && (
@@ -966,13 +1000,17 @@ export function DealsCard({
               </div>
               <div
                 className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "stripe" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "stripe"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("stripe")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "stripe" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "stripe"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "stripe" && (
@@ -1001,7 +1039,11 @@ export function DealsCard({
       <Dialog open={isPayPalModalOpen} onOpenChange={setIsPayPalModalOpen}>
         <DialogContent className="p-5 w-full">
           {bookingId && (
-            <PayPalCheckout amount={price} userId={session?.user?.id ?? ""} bookingId={bookingId} />
+            <PayPalCheckout
+              amount={price}
+              userId={session?.user?.id ?? ""}
+              bookingId={bookingId}
+            />
           )}
         </DialogContent>
       </Dialog>
@@ -1028,7 +1070,9 @@ export function DealsCard({
             </Elements>
           ) : (
             <div className="text-center p-4">
-              <p className="text-red-500">Failed to initialize payment. Please try again.</p>
+              <p className="text-red-500">
+                Failed to initialize payment. Please try again.
+              </p>
               <Button
                 onClick={() => createPaymentIntent()}
                 className="mt-4 bg-blue-500 hover:bg-blue-600"

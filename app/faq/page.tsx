@@ -6,7 +6,7 @@ import Image from "next/image";
 const page = () => {
   return (
     <div>
-      <PageHeader title="Häufige Fragen" imge="/assets/faq-banner.jpg" />
+      <PageHeader title="Häufige Fragen" imge="/assets/faq-banner.jpg" height="350px" />
       <div className="container">
         <div className="grid grid-cols-3 gap-4 pt-16">
           <div className="hidden lg:block lg:col-span-1 ">

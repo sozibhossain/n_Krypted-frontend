@@ -1,40 +1,40 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { registerUser } from "@/app/actions/auth"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { registerUser } from "@/app/actions/auth";
+import { toast } from "sonner";
 
 export function RegisterForm() {
-  const [name, setUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [phoneNumber, setPhone] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [name, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   // In your RegisterForm component
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwörter stimmen nicht überein")
-      return
+      toast.error("Passwörter stimmen nicht überein");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const result = await registerUser({
@@ -42,30 +42,35 @@ export function RegisterForm() {
         email,
         password,
         phoneNumber,
-      })
+      });
 
       if (result.success) {
-        toast.success("Konto erfolgreich erstellt!")
+        toast.success("Konto erfolgreich erstellt!");
 
         // Store email in sessionStorage before redirecting
-        sessionStorage.setItem("registerEmail", email)
+        sessionStorage.setItem("registerEmail", email);
 
         // Redirect to verify-email with the email as a query parameter
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`)
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       } else {
-        toast.error(result.message)
+        toast.error(result.message);
       }
     } catch {
-      toast.error("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+      toast.error(
+        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg"
+    >
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username">Benutzername</Label>
         <div className="relative">
           <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -80,7 +85,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">E-Mail-Adresse</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -96,7 +101,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone Number</Label>
+        <Label htmlFor="phone">Telefonnummer</Label>
         <div className="relative">
           <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -111,7 +116,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Passwort</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -128,13 +133,17 @@ export function RegisterForm() {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-3 text-gray-400"
           >
-            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -151,31 +160,43 @@ export function RegisterForm() {
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute right-3 top-3 text-gray-400"
           >
-            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
       <div className="flex items-center space-x-2">
-        <Checkbox id="remember" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} />
+        <Checkbox
+          id="remember"
+          checked={rememberMe}
+          onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+        />
         <label
           htmlFor="remember"
           className="text-sm font-medium leading-none text-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          Remember me
+          Erinnere dich an mich
         </label>
       </div>
 
-      <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-200" disabled={isLoading}>
+      <Button
+        type="submit"
+        className="w-full bg-white text-gray-900 hover:bg-gray-200"
+        disabled={isLoading}
+      >
         {isLoading ? "Creating account..." : "Sign Up"}
       </Button>
 
       <div className="text-center text-sm text-[#BABABA]">
-        Already have an account?{" "}
+        Hast du schon ein Konto?{" "}
         <Link href="/login" className="text-white hover:text-blue-400">
-          Sign in
+          anmelden
         </Link>
       </div>
     </form>
-  )
+  );
 }

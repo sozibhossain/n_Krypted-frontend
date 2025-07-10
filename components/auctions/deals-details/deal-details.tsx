@@ -1,6 +1,7 @@
 "use client";
+
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MapPin, Trash2, Edit2, Calendar } from "lucide-react";
@@ -20,6 +21,13 @@ import StarRating from "@/app/deals/Star-rating";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import PayPalCheckout from "@/components/PayPalCheckout";
+import StripeCheckout from "@/components/pyment/StripeCheckout";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 
 interface AuctionDetailsProps {
   auctionId: string;
@@ -119,11 +127,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleDate | null>(
     null
   );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "paypal" | "stripe" | null
+  >(null);
+  const [clientSecret, setClientSecret] = useState<string>("");
+  const [stripeLoading, setStripeLoading] = useState(false);
+
   const session = useSession();
   const token = session?.data?.user?.accessToken;
   const queryClient = useQueryClient();
 
-  console.log(selectedSchedule);
   // Fetch auction details
   const {
     data: auctionData,
@@ -189,7 +202,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Bewertung erfolgreich übermittelt", {
+      toast.success("Review submitted successfully", {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
@@ -199,12 +212,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEmail("");
     },
     onError: (error) => {
-      toast.error(
-        error.message || "Bewertung konnte nicht übermittelt werden",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error.message || "Failed to submit review", {
+        position: "top-right",
+      });
     },
   });
 
@@ -212,9 +222,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const deleteReviewMutation = useMutation({
     mutationFn: async ({ reviewId }: DeleteReviewData) => {
       if (!token) {
-        throw new Error(
-          "Authentifizierung erforderlich. Bitte melden Sie sich an."
-        );
+        throw new Error("Authentication required. Please log in.");
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`,
@@ -227,14 +235,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          errorData.message || "Die Bewertung konnte nicht gelöscht werden."
-        );
+        throw new Error(errorData.message || "Failed to delete review");
       }
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Bewertung erfolgreich gelöscht", {
+      toast.success("Review deleted successfully", {
         position: "top-right",
       });
       setIsDeleteModalOpen(false);
@@ -242,12 +248,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
     },
     onError: (error) => {
-      toast.error(
-        error.message || "Die Bewertung konnte nicht gelöscht werden.",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error.message || "Failed to delete review", {
+        position: "top-right",
+      });
       setIsDeleteModalOpen(false);
       setReviewToDelete(null);
     },
@@ -255,11 +258,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   // Edit review mutation
   const editReviewMutation = useMutation({
-    mutationFn: async ({
-      reviewId,
-      reviewComment,
-      ratings,
-    }: EditReviewData) => {
+    mutationFn: async ({ reviewId, reviewComment, ratings }: EditReviewData) => {
       if (!token) {
         throw new Error("Authentication required. Please log in.");
       }
@@ -279,10 +278,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          errorData.message ||
-            "Die Aktualisierung der Bewertung ist fehlgeschlagen."
-        );
+        throw new Error(errorData.message || "Failed to update review");
       }
       return response.json();
     },
@@ -295,23 +291,53 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditRating(0);
     },
     onError: (error) => {
-      toast.error(
-        error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error.message || "Failed to update review", {
+        position: "top-right",
+      });
     },
   });
 
-  const auction = auctionData?.deal;
+  // Create Stripe Payment Intent
+  const createPaymentIntent = async () => {
+    if (!bookingId) return;
 
-  // Filter and limit schedule dates
-  const today = new Date();
-  const futureSchedules =
-    auction?.scheduleDates
-      ?.filter((schedule: ScheduleDate) => new Date(schedule.date) >= today)
-      ?.slice(0, 4) || [];
+    setStripeLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.data?.user?.id,
+            bookingId: bookingId,
+            price: auction?.price,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create payment intent");
+      }
+
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
+    } catch (error) {
+      toast.error("Failed to initialize payment");
+      console.error(error);
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isPaymentModalOpen && selectedPaymentMethod === "stripe" && bookingId && !clientSecret) {
+      createPaymentIntent();
+    }
+  }, [isPaymentModalOpen, selectedPaymentMethod, bookingId]);
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
@@ -360,6 +386,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   };
 
   const handleBooking = async (notifyMe = false) => {
+
+    console.log(notifyMe)
     if (!session?.data?.user?.id) {
       toast.error("Please log in to book this deal");
       return;
@@ -371,7 +399,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     setIsBookingModalOpen(true);
   };
 
-
+ 
 
   const confirmBooking = async () => {
     if (!session?.data?.user?.id || !selectedSchedule) return;
@@ -430,7 +458,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           onClick={() => handleBooking(true)}
           disabled={isLoading || !selectedSchedule}
         >
-          {isLoading ? "Processing..." : "Benachrichtige mich"}
+          {isLoading ? "Processing..." : "Notify me"}
         </Button>
       );
     } else {
@@ -445,6 +473,15 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
     }
   };
+
+  const auction = auctionData?.deal;
+
+  // Filter and limit schedule dates
+  const today = new Date();
+  const futureSchedules =
+    auction?.scheduleDates
+      ?.filter((schedule: ScheduleDate) => new Date(schedule.date) >= today)
+      ?.slice(0, 4) || [];
 
   if (isLoadingAuction) {
     return (
@@ -557,7 +594,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </h2>
         <div>
           <p className="text-xl text-[#FFFFFF] font-medium">
-            Be the first to review &quot;This Deals&quot;
+            Be the first to review &quot;This Deal&quot;
           </p>
         </div>
         <div className="space-y-4 mt-6">
@@ -782,6 +819,56 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 </div>
               </div>
             </div>
+            <div className="space-y-3 mb-6">
+              <div
+                className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
+                  selectedPaymentMethod === "paypal"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
+                }`}
+                onClick={() => setSelectedPaymentMethod("paypal")}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full border-2 ${
+                    selectedPaymentMethod === "paypal"
+                      ? "border-blue-500"
+                      : "border-gray-600"
+                  } flex items-center justify-center`}
+                >
+                  {selectedPaymentMethod === "paypal" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
+                </div>
+                <span className="text-gray-800">Pay With PayPal</span>
+                <div className="ml-auto">
+                  <span className="text-blue-500 font-semibold">PayPal</span>
+                </div>
+              </div>
+              <div
+                className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
+                  selectedPaymentMethod === "stripe"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
+                }`}
+                onClick={() => setSelectedPaymentMethod("stripe")}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full border-2 ${
+                    selectedPaymentMethod === "stripe"
+                      ? "border-blue-500"
+                      : "border-gray-600"
+                  } flex items-center justify-center`}
+                >
+                  {selectedPaymentMethod === "stripe" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
+                </div>
+                <span className="text-gray-800">Pay With Stripe</span>
+                <div className="ml-auto">
+                  <span className="text-blue-500 font-semibold">Stripe</span>
+                </div>
+              </div>
+            </div>
             <div className="border-t border-gray-200 pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-gray-900">
@@ -804,7 +891,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <Button
               onClick={confirmBooking}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6"
-              disabled={isLoading}
+              disabled={isLoading || !selectedPaymentMethod}
             >
               {isLoading ? "Processing..." : "Proceed to Payment"}
             </Button>
@@ -813,11 +900,47 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       </Dialog>
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent className="p-10 border-[#FFFFFF33] text-white">
-          <PayPalCheckout
-            amount={auction?.price || 0}
-            userId={session?.data?.user?.id ?? ""}
-            bookingId={bookingId ?? ""}
-          />
+          {selectedPaymentMethod === "paypal" && bookingId && (
+            <PayPalCheckout
+              amount={auction?.price || 0}
+              userId={session?.data?.user?.id ?? ""}
+              bookingId={bookingId}
+            />
+          )}
+          {selectedPaymentMethod === "stripe" && (
+            <>
+              {stripeLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              ) : clientSecret && bookingId ? (
+                <Elements
+                  stripe={stripePromise}
+                  options={{
+                    clientSecret,
+                    appearance: {
+                      theme: "night",
+                      labels: "floating",
+                    },
+                  }}
+                >
+                  <StripeCheckout/>
+                </Elements>
+              ) : (
+                <div className="text-center p-4">
+                  <p className="text-red-500">
+                    Failed to initialize payment. Please try again.
+                  </p>
+                  <Button
+                    onClick={() => createPaymentIntent()}
+                    className="mt-4 bg-blue-500 hover:bg-blue-600"
+                  >
+                    Retry
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

@@ -39,6 +39,14 @@ interface Category {
   location: Location;
 }
 
+interface ScheduleDate {
+  date: string;
+  active: boolean;
+  participationsLimit: number;
+  bookedCount: number;
+  _id: string;
+}
+
 interface Deal {
   time: number | undefined;
   bookingCount: number;
@@ -55,6 +63,8 @@ interface Deal {
   category: string;
   createdAt: string;
   updatedAt: string;
+  timer?: string;
+  scheduleDates?: ScheduleDate[];
 }
 
 interface UniqueLocation {
@@ -866,6 +876,7 @@ function DealsPage() {
                         maxParticipants={deal.participationsLimit}
                         scheduleDates={deal.scheduleDates}
                         location={deal.location}
+                        timer={deal.timer}
                       />
                     ))
                   ) : (
