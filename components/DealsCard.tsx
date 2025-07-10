@@ -1,6 +1,3 @@
-
-
-
 "use client";
 
 import Image from "next/image";
@@ -17,7 +14,9 @@ import StripeCheckout from "./pyment/StripeCheckout";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 
 interface ScheduleDate {
   date: string;
@@ -46,6 +45,7 @@ interface DealsCardProps {
   updatedAt?: string | Date;
   scheduleDates?: ScheduleDate[];
   location?: Location;
+  timer?: string;
 }
 
 interface TimeLeft {
@@ -70,6 +70,7 @@ export function DealsCard({
   time = 0,
   scheduleDates,
   location,
+  timer,
 }: DealsCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +79,9 @@ export function DealsCard({
   const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
   const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"paypal" | "stripe" | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "paypal" | "stripe" | null
+  >(null);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -134,7 +137,9 @@ export function DealsCard({
       }
 
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
@@ -152,21 +157,24 @@ export function DealsCard({
 
   const createPaymentIntent = async () => {
     if (!bookingId) return;
-    
+
     setStripeLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          bookingId: bookingId,
-          price: price,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            bookingId: bookingId,
+            price: price,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to create payment intent");
@@ -204,23 +212,26 @@ export function DealsCard({
   const bookingPayment = async (notifyMe = false) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          dealsId: id,
-          notifyMe: notifyMe,
-          scheduleDate: scheduleDates?.[0]?.date,
-          scheduleId: scheduleDates?.[0]?._id,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            dealsId: id,
+            scheduleDate: scheduleDates?.[0]?.date,
+            scheduleId: scheduleDates?.[0]?._id,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         if (data.booking.notifyMe) {
           throw new Error("You have already notified for this deal");
         }
@@ -243,7 +254,9 @@ export function DealsCard({
   };
 
   const isDealExpired = timeLeft.isExpired;
-  const isDealAtCapacity = maxParticipants ? participations >= maxParticipants : false;
+  const isDealAtCapacity = maxParticipants
+    ? participations >= maxParticipants
+    : false;
   const hasTimeLimit = time > 0;
   // const hasAvailableSpots = maxParticipants ? participations < maxParticipants : true;
 
@@ -317,7 +330,10 @@ export function DealsCard({
             onMouseLeave={() => setIsHovered(false)}
           >
             <Image
-              src={image || "/placeholder.svg?height=222&width=370&query=deal image"}
+              src={
+                image ||
+                "/placeholder.svg?height=222&width=370&query=deal image"
+              }
               alt={title || "Deal Image"}
               width={600}
               height={400}
@@ -443,7 +459,9 @@ export function DealsCard({
                     </div>
                   )}
                 </div>
-                <div className="text-lg font-semibold text-white mt-2">{price?.toFixed(2)} EUR</div>
+                <div className="text-lg font-semibold text-white mt-2">
+                  {price?.toFixed(2)} EUR
+                </div>
               </div>
             </div>
 
@@ -466,13 +484,17 @@ export function DealsCard({
             <div className="space-y-3 mb-6">
               <div
                 className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "paypal" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "paypal"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("paypal")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "paypal" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "paypal"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "paypal" && (
@@ -486,13 +508,17 @@ export function DealsCard({
               </div>
               <div
                 className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "stripe" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "stripe"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("stripe")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "stripe" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "stripe"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "stripe" && (
@@ -520,17 +546,13 @@ export function DealsCard({
       {/* PayPal Checkout Modal */}
       <Dialog open={isPayPalModalOpen} onOpenChange={setIsPayPalModalOpen}>
         <DialogContent className="p-5 w-full">
-<<<<<<< HEAD
-          <PayPalCheckout
-            amount={price}
-            userId={session?.user?.id ?? ""}
-            bookingId={bookingId ?? ""}
-          />
-=======
           {bookingId && (
-            <PayPalCheckout amount={price} userId={session?.user?.id ?? ""} bookingId={bookingId} />
+            <PayPalCheckout
+              amount={price}
+              userId={session?.user?.id ?? ""}
+              bookingId={bookingId}
+            />
           )}
->>>>>>> 79c3ecd4f8276318d52d465f5340377ef0c4f104
         </DialogContent>
       </Dialog>
 
@@ -556,7 +578,9 @@ export function DealsCard({
             </Elements>
           ) : (
             <div className="text-center p-4">
-              <p className="text-red-500">Failed to initialize payment. Please try again.</p>
+              <p className="text-red-500">
+                Failed to initialize payment. Please try again.
+              </p>
               <Button
                 onClick={() => createPaymentIntent()}
                 className="mt-4 bg-blue-500 hover:bg-blue-600"
