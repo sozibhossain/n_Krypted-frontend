@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import {  useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Trash2 } from "lucide-react"
+
 import { format } from "date-fns"
 
-import { Button } from "@/components/ui/button"
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Pagination,
@@ -18,19 +18,27 @@ import {
 } from "@/components/ui/pagination"
 import { Skeleton } from "@/components/ui/skeleton"
 import DeleteBookingDialog from "./_component/delete-booking-dialog"
-import type { Booking, BookingsResponse } from "./_component/bookings"
+import type {  BookingsResponse } from "./_component/bookings"
 import Layout from "@/components/dashboard/layout"
+import { useSession } from "next-auth/react"
 
 export default function BookingsTable() {
   const [page, setPage] = useState(1)
   const [limit] = useState(10)
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  // const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const session  = useSession()
+   const token = session?.data?.user?.accessToken
 
   const { data, isLoading, refetch, isPending } = useQuery<BookingsResponse>({
     queryKey: ["bookings", page, limit],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/booked?page=${page}&limit=${limit}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/booked?page=${page}&limit=${limit}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
       if (!response.ok) {
         throw new Error("Failed to fetch bookings")
       }
@@ -42,13 +50,13 @@ export default function BookingsTable() {
     setPage(newPage)
   }
 
-  const handleDeleteClick = (booking: Booking) => {
-    setSelectedBooking(booking)
-    setIsDeleteDialogOpen(true)
-  }
+  // const handleDeleteClick = (booking: Booking) => {
+  //   setSelectedBooking(booking)
+  //   setIsDeleteDialogOpen(true)
+  // }
 
   const handleDeleteConfirm = async () => {
-    if (!selectedBooking) return
+    // if (!selectedBooking) return
 
     setIsDeleteDialogOpen(false)
 
@@ -229,7 +237,7 @@ export default function BookingsTable() {
           <div className="flex flex-row items-center justify-between">
             <div>
               <div className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Notify Me List</div>
-              <p className="text-xl text-[#595959]">Dashboard &gt; Notify Me List</p>
+              <p className="text-xl text-[#595959]">Dashboard {'>'} Notify Me List</p>
             </div>
           </div>
           <div className=" mt-10">
@@ -253,9 +261,9 @@ export default function BookingsTable() {
                         {/* <Button variant="ghost" size="icon">
                           <Pencil className="h-4 w-4" />
                         </Button> */}
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(booking)}>
+                        {/* <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(booking)}>
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -274,7 +282,7 @@ export default function BookingsTable() {
 
           <DeleteBookingDialog
             open={isDeleteDialogOpen}
-            booking={selectedBooking}
+            // booking={selectedBooking}
             onClose={() => setIsDeleteDialogOpen(false)}
             onConfirm={handleDeleteConfirm}
           />

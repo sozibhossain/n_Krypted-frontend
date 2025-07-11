@@ -18,7 +18,7 @@ import { toast } from "sonner"
 
 interface DeleteBookingDialogProps {
     open: boolean
-    booking: Booking | null
+    booking?: Booking | null
     onClose: () => void
     onConfirm: () => void
 }

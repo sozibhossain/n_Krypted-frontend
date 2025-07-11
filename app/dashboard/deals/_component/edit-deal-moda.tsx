@@ -158,6 +158,7 @@ export default function EditDealModal({
     return (hours || 0) * 60 + (minutes || 0);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isValidDate = (date: any): date is Date => {
     return date instanceof Date && !isNaN(date.getTime());
   };
