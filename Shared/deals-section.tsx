@@ -19,13 +19,19 @@ interface Deal {
   description: string
   participations: number
   price: number
-  location: string
+
   images: string[]
   offers: string[]
   status: string
   category: string
   createdAt: string
   updatedAt: string
+  scheduleDates?: [] 
+  timer?: string
+  location?: {
+    country: string;
+    city: string;
+  }
 }
 
 export function DealsSection() {
@@ -175,6 +181,7 @@ export function DealsSection() {
                         maxParticipants={deal.participationsLimit}
                         scheduleDates={deal.scheduleDates}
                         location={deal.location}
+                        timer={deal.timer}
                       />
                     </div>
                   </CarouselItem>

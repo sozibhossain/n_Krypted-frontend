@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -29,6 +30,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import Layout from "@/components/dashboard/layout"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react"
 
 interface Booking {
   _id: string
@@ -39,11 +41,12 @@ interface Booking {
     title: string
     description: string
     price: number
-    location: string
+    location: { country: string; city: string }
     time?: number
   } | null
   isBooked: boolean
   notifyMe: boolean
+  scheduleDate: string
   createdAt: string
   updatedAt: string
 }
@@ -53,14 +56,21 @@ export default function BookingsPage() {
   const [itemsPerPage] = useState(10)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const session = useSession()
+  const token = session?.data?.user?.accessToken
 
   const queryClient = useQueryClient()
 
-  // Fetch bookings data
+  // Fetch bookings data with token in headers
   const { data, isLoading, isError } = useQuery({
     queryKey: ["bookings"],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
       if (!response.ok) {
         throw new Error("Failed to fetch bookings")
       }
@@ -68,11 +78,15 @@ export default function BookingsPage() {
     },
   })
 
-  // Delete booking mutation
+  // Delete booking mutation with token in headers
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       })
       if (!response.ok) {
         throw new Error("Failed to delete booking")
@@ -81,7 +95,7 @@ export default function BookingsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] })
-      toast.success("Booking deleted successfully",{ position: "top-right" })
+      toast.success("Booking deleted successfully", { position: "top-right" })
     },
   })
 
@@ -100,8 +114,8 @@ export default function BookingsPage() {
 
   // Calculate pagination
   const bookings = data?.data || []
-  const totalItems = bookings.length
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const totalItems = data?.pagination?.totalItems || bookings.length
+  const totalPages = data?.pagination?.totalPages || Math.ceil(totalItems / itemsPerPage)
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
@@ -119,9 +133,9 @@ export default function BookingsPage() {
 
   return (
     <Layout>
-      <div className=" py-6">
+      <div className="py-6">
         <div className="mb-6">
-          <h1 className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Booking</h1>
+          <h1 className="text-[40px] text-[#1F2937] font-bold tracking-tight">Booking</h1>
           <div className="text-xl text-[#595959]">Dashboard &gt; Booking</div>
         </div>
 
@@ -136,15 +150,17 @@ export default function BookingsPage() {
           <div className="p-4 text-center text-red-500">Error loading bookings. Please try again.</div>
         ) : (
           <>
-            <div className="rounded-md  bg-white  shadow-md">
+            <div className="rounded-md bg-white shadow-md">
               <Table>
                 <TableHeader>
-                      <TableRow className="text-[#595959] text-base font-medium py-4 hover:bg-transparent">
+                  <TableRow className="text-[#595959] text-base font-medium py-4 hover:bg-transparent">
                     <TableHead>Booker</TableHead>
                     <TableHead>Booking ID</TableHead>
                     <TableHead>Details</TableHead>
+                    <TableHead>Schedule Date</TableHead>
                     <TableHead>Time</TableHead>
                     <TableHead>Price</TableHead>
+                    <TableHead>Booking Status</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -161,10 +177,18 @@ export default function BookingsPage() {
                         {booking.dealsId ? booking.dealsId.title : "Lorem ipsum is a dummy or text..."}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
+                        {booking.scheduleDate ? format(new Date(booking.scheduleDate), "yyyy-MM-dd HH:mm") : "N/A"}
+                      </TableCell>
+                      <TableCell className="text-[#212121] text-base font-medium py-4">
                         {format(new Date(booking.createdAt), "yyyy-MM-dd")}
                         <div>3:00 PM</div>
                       </TableCell>
-                      <TableCell className="text-[#212121] text-base font-medium py-4">${booking.dealsId ? booking.dealsId.price.toFixed(2) : "50.00"}</TableCell>
+                      <TableCell className="text-[#212121] text-base font-medium py-4">
+                        ${booking.dealsId ? booking.dealsId.price.toFixed(2) : "50.00"}
+                      </TableCell>
+                      <TableCell className="text-[#212121] text-base font-medium py-4">
+                        {booking.isBooked ? "Payment Received" : "Payment Pending"}
+                      </TableCell>
                       <TableCell className="text-center">
                         <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(booking._id)}>
                           <Trash2 className="h-4 w-4" />
@@ -237,6 +261,6 @@ export default function BookingsPage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-   </Layout>
+    </Layout>
   )
 }

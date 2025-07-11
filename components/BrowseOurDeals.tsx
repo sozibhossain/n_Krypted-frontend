@@ -7,7 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
 import { DealsCardSkeleton } from "./skeleton/dealsSkeleton";
 
+
 interface Deal {
+  timer: string | undefined;
   time: number | undefined;
   bookingCount: number;
   participationsLimit: number | undefined;
@@ -16,13 +18,18 @@ interface Deal {
   description: string;
   participations: number;
   price: number;
-  location: string;
+ 
   images: string[];
   offers: string[];
   status: string;
   category: string;
   createdAt: string;
   updatedAt: string;
+  scheduleDates?: [] ;
+  location?: {
+    country: string;
+    city: string;
+  };
 }
 
 export function BrowseOurDeals() {
@@ -94,6 +101,7 @@ export function BrowseOurDeals() {
                     maxParticipants={deal.participationsLimit}
                     scheduleDates={deal.scheduleDates}
                     location={deal.location}
+                    timer={deal.timer}
                   />
                 </div>
               </div>
