@@ -1,3 +1,6 @@
+
+
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
@@ -8,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea f
 
 interface Blog {
   title: string;
+  authorName: string;
   description: string;
   image: File | null;
 }
@@ -16,6 +20,7 @@ interface AddEditBlogsProps {
   handleAddBlog: (e: React.FormEvent) => void;
   newBlog: {
     title: string;
+    authorName: string;
     description: string;
     image: File | null;
   };
@@ -32,7 +37,6 @@ interface AddEditBlogsProps {
   editingBlog: boolean;
 }
 
-
 function AddEditBlogs({
   handleAddBlog,
   newBlog,
@@ -44,7 +48,6 @@ function AddEditBlogs({
   updateBlogMutation,
   editingBlog,
 }: AddEditBlogsProps) {
-
   console.log("editingBlog", newBlog);
   return (
     <ScrollArea className="h-[calc(100vh-200px)]">
@@ -63,7 +66,16 @@ function AddEditBlogs({
             placeholder="Type Blog Title here..."
           />
         </div>
-        
+        {/* Author Name */}
+        <div className="space-y-2">
+          <Label htmlFor="authorName">Author Name</Label>
+          <Input
+            id="authorName"
+            value={newBlog.authorName}
+            onChange={(e) => setNewBlog({ ...newBlog, authorName: e.target.value })}
+            placeholder="Type Author Name here..."
+          />
+        </div>
         {/* Content */}
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>

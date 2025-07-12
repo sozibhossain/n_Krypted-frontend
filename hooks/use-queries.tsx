@@ -1,6 +1,21 @@
+
+
+
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiService, type ApiResponse } from "@/lib/api-service";
 import { toast } from "sonner";
+
+// Blog interface for type safety
+interface Blog {
+  _id: string;
+  title: string;
+  authorName: string;
+  description: string;
+  image: string;
+  createdAt: string;
+  commentCount?: number;
+}
 
 // Generic query hook creator to simplify implementation
 function createQuery<T>(
@@ -285,17 +300,17 @@ export function useAllBlogs() {
   return createQuery(["blogs", "all"], () => apiService.getAllBlogs());
 }
 
-// export function useBlogDetails(id: string) {
-//   return createQuery(["blogs", id], () => apiService.getBlogDetails(id), {
-//     enabled: !!id,
-//   });
-// }
+export function useBlogDetails(id: string) {
+  return createQuery<Blog>(["blogs", id], () => apiService.getBlogDetails(id), {
+    enabled: !!id,
+  });
+}
 
 export function useCreateBlog() {
   return createMutation((data: FormData) => apiService.createBlog(data), {
     onSuccessMessage: "Blog created successfully",
     onErrorMessage: "Failed to create blog",
-    invalidateQueries: [["blogs"]],
+    invalidateQueries: [["blogs", "all"]],
   });
 }
 
@@ -306,7 +321,7 @@ export function useUpdateBlog() {
     {
       onSuccessMessage: "Blog updated successfully",
       onErrorMessage: "Failed to update blog",
-      invalidateQueries: [["blogs"]],
+      invalidateQueries: [["blogs", "all"]],
     }
   );
 }
@@ -315,7 +330,7 @@ export function useDeleteBlog() {
   return createMutation((id: string) => apiService.deleteBlog(id), {
     onSuccessMessage: "Blog deleted successfully",
     onErrorMessage: "Failed to delete blog",
-    invalidateQueries: [["blogs"]],
+    invalidateQueries: [["blogs", "all"]],
   });
 }
 

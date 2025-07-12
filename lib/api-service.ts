@@ -15,6 +15,8 @@ export interface ApiResponse<T> {
 
 class ApiService {
   private token: string | null = null;
+  // eslint-disable-next-line
+  getBlogDetails: any;
 
   setToken(token: string) {
     this.token = token;

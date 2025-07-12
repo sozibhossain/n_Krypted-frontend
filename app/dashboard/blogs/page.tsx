@@ -12,34 +12,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import { Pagination } from "@/components/dashboard/pagination";
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useAllBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hooks/use-queries"; // <-- assume you have useUpdateBlog
+import { useAllBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hooks/use-queries";
 import Image from "next/image";
 import AddEditBlogs from "./_components/addEditBlogs";
-import DeleteModal from "./_components/detetemodal";
+
 import { Pagination } from "@/components/dashboard/pagination";
+import DeleteModal from "./_components/detetemodal";
 
 interface Blog {
   _id: string;
   title: string;
-  description: string; // matches the actual API field
+  authorName: string;
+  description: string;
   image: string;
   createdAt: string;
-  commentCount?: number; // optional, since it's not provided
+  commentCount?: number;
 }
 
-
 export default function BlogsPage() {
-  // Define the expected API response type
-
-
   const { data: blogsData, isLoading } = useAllBlogs();
   const createBlogMutation = useCreateBlog();
-  const updateBlogMutation = useUpdateBlog(); // <-- added
+  const updateBlogMutation = useUpdateBlog();
   const deleteBlogMutation = useDeleteBlog();
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -50,6 +47,7 @@ export default function BlogsPage() {
 
   const [formBlog, setFormBlog] = useState({
     title: "",
+    authorName: "",
     description: "",
     image: null as File | null,
   });
@@ -61,7 +59,6 @@ export default function BlogsPage() {
       setTotalPages(blogsData.totalPages || 1);
     }
   }, [blogsData]);
-
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -79,12 +76,13 @@ export default function BlogsPage() {
   const handleAddOrEditBlog = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formBlog.title || !formBlog.description || (!formBlog.image && !editingBlog)) {
+    if (!formBlog.title || !formBlog.authorName || !formBlog.description || (!formBlog.image && !editingBlog)) {
       return;
     }
 
     const formData = new FormData();
     formData.append("title", formBlog.title);
+    formData.append("authorName", formBlog.authorName);
     formData.append("description", formBlog.description);
     if (formBlog.image) {
       formData.append("image", formBlog.image);
@@ -97,7 +95,7 @@ export default function BlogsPage() {
           onSuccess: () => {
             setIsDialogOpen(false);
             setEditingBlog(null);
-            setFormBlog({ title: "", description: "", image: null });
+            setFormBlog({ title: "", authorName: "", description: "", image: null });
             setPreviewUrl("");
           },
         }
@@ -106,7 +104,7 @@ export default function BlogsPage() {
       createBlogMutation.mutate(formData, {
         onSuccess: () => {
           setIsDialogOpen(false);
-          setFormBlog({ title: "", description: "", image: null });
+          setFormBlog({ title: "", authorName: "", description: "", image: null });
           setPreviewUrl("");
         },
       });
@@ -121,6 +119,7 @@ export default function BlogsPage() {
     setEditingBlog(blog);
     setFormBlog({
       title: blog.title,
+      authorName: blog.authorName,
       description: blog.description,
       image: null,
     });
@@ -144,14 +143,14 @@ export default function BlogsPage() {
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             if (!open) {
               setEditingBlog(null);
-              setFormBlog({ title: "", description: "", image: null });
+              setFormBlog({ title: "", authorName: "", description: "", image: null });
               setPreviewUrl("");
             }
             setIsDialogOpen(open);
           }}>
             <DialogTrigger asChild>
-              <Button className="bg-[#212121] ">
-                <Plus className="mr-2 h-4 w-4" /> Add Blog 
+              <Button className="bg-[#212121]">
+                <Plus className="mr-2 h-4 w-4" /> Add Blog
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[50%]">
@@ -167,9 +166,8 @@ export default function BlogsPage() {
                 handleImageChange={handleImageChange}
                 createBlogMutation={createBlogMutation}
                 updateBlogMutation={updateBlogMutation}
-                editingBlog={!!editingBlog} // <--- FIX HERE
+                editingBlog={!!editingBlog}
               />
-
             </DialogContent>
           </Dialog>
         </div>
@@ -184,6 +182,7 @@ export default function BlogsPage() {
               <thead className="bg-muted/50">
                 <tr>
                   <th className="text-left p-4">Blog Name</th>
+                  <th className="text-left p-4">Author</th>
                   <th className="text-left p-4">Added</th>
                   <th className="text-left p-4">Comments</th>
                   <th className="text-left p-4">Actions</th>
@@ -192,7 +191,7 @@ export default function BlogsPage() {
               <tbody>
                 {blogs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="text-center py-4">
+                    <td colSpan={5} className="text-center py-4">
                       No blogs found
                     </td>
                   </tr>
@@ -211,14 +210,15 @@ export default function BlogsPage() {
                           <div>
                             <h4 className="font-medium">{blog.title}</h4>
                             <p
-                              className="text-sm text-muted-foreground line-clamp-2"
+                              className="text-sm text-muted-foreground line-clamp-2 max-w-[700px]"
                               dangerouslySetInnerHTML={{ __html: blog.description }}
                             />
                           </div>
                         </div>
                       </td>
+                      <td className="p-4">{blog.authorName}</td>
                       <td className="p-4">{formatDate(blog.createdAt)}</td>
-                      <td className="p-4">{blog.commentCount || 150}</td>
+                      <td className="p-4">{blog.commentCount}</td>
                       <td className="p-4">
                         <div className="flex gap-2">
                           <Button
@@ -254,7 +254,6 @@ export default function BlogsPage() {
           )}
         </div>
 
-        {/* Pagination */}
         {totalPages >= 1 && (
           <div className="px-6 py-4 border-t">
             <Pagination

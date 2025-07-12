@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Comment {
     _id: string;
     name: string;
@@ -7,6 +9,7 @@ export interface Comment {
 }
 
 export interface Blog {
+    authorName: ReactNode;
     _id: string;
     title: string;
     description: string;
