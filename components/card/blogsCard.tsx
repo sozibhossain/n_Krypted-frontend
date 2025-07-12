@@ -1,9 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { Calendar, ArrowUpRight } from "lucide-react";
+import { Calendar, ArrowUpRight, UserRound } from "lucide-react";
 import Link from "next/link";
+import { ReactNode } from "react";
 
 interface Blog {
+  authorName: ReactNode;
   _id: string;
   image?: string;
   title: string;
@@ -31,11 +33,11 @@ function BlogsCard({ blog }: { blog: Blog }) {
 
         <div className="p-6">
           <CardContent className="p-0">
-            <div className="flex items-center space-x-4 mb-4">
-              {/* <div className="flex items-center space-x-2 text-gray-600">
+            <div className="flex items-center justify-between space-x-4 mb-4">
+              <div className="flex items-center  space-x-2  text-gray-600">
                 <UserRound className="w-4 h-4" />
-                <span className="text-sm font-medium">Admin</span>
-              </div> */}
+                <span className="text-sm font-medium">{blog?.authorName}</span>
+              </div>
 
               <div className="flex items-center space-x-2 text-gray-600">
                 <Calendar className="w-4 h-4" />

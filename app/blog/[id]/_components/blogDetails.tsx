@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
-import { Calendar } from "lucide-react";
+import { Calendar, UserRound } from "lucide-react";
 import BlogComments from "./blogComments";
 import { BlogCommentsSection } from "./BlogCommentsShow";
 
@@ -53,7 +53,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     fetchBlog();
   }, [blogId]);
 
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -85,17 +84,24 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           <h1 className="text-3xl md:text-4xl font-bold text-white pb-4">
             {blog.title}
           </h1>
-          <div className="flex items-center space-x-4">
+          <div className="flex  items-center space-x-4">
             <div className="mt-2 text-white  text-[18px] flex items-center gap-2">
               <div>
                 <Calendar />
               </div>
-              {new Date(blog.updatedAt).toLocaleDateString("en-US", {
+              {new Date(blog.createdAt).toLocaleString("en-US", {
+                timeZone: "Europe/Berlin",
                 year: "numeric",
                 month: "short",
                 day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             </div>
+          </div>
+          <div className=" space-x-2  mt-2 text-white  text-[18px] flex items-center gap-">
+            <UserRound className="" />
+            <span className="">{blog?.authorName}</span>
           </div>
         </div>
 
