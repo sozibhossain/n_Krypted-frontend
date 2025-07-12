@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import {  useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { format } from "date-fns"
+import { format } from "date-fns";
 
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -15,40 +21,43 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Skeleton } from "@/components/ui/skeleton"
-import DeleteBookingDialog from "./_component/delete-booking-dialog"
-import type {  BookingsResponse } from "./_component/bookings"
-import Layout from "@/components/dashboard/layout"
-import { useSession } from "next-auth/react"
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import DeleteBookingDialog from "./_component/delete-booking-dialog";
+import type { BookingsResponse } from "./_component/bookings";
+import Layout from "@/components/dashboard/layout";
+import { useSession } from "next-auth/react";
 
 export default function BookingsTable() {
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
   // const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const session  = useSession()
-   const token = session?.data?.user?.accessToken
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const session = useSession();
+  const token = session?.data?.user?.accessToken;
 
   const { data, isLoading, refetch, isPending } = useQuery<BookingsResponse>({
     queryKey: ["bookings", page, limit],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/booked?page=${page}&limit=${limit}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/booked?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (!response.ok) {
-        throw new Error("Failed to fetch bookings")
+        throw new Error("Failed to fetch bookings");
       }
-      return response.json()
+      return response.json();
     },
-  })
+  });
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage)
-  }
+    setPage(newPage);
+  };
 
   // const handleDeleteClick = (booking: Booking) => {
   //   setSelectedBooking(booking)
@@ -58,11 +67,11 @@ export default function BookingsTable() {
   const handleDeleteConfirm = async () => {
     // if (!selectedBooking) return
 
-    setIsDeleteDialogOpen(false)
+    setIsDeleteDialogOpen(false);
 
     // Refresh the data after deletion
-    await refetch()
-  }
+    await refetch();
+  };
 
   const renderTableSkeleton = () => {
     return (
@@ -79,7 +88,10 @@ export default function BookingsTable() {
             </TableHeader>
             <TableBody>
               {Array.from({ length: limit }).map((_, index) => (
-                <TableRow key={index} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
+                <TableRow
+                  key={index}
+                  className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
+                >
                   <TableCell>
                     <Skeleton className="h-5 w-[180px]" />
                   </TableCell>
@@ -120,68 +132,68 @@ export default function BookingsTable() {
           </Pagination>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   // Custom pagination component
   const CustomPagination = () => {
-    if (!data?.pagination) return null
+    if (!data?.pagination) return null;
 
-    const { currentPage, totalPages } = data.pagination
+    const { currentPage, totalPages } = data.pagination;
 
     // Generate page numbers to display
     const getPageNumbers = () => {
-      const pages = []
-      const maxPagesToShow = 5
+      const pages = [];
+      const maxPagesToShow = 5;
 
       if (totalPages <= maxPagesToShow) {
         // Show all pages if there are few
         for (let i = 1; i <= totalPages; i++) {
-          pages.push(i)
+          pages.push(i);
         }
       } else {
         // Always show first page
-        pages.push(1)
+        pages.push(1);
 
         // Calculate start and end of page range around current page
-        let startPage = Math.max(2, currentPage - 1)
-        let endPage = Math.min(totalPages - 1, currentPage + 1)
+        let startPage = Math.max(2, currentPage - 1);
+        let endPage = Math.min(totalPages - 1, currentPage + 1);
 
         // Adjust if we're near the beginning
         if (currentPage <= 3) {
-          endPage = Math.min(totalPages - 1, 4)
+          endPage = Math.min(totalPages - 1, 4);
         }
 
         // Adjust if we're near the end
         if (currentPage >= totalPages - 2) {
-          startPage = Math.max(2, totalPages - 3)
+          startPage = Math.max(2, totalPages - 3);
         }
 
         // Add ellipsis after first page if needed
         if (startPage > 2) {
-          pages.push("ellipsis-start")
+          pages.push("ellipsis-start");
         }
 
         // Add middle pages
         for (let i = startPage; i <= endPage; i++) {
-          pages.push(i)
+          pages.push(i);
         }
 
         // Add ellipsis before last page if needed
         if (endPage < totalPages - 1) {
-          pages.push("ellipsis-end")
+          pages.push("ellipsis-end");
         }
 
         // Always show last page
         if (totalPages > 1) {
-          pages.push(totalPages)
+          pages.push(totalPages);
         }
       }
 
-      return pages
-    }
+      return pages;
+    };
 
-    const pageNumbers = getPageNumbers()
+    const pageNumbers = getPageNumbers();
 
     return (
       <Pagination className="">
@@ -189,18 +201,28 @@ export default function BookingsTable() {
           <PaginationItem>
             <PaginationPrevious
               onClick={() => handlePageChange(currentPage - 1)}
-              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
               aria-disabled={currentPage === 1 || isLoading || isPending}
             />
           </PaginationItem>
 
           {pageNumbers.map((pageNumber, index) => {
-            if (pageNumber === "ellipsis-start" || pageNumber === "ellipsis-end") {
+            if (
+              pageNumber === "ellipsis-start" ||
+              pageNumber === "ellipsis-end"
+            ) {
               return (
-                <PaginationItem className=" !bg-red-500" key={`ellipsis-${index}`}>
+                <PaginationItem
+                  className=" !bg-red-500"
+                  key={`ellipsis-${index}`}
+                >
                   <PaginationEllipsis />
                 </PaginationItem>
-              )
+              );
             }
 
             return (
@@ -208,25 +230,33 @@ export default function BookingsTable() {
                 <PaginationLink
                   isActive={currentPage === pageNumber}
                   onClick={() => handlePageChange(pageNumber as number)}
-                  className={isLoading || isPending ? "pointer-events-none" : ""}
+                  className={
+                    isLoading || isPending ? "pointer-events-none" : ""
+                  }
                 >
                   {pageNumber}
                 </PaginationLink>
               </PaginationItem>
-            )
+            );
           })}
 
           <PaginationItem>
             <PaginationNext
               onClick={() => handlePageChange(currentPage + 1)}
-              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-              aria-disabled={currentPage === totalPages || isLoading || isPending}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+              aria-disabled={
+                currentPage === totalPages || isLoading || isPending
+              }
             />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-    )
-  }
+    );
+  };
 
   return (
     <Layout>
@@ -236,8 +266,12 @@ export default function BookingsTable() {
         <div>
           <div className="flex flex-row items-center justify-between">
             <div>
-              <div className="text-[40px] text-[#1F2937] font-bold tracking-tigh">Notify Me List</div>
-              <p className="text-xl text-[#595959]">Dashboard {'>'} Notify Me List</p>
+              <div className="text-[40px] text-[#1F2937] font-bold tracking-tigh">
+                Notify Me List
+              </div>
+              <p className="text-xl text-[#595959]">
+                Dashboard {">"} Notify Me List
+              </p>
             </div>
           </div>
           <div className=" mt-10">
@@ -252,10 +286,19 @@ export default function BookingsTable() {
               </TableHeader>
               <TableBody>
                 {data?.data.map((booking) => (
-                  <TableRow key={booking._id} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
-                    <TableCell className="text-[#212121] text-base font-medium py-4">{booking?.userId?.email}</TableCell>
-                    <TableCell className="text-[#212121] text-base font-medium py-4">{booking?.dealsId?.title}</TableCell>
-                    <TableCell className="text-[#212121] text-base font-medium py-4">{format(new Date(booking.createdAt), "yyyy-MM-dd HH:mm")}</TableCell>
+                  <TableRow
+                    key={booking._id}
+                    className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
+                  >
+                    <TableCell className="text-[#212121] text-base font-medium py-4">
+                      {booking?.userId?.email}
+                    </TableCell>
+                    <TableCell className="text-[#212121] text-base font-medium py-4">
+                      {booking?.dealsId?.title}
+                    </TableCell>
+                    <TableCell className="text-[#212121] text-base font-medium py-4">
+                      {format(new Date(booking.createdAt), "yyyy-MM-dd HH:mm")}
+                    </TableCell>
                     <TableCell className="text-[#212121] text-base font-medium py-4">
                       <div className="flex justify-end gap-2">
                         {/* <Button variant="ghost" size="icon">
@@ -274,8 +317,9 @@ export default function BookingsTable() {
 
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground text-nowrap">
-              Showing {data?.pagination.currentPage} of {data?.pagination.totalPages} pages (
-              {data?.pagination.totalItems} results)
+              Showing {data?.pagination.currentPage} of{" "}
+              {data?.pagination.totalPages} pages ({data?.pagination.totalItems}{" "}
+              results)
             </div>
             <CustomPagination />
           </div>
@@ -289,5 +333,5 @@ export default function BookingsTable() {
         </div>
       )}
     </Layout>
-  )
+  );
 }
