@@ -1,59 +1,58 @@
+"use client";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ChevronRight, MapPin, Calendar } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import PayPalCheckout from "./PayPalCheckout";
+import StripeCheckout from "./pyment/StripeCheckout";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
-
-
-"use client"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ChevronRight, Users, MapPin, Calendar } from "lucide-react"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { toast } from "sonner"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import PayPalCheckout from "./PayPalCheckout"
-import StripeCheckout from "./pyment/StripeCheckout"
-import { Elements } from "@stripe/react-stripe-js"
-import { loadStripe } from "@stripe/stripe-js"
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 
 interface ScheduleDate {
-  date: string
-  active: boolean
-  participationsLimit: number
-  bookedCount: number
-  _id: string
+  date: string;
+  active: boolean;
+  participationsLimit: number;
+  bookedCount: number;
+  _id: string;
 }
 
 interface Location {
-  country: string
-  city: string
+  country: string;
+  city: string;
 }
 
 interface DealsCardProps {
-  id: string
-  title: string
-  description: string
-  price: number
-  participations: number
-  maxParticipants?: number
-  image?: string
-  status?: string
-  time?: number
-  createdAt?: string | Date
-  updatedAt?: string | Date
-  scheduleDates?: ScheduleDate[]
-  location?: Location
-  timer?: string
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  participations: number;
+  maxParticipants?: number;
+  image?: string;
+  status?: string;
+  time?: number;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  scheduleDates?: ScheduleDate[];
+  location?: Location;
+  timer?: string;
 }
 
 interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-  isExpired: boolean
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  isExpired: boolean;
 }
 
 export function DealsCard({
@@ -61,8 +60,6 @@ export function DealsCard({
   title,
   description,
   price,
-  participations,
-  maxParticipants,
   createdAt,
   updatedAt,
   image,
@@ -72,26 +69,28 @@ export function DealsCard({
   location,
   timer,
 }: DealsCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { data: session } = useSession()
-  const [bookingId, setBookingId] = useState<string | null>(null)
-  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false)
-  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false)
-  const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false)
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"paypal" | "stripe" | null>(null)
+  const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session } = useSession();
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
+  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+  const [isBookingSummaryOpen, setIsBookingSummaryOpen] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "paypal" | "stripe" | null
+  >(null);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
     isExpired: false,
-  })
-  const [clientSecret, setClientSecret] = useState<string>("")
-  const [stripeLoading, setStripeLoading] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<ScheduleDate | null>(null)
+  });
+  const [clientSecret, setClientSecret] = useState<string>("");
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<ScheduleDate | null>(null);
 
-  const token = session?.user?.accessToken ?? ""
+  const token = session?.user?.accessToken ?? "";
 
   // Timer logic - only run if timer is "on"
   useEffect(() => {
@@ -102,44 +101,46 @@ export function DealsCard({
         minutes: 0,
         seconds: 0,
         isExpired: true,
-      })
-      return
+      });
+      return;
     }
 
     const timerInterval = setInterval(() => {
-      const startTime = updatedAt || createdAt
+      const startTime = updatedAt || createdAt;
       if (!startTime) {
-        clearInterval(timerInterval)
+        clearInterval(timerInterval);
         setTimeLeft({
           days: 0,
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const endTime = new Date(new Date(startTime).getTime() + time * 60000)
-      const now = new Date().getTime()
-      const difference = endTime.getTime() - now
+      const endTime = new Date(new Date(startTime).getTime() + time * 60000);
+      const now = new Date().getTime();
+      const difference = endTime.getTime() - now;
 
       if (difference <= 0) {
-        clearInterval(timerInterval)
+        clearInterval(timerInterval);
         setTimeLeft({
           days: 0,
           hours: 0,
           minutes: 0,
           seconds: 0,
           isExpired: true,
-        })
-        return
+        });
+        return;
       }
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
       setTimeLeft({
         days,
@@ -147,111 +148,122 @@ export function DealsCard({
         minutes,
         seconds,
         isExpired: false,
-      })
-    }, 1000)
+      });
+    }, 1000);
 
-    return () => clearInterval(timerInterval)
-  }, [time, createdAt, updatedAt, timer])
+    return () => clearInterval(timerInterval);
+  }, [time, createdAt, updatedAt, timer]);
 
   // Set selectedDate to first available date on mount
   useEffect(() => {
-    const firstAvailable = getFirstAvailableDate()
-    setSelectedDate(firstAvailable)
-  }, [scheduleDates])
+    const firstAvailable = getFirstAvailableDate();
+    setSelectedDate(firstAvailable);
+  }, [scheduleDates]);
 
   const createPaymentIntent = async () => {
-    if (!bookingId) return
-    setStripeLoading(true)
+    if (!bookingId) return;
+    setStripeLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          bookingId: bookingId,
-          price: price,
-        }),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            bookingId: bookingId,
+            price: price,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to create payment intent")
+        throw new Error("Failed to create payment intent");
       }
 
-      const data = await response.json()
-      setClientSecret(data.clientSecret)
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
     } catch (error) {
-      toast.error("Failed to initialize payment")
-      console.error(error)
+      toast.error("Failed to initialize payment");
+      console.error(error);
     } finally {
-      setStripeLoading(false)
+      setStripeLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (isStripeModalOpen && bookingId && !clientSecret) {
-      createPaymentIntent()
+      createPaymentIntent();
     }
-  }, [isStripeModalOpen, bookingId])
+  }, [isStripeModalOpen, bookingId]);
 
   const getFirstAvailableDate = () => {
-    if (!scheduleDates || scheduleDates.length === 0) return null
-    const now = new Date()
+    if (!scheduleDates || scheduleDates.length === 0) return null;
+    const now = new Date();
     return (
       scheduleDates.find(
-        (date) => date.active && new Date(date.date) > now && date.bookedCount < date.participationsLimit,
+        (date) =>
+          date.active &&
+          new Date(date.date) > now &&
+          date.bookedCount < date.participationsLimit
       ) || null
-    )
-  }
+    );
+  };
 
   const allDatesUnavailable = () => {
-    if (!scheduleDates || scheduleDates.length === 0) return true
-    const now = new Date()
+    if (!scheduleDates || scheduleDates.length === 0) return true;
+    const now = new Date();
     return !scheduleDates.some(
-      (date) => date.active && new Date(date.date) > now && date.bookedCount < date.participationsLimit,
-    )
-  }
+      (date) =>
+        date.active &&
+        new Date(date.date) > now &&
+        date.bookedCount < date.participationsLimit
+    );
+  };
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Please sign in to book this deal")
-      return
+      toast.success("Please sign in to book this deal");
+      return;
     }
 
-    const availableDate = getFirstAvailableDate()
+    const availableDate = getFirstAvailableDate();
     if (!notifyMe && status === "activate" && availableDate) {
-      setSelectedDate(availableDate)
-      setIsBookingSummaryOpen(true)
+      setSelectedDate(availableDate);
+      setIsBookingSummaryOpen(true);
     } else {
-      await bookingPayment(notifyMe)
+      await bookingPayment(notifyMe);
     }
-  }
+  };
 
   const bookingPayment = async (notifyMe = false) => {
-    setIsLoading(true)
-    let dateToSend: ScheduleDate | null = null
+    setIsLoading(true);
+    let dateToSend: ScheduleDate | null = null;
 
     if (notifyMe) {
       if (scheduleDates && scheduleDates.length > 0) {
         dateToSend = scheduleDates.reduce((latest, current) => {
-          return new Date(current.date) > new Date(latest.date) ? current : latest
-        }, scheduleDates[0])
+          return new Date(current.date) > new Date(latest.date)
+            ? current
+            : latest;
+        }, scheduleDates[0]);
       }
     } else {
-      dateToSend = selectedDate || getFirstAvailableDate()
+      dateToSend = selectedDate || getFirstAvailableDate();
       if (!dateToSend) {
-        toast.error("No available dates for booking")
-        setIsLoading(false)
-        return
+        toast.error("No available dates for booking");
+        setIsLoading(false);
+        return;
       }
     }
 
     if (!dateToSend) {
-      toast.error("Could not determine a valid date for booking/notification.")
-      setIsLoading(false)
-      return
+      toast.error("Could not determine a valid date for booking/notification.");
+      setIsLoading(false);
+      return;
     }
 
     try {
@@ -262,53 +274,56 @@ export function DealsCard({
         notifyMe,
         scheduleDate: dateToSend.date,
         scheduleId: dateToSend._id,
-      }
+      };
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestBody),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.booking.notifyMe) {
-          toast.success("You'll be notified when spots become available")
-          setIsBookingSummaryOpen(false)
-          return
+          toast.success("You'll be notified when spots become available");
+          setIsBookingSummaryOpen(false);
+          return;
         }
 
-        setBookingId(data.booking._id)
-        setIsBookingSummaryOpen(false)
+        setBookingId(data.booking._id);
+        setIsBookingSummaryOpen(false);
         if (selectedPaymentMethod === "paypal") {
-          setIsPayPalModalOpen(true)
+          setIsPayPalModalOpen(true);
         } else if (selectedPaymentMethod === "stripe") {
-          setIsStripeModalOpen(true)
+          setIsStripeModalOpen(true);
         }
       } else {
-        const error = await response.json()
-        throw new Error(error.message || "Something went wrong")
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error((error as Error).message)
+      toast.error((error as Error).message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const isDealExpired = timeLeft.isExpired && timer === "on"
+  const isDealExpired = timeLeft.isExpired && timer === "on";
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("de-DE", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   const formatTimeUnit = (value: number, label: string) => (
     <div className="text-center">
@@ -317,10 +332,14 @@ export function DealsCard({
       </div>
       <h1 className="text-xs">{label}</h1>
     </div>
-  )
+  );
 
   const renderActionButton = () => {
-    if ((isDealExpired && timer === "on") || status === "deactivate" || allDatesUnavailable()) {
+    if (
+      (isDealExpired && timer === "on") ||
+      status === "deactivate" ||
+      allDatesUnavailable()
+    ) {
       return (
         <Button
           className="w-full bg-black text-white font-semibold mt-2 hover:bg-black/80"
@@ -329,7 +348,7 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Notify Me"}
         </Button>
-      )
+      );
     }
 
     if (status === "activate") {
@@ -341,17 +360,20 @@ export function DealsCard({
         >
           {isLoading ? "Processing..." : "Book now"}
         </Button>
-      )
+      );
     }
 
     return (
-      <Button className="w-full bg-gray-400 text-white font-semibold mt-2" disabled>
+      <Button
+        className="w-full bg-gray-400 text-white font-semibold mt-2"
+        disabled
+      >
         Unavailable
       </Button>
-    )
-  }
+    );
+  };
 
-  const firstAvailableDate = getFirstAvailableDate()
+  const firstAvailableDate = getFirstAvailableDate();
 
   return (
     <>
@@ -367,7 +389,7 @@ export function DealsCard({
               alt={title || "Deal Image"}
               width={600}
               height={400}
-              className={`w-full h-auto aspect-[5/3] sm:aspect-[5/4] object-cover rounded-lg ${
+              className={`w-[354px] h-[222px] aspect-[5/3] sm:aspect-[5/4] object-cover rounded-lg ${
                 isHovered ? "scale-105" : "scale-100"
               } transition-transform duration-300`}
             />
@@ -384,9 +406,11 @@ export function DealsCard({
             )}
           </div>
           <CardContent className="space-y-2 pt-4 px-1 h-[140px] overflow-hidden">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-2">
               <div className="col-span-2">
-                <h3 className="font-bold text-lg sm:text-[18px] my-1 line-clamp-1 text-[#212121]">{title}</h3>
+                <h3 className="font-bold text-lg sm:text-[18px] my-1 line-clamp-1 text-[#212121]">
+                  {title}
+                </h3>
                 <p className="text-sm sm:text-[16px] font-normal text-[#737373]">
                   <div
                     className="text-[#737373] truncate max-w-full"
@@ -402,51 +426,55 @@ export function DealsCard({
                     }}
                   />
                 </p>
-                <Link href={`/deals/${id}`}>
-                  <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-sm sm:text-[14px]">
-                    <span>Show more</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </div>
-                </Link>
               </div>
-              <div className="col-span-1 flex flex-col gap-1 text-xs text-gray-600">
-                {firstAvailableDate && (
-                  <div className="flex items-center gap-1 flex-wrap">
-                    <Calendar className="w-3 h-3" />
-                    <span>{formatDate(firstAvailableDate.date)}</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Link href={`/deals/${id}`}>
+                    <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-sm sm:text-[14px]">
+                      <span>Show more</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </Link>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm sm:text-base">
+                      {price?.toFixed(2)} EUR
+                    </span>
                   </div>
-                )}
-                {location && (
-                  <div className="flex items-center gap-1 flex-wrap">
-                    <MapPin className="w-3 h-3" />
-                    <span className="truncate text-wrap">{location.city}, {location.country}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm sm:text-base">{price?.toFixed(2)} EUR</span>
-              {timer === "off" && maxParticipants && (
-                <div className="flex gap-2 items-center text-gray-600 text-xs sm:text-sm">
-                  <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span>
-                    {participations}/{maxParticipants} participants
-                  </span>
                 </div>
-              )}
+                <div className="col-span-1 flex flex-col gap-1 text-xs text-gray-600">
+                  {firstAvailableDate && (
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDate(firstAvailableDate.date)}</span>
+                    </div>
+                  )}
+                  {location && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      <span className="truncate text-wrap">
+                        {location.city}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Link>
-        <CardFooter className="px-3 sm:px-6 pb-3 sm:pb-6">{renderActionButton()}</CardFooter>
+        <CardFooter className="">{renderActionButton()}</CardFooter>
       </Card>
 
       {/* Booking Summary Modal */}
-      <Dialog open={isBookingSummaryOpen} onOpenChange={setIsBookingSummaryOpen}>
+      <Dialog
+        open={isBookingSummaryOpen}
+        onOpenChange={setIsBookingSummaryOpen}
+      >
         <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none rounded-lg w-[95%] sm:w-full">
           <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-lg sm:text-xl font-semibold">Booking Summary</h2>
-         
+              <h2 className="text-lg sm:text-xl font-semibold">
+                Booking Summary
+              </h2>
             </div>
             <div className="flex gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -459,7 +487,9 @@ export function DealsCard({
                 />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-white mb-1 text-sm sm:text-base">{title}</h3>
+                <h3 className="font-semibold text-white mb-1 text-sm sm:text-base">
+                  {title}
+                </h3>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-gray-300 space-y-1 sm:space-y-0">
                   {location && (
                     <div className="flex items-center gap-1">
@@ -475,8 +505,10 @@ export function DealsCard({
                       <select
                         value={selectedDate?._id || ""}
                         onChange={(e) => {
-                          const selected = scheduleDates.find((date) => date._id === e.target.value)
-                          setSelectedDate(selected || null)
+                          const selected = scheduleDates.find(
+                            (date) => date._id === e.target.value
+                          );
+                          setSelectedDate(selected || null);
                         }}
                         className="bg-gray-700  text-white  border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
                       >
@@ -488,7 +520,7 @@ export function DealsCard({
                             (date) =>
                               date.active &&
                               new Date(date.date) > new Date() &&
-                              date.bookedCount < date.participationsLimit,
+                              date.bookedCount < date.participationsLimit
                           )
                           .map((date) => (
                             <option key={date._id} value={date._id}>
@@ -522,38 +554,58 @@ export function DealsCard({
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
               <div
                 className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "paypal" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "paypal"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("paypal")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "paypal" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "paypal"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
-                  {selectedPaymentMethod === "paypal" && <div className="w-2 h-2 rounded-full bg-blue-500"></div>}
+                  {selectedPaymentMethod === "paypal" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
                 </div>
-                <span className="text-white text-sm sm:text-base">Pay With PayPal</span>
+                <span className="text-white text-sm sm:text-base">
+                  Pay With PayPal
+                </span>
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold text-sm sm:text-base">PayPal</span>
+                  <span className="text-blue-500 font-semibold text-sm sm:text-base">
+                    PayPal
+                  </span>
                 </div>
               </div>
               <div
                 className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg cursor-pointer ${
-                  selectedPaymentMethod === "stripe" ? "border-blue-500 bg-blue-500/10" : "border-gray-600"
+                  selectedPaymentMethod === "stripe"
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("stripe")}
               >
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    selectedPaymentMethod === "stripe" ? "border-blue-500" : "border-gray-600"
+                    selectedPaymentMethod === "stripe"
+                      ? "border-blue-500"
+                      : "border-gray-600"
                   } flex items-center justify-center`}
                 >
-                  {selectedPaymentMethod === "stripe" && <div className="w-2 h-2 rounded-full bg-blue-500"></div>}
+                  {selectedPaymentMethod === "stripe" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
                 </div>
-                <span className="text-white text-sm sm:text-base">Pay With Stripe</span>
+                <span className="text-white text-sm sm:text-base">
+                  Pay With Stripe
+                </span>
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold text-sm sm:text-base">Stripe</span>
+                  <span className="text-blue-500 font-semibold text-sm sm:text-base">
+                    Stripe
+                  </span>
                 </div>
               </div>
             </div>
@@ -571,7 +623,13 @@ export function DealsCard({
       {/* PayPal Checkout Modal */}
       <Dialog open={isPayPalModalOpen} onOpenChange={setIsPayPalModalOpen}>
         <DialogContent className="p-4 sm:p-5 w-full max-w-md">
-          {bookingId && <PayPalCheckout amount={price} userId={session?.user?.id ?? ""} bookingId={bookingId} />}
+          {bookingId && (
+            <PayPalCheckout
+              amount={price}
+              userId={session?.user?.id ?? ""}
+              bookingId={bookingId}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
@@ -597,9 +655,11 @@ export function DealsCard({
             </Elements>
           ) : (
             <div className="text-center p-3 sm:p-4">
-              <p className="text-red-500 text-sm sm:text-base">Failed to initialize payment. Please try again.</p>
-              <Button 
-                onClick={() => createPaymentIntent()} 
+              <p className="text-red-500 text-sm sm:text-base">
+                Failed to initialize payment. Please try again.
+              </p>
+              <Button
+                onClick={() => createPaymentIntent()}
                 className="mt-3 sm:mt-4 bg-blue-500 hover:bg-blue-600 text-sm sm:text-base"
               >
                 Retry
@@ -609,5 +669,5 @@ export function DealsCard({
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

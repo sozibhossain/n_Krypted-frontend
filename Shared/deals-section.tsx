@@ -166,7 +166,7 @@ export function DealsSection() {
                     className={` ${itemsPerView === 1 ? "basis-full" : itemsPerView === 1 ? "basis-1/2" : "basis-1/3"
                       }`}
                   >
-                    <div className="p-1">
+                    <div className="">
                       <DealsCard
                         id={deal._id}
                         status={deal.status}

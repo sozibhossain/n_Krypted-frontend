@@ -15,8 +15,8 @@ interface Blog {
 function BlogsCard({ blog }: { blog: Blog }) {
   return (
     <Link href={`/blog/${blog?._id}`} className="group block">
-      <Card className="overflow-hidden border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300 ease-out transform hover:-translate-y-1 max-w-[370px] rounded-xl">
-        <div className="relative overflow-hidden">
+      <Card className="overflow-hidden border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300 ease-out transform hover:-translate-y-1 max-w-[370px] rounded-xl ">
+        <div className="relative overflow-hidden ">
           <Image
             src={blog?.image || "/placeholder.svg?height=222&width=370"}
             alt="Blog Image"
@@ -31,7 +31,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-2">
           <CardContent className="p-0">
             <div className="flex items-center justify-between space-x-4 mb-4">
               <div className="flex items-center  space-x-2  text-gray-600">
@@ -55,10 +55,10 @@ function BlogsCard({ blog }: { blog: Blog }) {
               {blog?.title}
             </h3>
 
-            <div className="flex items-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+            {/* <div className="flex items-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
               <span className="text-sm font-medium">Read more</span>
               <ArrowUpRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
-            </div>
+            </div> */}
           </CardContent>
         </div>
       </Card>

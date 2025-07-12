@@ -105,7 +105,6 @@ export default function DealsManagement() {
     },
   });
 
-  console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEE", data)
 
   // Fetch categories from API
   const { data: categoriesData } = useQuery<CategoriesResponse>({
