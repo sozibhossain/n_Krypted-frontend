@@ -8,7 +8,7 @@ const page = () => {
     <div>
       <PageHeader
         title="Kontakt"
-        imge="/assets/app4.png"
+        imge="/assets/contact-1.png"
         backgroundSize="contain"
       />
       <div className="my-20 lg:mt-28 container">
