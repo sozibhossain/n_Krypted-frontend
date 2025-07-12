@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -56,21 +55,24 @@ export default function BookingsPage() {
   const [itemsPerPage] = useState(10)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const session = useSession()
-  const token = session?.data?.user?.accessToken
+  const { data: session } = useSession()
+  const token = session?.user?.accessToken
 
   const queryClient = useQueryClient()
 
-  // Fetch bookings data with token in headers
+  // Fetch bookings data with pagination parameters
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["bookings"],
+    queryKey: ["bookings", currentPage, itemsPerPage],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings?page=${currentPage}&limit=${itemsPerPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       if (!response.ok) {
         throw new Error("Failed to fetch bookings")
       }
@@ -78,7 +80,7 @@ export default function BookingsPage() {
     },
   })
 
-  // Delete booking mutation with token in headers
+  // Delete booking mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${id}`, {
@@ -94,8 +96,12 @@ export default function BookingsPage() {
       return response.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["bookings", currentPage, itemsPerPage] })
       toast.success("Booking deleted successfully", { position: "top-right" })
+      // If the current page becomes empty after deletion, go to the previous page
+      if (data?.data?.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1)
+      }
     },
   })
 
@@ -112,23 +118,29 @@ export default function BookingsPage() {
     setIsDeleteDialogOpen(false)
   }
 
-  // Calculate pagination
+  // Pagination data from server
   const bookings = data?.data || []
-  const totalItems = data?.pagination?.totalItems || bookings.length
-  const totalPages = data?.pagination?.totalPages || Math.ceil(totalItems / itemsPerPage)
-
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = bookings.slice(indexOfFirstItem, indexOfLastItem)
+  const totalItems = data?.pagination?.totalItems || 0
+  const totalPages = data?.pagination?.totalPages || 1
 
   // Generate page numbers for pagination
   const pageNumbers = []
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-      pageNumbers.push(i)
-    } else if (i === currentPage - 2 || i === currentPage + 2) {
-      pageNumbers.push("ellipsis")
-    }
+  const maxPagesToShow = 5
+  const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2))
+  const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1)
+
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i)
+  }
+
+  // Add ellipsis if necessary
+  if (startPage > 1) {
+    pageNumbers.unshift("ellipsis-start")
+    pageNumbers.unshift(1)
+  }
+  if (endPage < totalPages) {
+    pageNumbers.push("ellipsis-end")
+    pageNumbers.push(totalPages)
   }
 
   return (
@@ -136,7 +148,7 @@ export default function BookingsPage() {
       <div className="py-6">
         <div className="mb-6">
           <h1 className="text-[40px] text-[#1F2937] font-bold tracking-tight">Booking</h1>
-          <div className="text-xl text-[#595959]">Dashboard &gt; Booking</div>
+          <div className="text-xl text-[#595959]">Dashboard {'>'} Booking</div>
         </div>
 
         {isLoading ? (
@@ -165,7 +177,7 @@ export default function BookingsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentItems.map((booking: Booking) => (
+                  {bookings.map((booking: Booking) => (
                     <TableRow key={booking._id} className="border-b border-[#BABABA] hover:bg-[#BABABA]/10">
                       <TableCell className="text-[#212121] text-base font-medium py-4">
                         <div>John Smith</div>
@@ -201,8 +213,9 @@ export default function BookingsPage() {
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, totalItems)} of {totalItems} results
+              <div className="text-sm text-muted-foreground text-nowrap">
+                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to{" "}
+                {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
               </div>
               <Pagination>
                 <PaginationContent>
@@ -214,7 +227,7 @@ export default function BookingsPage() {
                   </PaginationItem>
 
                   {pageNumbers.map((pageNumber, index) =>
-                    pageNumber === "ellipsis" ? (
+                    pageNumber.toString().startsWith("ellipsis") ? (
                       <PaginationItem key={`ellipsis-${index}`}>
                         <PaginationEllipsis />
                       </PaginationItem>
@@ -227,7 +240,7 @@ export default function BookingsPage() {
                           {pageNumber}
                         </PaginationLink>
                       </PaginationItem>
-                    ),
+                    )
                   )}
 
                   <PaginationItem>
