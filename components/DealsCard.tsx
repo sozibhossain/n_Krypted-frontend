@@ -635,7 +635,7 @@ export function DealsCard({
 
       {/* Stripe Checkout Modal */}
       <Dialog open={isStripeModalOpen} onOpenChange={setIsStripeModalOpen}>
-        <DialogContent className="p-4 sm:p-5 w-full max-w-md">
+        <DialogContent className="w-full max-w-md">
           {stripeLoading ? (
             <div className="flex justify-center items-center h-40 sm:h-64">
               <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -651,7 +651,9 @@ export function DealsCard({
                 },
               }}
             >
-              <StripeCheckout bookingId={bookingId} price={price} />
+              <div className="scale-y-[111%] scale-x-[113%]">
+                <StripeCheckout bookingId={bookingId} price={price} />
+              </div>
             </Elements>
           ) : (
             <div className="text-center p-3 sm:p-4">
