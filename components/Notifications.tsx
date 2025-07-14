@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BellRing, Clock } from "lucide-react";
+import { BellRing, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface Deal {
   _id: string;
@@ -60,7 +60,33 @@ const Notifications = () => {
     null
   );
 
-  console.log(notifications);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Calculate paginated notifications
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+  const paginatedNotifications = notifications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Pagination controls
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const markNotificationsAsRead = async () => {
     if (!token || markingAsRead) return;
@@ -79,12 +105,11 @@ const Notifications = () => {
       );
 
       if (response.ok) {
-        // Update local state to mark all notifications as read
         setNotifications((prev) =>
           prev.map((notif) => ({ ...notif, isRead: true }))
         );
         localStorage.removeItem("notificationCount");
-        setNotificationCount(0); // Set to 0 instead of null
+        setNotificationCount(0);
       }
     } catch (error) {
       console.error("Failed to mark notifications as read:", error);
@@ -98,7 +123,6 @@ const Notifications = () => {
 
     setMarkingIndividual(notificationId);
     try {
-      // First update the backend via API
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}/read`,
         {
@@ -111,17 +135,14 @@ const Notifications = () => {
       );
 
       if (response.ok) {
-        // Update local state to mark this specific notification as read
         setNotifications((prev) =>
           prev.map((notif) =>
             notif._id === notificationId ? { ...notif, isRead: true } : notif
           )
         );
 
-        // Update notification count - decrease by 1
         setNotificationCount((prev) => Math.max(0, prev - 1));
 
-        // Also emit the socket event to mark as read
         if (socket) {
           socket.emit("mark_notification_read", notificationId);
         }
@@ -161,7 +182,6 @@ const Notifications = () => {
 
         if (data.notifications) {
           setNotifications(data.notifications);
-          // Update notification count based on unread notifications
           const unreadCount = data.notifications.filter(
             (notif: Notification) => !notif.isRead
           ).length;
@@ -216,7 +236,6 @@ const Notifications = () => {
     }
   };
 
-  // Helper function to get deal title - Updated to handle both API and socket data
   const getDealTitle = (notification: Notification) => {
     if (!notification.dealId) return "";
 
@@ -227,7 +246,6 @@ const Notifications = () => {
     }
   };
 
-  // Helper function to get deal ID - Updated to handle both API and socket data
   const getDealId = (notification: Notification) => {
     if (!notification.dealId) return "";
 
@@ -238,14 +256,12 @@ const Notifications = () => {
     }
   };
 
-  // Helper function to get deal status for display
   const getDealStatus = (notification: Notification) => {
     if (!notification.dealId || typeof notification.dealId === "string")
       return "";
     return notification.dealId.status || "";
   };
 
-  // Helper function to get deal location for display
   const getDealLocation = (notification: Notification) => {
     if (!notification.dealId || typeof notification.dealId === "string")
       return "";
@@ -255,7 +271,6 @@ const Notifications = () => {
     if (typeof location === "string") {
       return location;
     } else if (location && typeof location === "object") {
-      // Handle object location (assuming it has country and city properties)
       return `${location.city}, ${location.country}`;
     }
 
@@ -266,7 +281,6 @@ const Notifications = () => {
     return (
       <div className="space-y-4">
         <Card>
-          
           <CardContent>
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
@@ -311,9 +325,9 @@ const Notifications = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between py-5">
             <div className="!text-white flex gap-3 items-center justify-center">
-                <BellRing className="h-5 w-5" />
-                Notifications
-              </div>
+              <BellRing className="h-5 w-5" />
+              Notifications
+            </div>
             <div className="flex items-center gap-2">
               {notifications.length > 0 && (
                 <Button
@@ -336,14 +350,12 @@ const Notifications = () => {
                 No notifications yet
               </h3>
               <p className="text-gray-500">
-                {
-                  "You'll see notifications here when there's activity on your deals."
-                }
+                {"You'll see notifications here when there's activity on your deals."}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {notifications.map((notification) => {
+              {paginatedNotifications.map((notification) => {
                 const dealId = getDealId(notification);
                 const dealTitle = getDealTitle(notification);
                 const dealStatus = getDealStatus(notification);
@@ -382,7 +394,6 @@ const Notifications = () => {
                             {notification.message}
                           </p>
 
-                          {/* Show deal title if it exists */}
                           {dealTitle && !dealTitle.startsWith("Deal ID:") && (
                             <p
                               className={`text-sm mb-1 font-semibold ${
@@ -395,7 +406,6 @@ const Notifications = () => {
                             </p>
                           )}
 
-                          {/* Show deal status and location if available */}
                           <div className="flex items-center gap-2 mb-1">
                             {dealStatus && (
                               <span
@@ -488,6 +498,69 @@ const Notifications = () => {
                   </div>
                 );
               })}
+
+              {/* Pagination controls */}
+              {notifications.length > itemsPerPage && (
+                <div className="flex items-center justify-between mt-6">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                  </Button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => goToPage(pageNum)}
+                          className="w-10 h-10 p-0"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                    {totalPages > 5 && currentPage < totalPages - 2 && (
+                      <span className="px-2">...</span>
+                    )}
+                    {totalPages > 5 && currentPage < totalPages - 2 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => goToPage(totalPages)}
+                        className="w-10 h-10 p-0"
+                      >
+                        {totalPages}
+                      </Button>
+                    )}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={nextPage}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
