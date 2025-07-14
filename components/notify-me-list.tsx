@@ -95,7 +95,7 @@ export default function NotifyMeList() {
 
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-2xl font-bold mb-6">Notify Me List</h1>
+            <h1 className="text-2xl font-bold mb-6">Benachrichtigungsliste</h1>
 
             {isLoading ? (
                 <div className="flex justify-center items-center min-h-[300px]">
@@ -107,7 +107,7 @@ export default function NotifyMeList() {
                 </div>
             ) : bookings.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                    <p>No notifications found.</p>
+                    <p>Keine Benachrichtigungen gefunden.</p>
                 </div>
             ) : (
                 <>
