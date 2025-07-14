@@ -1,80 +1,86 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
-import useAxios from "@/hooks/useAxios"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { Button } from "@/components/ui/button"
-import { DealsCard } from "@/components/DealsCard"
-import { DealsSkeleton } from "@/components/delas_skleton"
-
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import useAxios from "@/hooks/useAxios";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { DealsCard } from "@/components/DealsCard";
+import { DealsSkeleton } from "@/components/delas_skleton";
 
 interface Deal {
-  time: number | undefined
-  bookingCount: number
-  participationsLimit: number | undefined
-  _id: string
-  title: string
-  description: string
-  participations: number
-  price: number
+  time: number | undefined;
+  bookingCount: number;
+  participationsLimit: number | undefined;
+  _id: string;
+  title: string;
+  description: string;
+  participations: number;
+  price: number;
 
-  images: string[]
-  offers: string[]
-  status: string
-  category: string
-  createdAt: string
-  updatedAt: string
-  scheduleDates?: [] 
-  timer?: string
+  images: string[];
+  offers: string[];
+  status: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  scheduleDates?: [];
+  timer?: string;
   location?: {
     country: string;
     city: string;
-  }
+  };
 }
 
 export function DealsSection() {
-  const axiosInstance = useAxios()
+  const axiosInstance = useAxios();
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["deals"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get(`/api/deals?showAll=true`)
-      return data
+      const { data } = await axiosInstance.get(`/api/deals?showAll=true`);
+      return data;
     },
-  })
+  });
 
-  const dealsData = response?.deals || []
-
-  
+  const dealsData = response?.deals || [];
 
   // Determine number of items to show based on screen size
-  const [itemsPerView, setItemsPerView] = useState(3)
+  const [itemsPerView, setItemsPerView] = useState(3);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setItemsPerView(1)
+        setItemsPerView(1);
       } else if (window.innerWidth < 1024) {
-        setItemsPerView(2)
+        setItemsPerView(2);
       } else {
-        setItemsPerView(3)
+        setItemsPerView(3);
       }
-    }
+    };
 
     // Set initial value
-    handleResize()
+    handleResize();
 
     // Add event listener
-    window.addEventListener("resize", handleResize)
+    window.addEventListener("resize", handleResize);
 
     // Clean up
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Create an array of skeleton items based on itemsPerView
-  const skeletonItems = Array.from({ length: itemsPerView }, (_, index) => index)
+  const skeletonItems = Array.from(
+    { length: itemsPerView },
+    (_, index) => index
+  );
 
   return (
     <section className="">
@@ -84,13 +90,17 @@ export function DealsSection() {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-3 sm:w-5 h-6 sm:h-9 bg-white rounded" />
               <div>
-                <h1 className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
-                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]">
+                <h1
+                  className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
+                >
                   Popular
                 </h1>
               </div>
             </div>
-            <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">Unsere beliebten Deals</p>
+            <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">
+              Unsere beliebten Deals
+            </p>
           </div>
 
           <div className="flex gap-2 mt-2 sm:mt-0">
@@ -125,15 +135,19 @@ export function DealsSection() {
             className="w-full"
             setApi={(api) => {
               if (api) {
-                const prevButton = document.getElementById("carousel-prev-button")
-                const nextButton = document.getElementById("carousel-next-button")
+                const prevButton = document.getElementById(
+                  "carousel-prev-button"
+                );
+                const nextButton = document.getElementById(
+                  "carousel-next-button"
+                );
 
                 if (prevButton) {
-                  prevButton.addEventListener("click", () => api.scrollPrev())
+                  prevButton.addEventListener("click", () => api.scrollPrev());
                 }
 
                 if (nextButton) {
-                  nextButton.addEventListener("click", () => api.scrollNext())
+                  nextButton.addEventListener("click", () => api.scrollNext());
                 }
               }
             }}
@@ -144,8 +158,13 @@ export function DealsSection() {
                 skeletonItems.map((index) => (
                   <CarouselItem
                     key={`skeleton-${index}`}
-                    className={`pl-2 md:pl-4 ${itemsPerView === 1 ? "basis-full" : itemsPerView === 2 ? "basis-1/2" : "basis-1/3"
-                      }`}
+                    className={`pl-2 md:pl-4 ${
+                      itemsPerView === 1
+                        ? "basis-full"
+                        : itemsPerView === 2
+                        ? "basis-1/2"
+                        : "basis-1/3"
+                    }`}
                   >
                     <div className="p-1">
                       <DealsSkeleton />
@@ -155,7 +174,9 @@ export function DealsSection() {
               ) : dealsData.length === 0 ? (
                 <CarouselItem className="basis-full pl-2 md:pl-4">
                   <div className="flex justify-center items-center h-40 sm:h-64">
-                    <p className="text-white text-center text-sm sm:text-base">No deals available at the moment.</p>
+                    <p className="text-white text-center text-sm sm:text-base">
+                      No deals available at the moment.
+                    </p>
                   </div>
                 </CarouselItem>
               ) : (
@@ -163,8 +184,13 @@ export function DealsSection() {
                 dealsData.map((deal: Deal) => (
                   <CarouselItem
                     key={deal._id}
-                    className={` ${itemsPerView === 1 ? "basis-full" : itemsPerView === 1 ? "basis-1/2" : "basis-1/3"
-                      }`}
+                    className={` ${
+                      itemsPerView === 1
+                        ? "basis-full"
+                        : itemsPerView === 1
+                        ? "basis-1/2"
+                        : "basis-1/3"
+                    }`}
                   >
                     <div className="">
                       <DealsCard
@@ -174,7 +200,7 @@ export function DealsSection() {
                         image={deal.images[0] || "/assets/deals.png"}
                         description={deal.description}
                         price={deal.price}
-                        time ={deal.time}
+                        time={deal.time}
                         createdAt={deal.createdAt}
                         updatedAt={deal.updatedAt}
                         participations={deal.bookingCount}
@@ -196,5 +222,5 @@ export function DealsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

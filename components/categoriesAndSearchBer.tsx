@@ -1,5 +1,4 @@
 "use client";
-
 import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -52,7 +51,6 @@ interface Deal {
   updatedAt: string;
 }
 
-
 // Custom hook for managing URL parameters (same as in DealsPage)
 function useURLParams() {
   const router = useRouter();
@@ -61,7 +59,6 @@ function useURLParams() {
   const updateParams = useCallback(
     (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
-
       Object.entries(updates).forEach(([key, value]) => {
         if (value === null || value === "" || value === "all") {
           params.delete(key);
@@ -69,18 +66,15 @@ function useURLParams() {
           params.set(key, value);
         }
       });
-
       // Always reset to page 1 when filters change (except when only page is being updated)
       if (!updates.page && Object.keys(updates).length > 0) {
         params.set("page", "1");
       }
-
       const queryString = params.toString();
       router.push(`/deals?${queryString}`, { scroll: false });
     },
     [router, searchParams]
   );
-
   return { searchParams, updateParams };
 }
 
@@ -154,7 +148,6 @@ export function CategoriesAndSearchBar() {
     setSelectedCategory("");
     setSelectedCountry("");
     setSelectedCity("");
-
     // Clear search-related params but preserve others
     updateParams({
       search: null,
@@ -286,7 +279,6 @@ export function CategoriesAndSearchBar() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-
                 <div className="col-span-4 md:col-span-4 lg:col-span-3">
                   {/* Search Input and Location Dropdown */}
                   <div className="flex items-center border border-white justify-between rounded-lg">
@@ -326,7 +318,6 @@ export function CategoriesAndSearchBar() {
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-
                       <DropdownMenuContent
                         align="end"
                         className="p-0 max-w-[200px] z-50 overflow-visible"
@@ -345,7 +336,6 @@ export function CategoriesAndSearchBar() {
                         >
                           Frankfurt am Main
                         </div>
-
                         {/* Countries and Cities */}
                         {uniqueLocations.map(({ country, cities }) => (
                           <div key={country} className="relative group">
@@ -361,9 +351,8 @@ export function CategoriesAndSearchBar() {
                               <span>{country}</span>
                               <ChevronDown className="h-4 w-4 transform group-hover:rotate-180 transition-transform" />
                             </div>
-
                             {/* Submenu: Cities */}
-                            <div className="absolute left-full top-0 hidden group-hover:flex flex-col bg-white border rounded-md shadow-md z-50 min-w-[160px]">
+                            <div className="absolute top-full left-0 w-full md:w-auto md:min-w-[160px] lg:left-full lg:top-0 hidden group-hover:flex flex-col bg-white border rounded-md shadow-md z-50">
                               {cities.map((city) => (
                                 <div
                                   key={city}

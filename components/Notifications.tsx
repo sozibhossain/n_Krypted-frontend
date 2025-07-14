@@ -266,12 +266,7 @@ const Notifications = () => {
     return (
       <div className="space-y-4">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BellRing className="h-5 w-5" />
-              Notifications
-            </CardTitle>
-          </CardHeader>
+          
           <CardContent>
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
@@ -315,10 +310,10 @@ const Notifications = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between py-5">
-            <div className="flex items-center gap-2">
-              <BellRing className="h-5 w-5" />
-              Notifications
-            </div>
+            <div className="!text-white flex gap-3 items-center justify-center">
+                <BellRing className="h-5 w-5" />
+                Notifications
+              </div>
             <div className="flex items-center gap-2">
               {notifications.length > 0 && (
                 <Button
