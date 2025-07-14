@@ -122,7 +122,7 @@ export default function ContactUsForm() {
         </h1>
         <h1
           // className="font-benedict text-2xl sm:text-3xl md:text-4xl mb-6 md:mb-8 text-center text-white"
-          className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] text-center 
+          className="heading-size font-normal font-benedict text-white leading-[120%] tracking-[0.04em] text-center 
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
           style={{ fontFamily: "cursive" }}
         >

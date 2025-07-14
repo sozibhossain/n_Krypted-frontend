@@ -522,14 +522,14 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   if (isLoadingAuction) {
     return (
       <div className="text-center py-10 text-white">
-        Loading auction details...
+        Auktionsdetails werden geladen ...
       </div>
     );
   }
   if (errorAuction) {
     return (
       <div className="text-center py-10 text-red-500">
-        Error loading auction details
+        Fehler beim Laden der Auktionsdetails
       </div>
     );
   }
@@ -980,10 +980,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   }}
                 >
                   <div className="scale-y-[118%] scale-x-[120%]">
-                  <StripeCheckout
-                    bookingId={bookingId}
-                    price={auction?.price || 0}
-                  />
+                    <StripeCheckout
+                      bookingId={bookingId}
+                      price={auction?.price || 0}
+                    />
                   </div>
                 </Elements>
               ) : (

@@ -188,7 +188,7 @@ const Notifications = () => {
           setNotificationCount(unreadCount);
         } else {
           console.error("Failed to fetch initial notifications:", data.message);
-          setError(data.message || "Failed to fetch notifications");
+          setError(data.message || "Abrufen der Benachrichtigungen fehlgeschlagen");
         }
       } catch (error) {
         console.error("Error fetching initial notifications:", error);
@@ -306,13 +306,13 @@ const Notifications = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-600">
             <BellRing className="h-5 w-5" />
-            Error Loading Notifications
+            Fehler beim Laden der Benachrichtigungen
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-red-600 mb-4">{error}</p>
           <Button onClick={() => window.location.reload()} variant="outline">
-            Try Again
+            Versuchen Sie es erneut
           </Button>
         </CardContent>
       </Card>
@@ -326,7 +326,7 @@ const Notifications = () => {
           <CardTitle className="flex items-center justify-between py-5">
             <div className="!text-white flex gap-3 items-center justify-center">
               <BellRing className="h-5 w-5" />
-              Notifications
+              Benachrichtigungen
             </div>
             <div className="flex items-center gap-2">
               {notifications.length > 0 && (
@@ -336,10 +336,10 @@ const Notifications = () => {
                   onClick={markNotificationsAsRead}
                   disabled={markingAsRead}
                 >
-                  {markingAsRead ? "Marking..." : "Mark All as Read"}
+                  {markingAsRead ? "Markierung..." : "Alle als gelesen markieren"}
                 </Button>
               )}
-            </div>
+            </div>bookings/notify
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -347,7 +347,7 @@ const Notifications = () => {
             <div className="text-center py-8">
               <BellRing className="h-12 w-12 mx-auto text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No notifications yet
+                Noch keine Benachrichtigungen
               </h3>
               <p className="text-gray-500">
                 {"You'll see notifications here when there's activity on your deals."}

@@ -39,6 +39,7 @@ interface PaginationData {
 
 export default function NotifyMeList() {
     const { data: session } = useSession()
+    const token = session?.user?.accessToken
     const [bookings, setBookings] = useState<Booking[]>([])
     const [pagination, setPagination] = useState<PaginationData>({
         currentPage: 1,
@@ -65,10 +66,15 @@ export default function NotifyMeList() {
             try {
                 const response = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/notify-true?user=${session.user.id}&page=${page}&limit=${limit}`,
+                    {
+                        headers: {
+                            Authorization: token ? `Bearer ${token}` : "",
+                        },
+                    }
                 )
 
                 if (!response.ok) {
-                    throw new Error("Failed to fetch notifications")
+                    throw new Error("Abrufen der Benachrichtigungen fehlgeschlagen")
                 }
 
                 const data = await response.json()
@@ -77,7 +83,7 @@ export default function NotifyMeList() {
                     setBookings(data.data)
                     setPagination(data.pagination)
                 } else {
-                    throw new Error(data.message || "Failed to fetch notifications")
+                    throw new Error(data.message || "Abrufen der Benachrichtigungen fehlgeschlagen")
                 }
             } catch (err) {
                 setError((err as Error).message)
