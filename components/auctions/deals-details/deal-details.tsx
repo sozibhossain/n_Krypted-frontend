@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import type React from "react";
@@ -484,7 +482,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           className="w-full bg-[#FFFFFF] text-[#212121] h-[40px] md:h-[40px]"
           onClick={() => handleBooking(true)}
         >
-          Notify Me
+          Benachrichtigt mich
         </Button>
       );
     }
@@ -506,7 +504,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify me"}
+          {isLoading ? "Processing..." : "Benachrichtigt mich"}
         </Button>
       );
     } else {
@@ -827,7 +825,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </DialogContent>
       </Dialog>
 
-
       <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
         <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none">
           <div className="p-6">
@@ -837,9 +834,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <div className="flex gap-4 mb-6">
               <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                   src={
-                  auction?.images?.[selectedImageIndex] || "/placeholder.svg"
-                }
+                  src={
+                    auction?.images?.[selectedImageIndex] || "/placeholder.svg"
+                  }
                   alt={auction?.title || "Auction Image"}
                   width={64}
                   height={64}
@@ -862,7 +859,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   {selectedSchedule && (
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      <span className="text-sm text-nowrap">{formatDate(selectedSchedule.date)}</span>
+                      <span className="text-sm text-nowrap">
+                        {formatDate(selectedSchedule.date)}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -941,7 +940,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               </div>
             </div>
             <DialogFooter className="flex gap-3 justify-end pt-0 border-t-0">
-        
               <Button
                 onClick={confirmBooking}
                 className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-3"
@@ -954,6 +952,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Stripe Checkout Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent className="p-10 border-[#FFFFFF33] text-white">
           {selectedPaymentMethod === "paypal" && bookingId && (
@@ -980,10 +979,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                     },
                   }}
                 >
+                  <div className="scale-y-[118%] scale-x-[120%]">
                   <StripeCheckout
                     bookingId={bookingId}
                     price={auction?.price || 0}
                   />
+                  </div>
                 </Elements>
               ) : (
                 <div className="text-center p-4">

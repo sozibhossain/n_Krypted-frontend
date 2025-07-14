@@ -380,7 +380,7 @@ function DealsPage() {
     queryKey: ["all-deals-locations"],
     queryFn: async () => {
       try {
-        const { data } = await axiosInstance.get("/api/deals");
+        const { data } = await axiosInstance.get("/api/deals?showAll=true");
         console.log("All Deals Data:", data); // Debug log
         return data.deals || [];
       } catch (error) {
@@ -423,7 +423,7 @@ function DealsPage() {
 
       try {
         const { data } = await axiosInstance.get(
-          `/api/deals?${params.toString()}`
+          `/api/deals?showAll=true&${params.toString()}`
         );
         console.log("API Response:", data); // Debug log
         return data;
