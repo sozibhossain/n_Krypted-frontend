@@ -70,13 +70,13 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="currentPassword">Current Password</Label>
+        <Label htmlFor="currentPassword">Aktuelles Passwort</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="currentPassword"
             type={showCurrentPassword ? "text" : "password"}
-            placeholder="Current Password"
+            placeholder="Aktuelles Passwort"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
@@ -93,13 +93,13 @@ export function ChangePasswordForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="newPassword">New Password</Label>
+        <Label htmlFor="newPassword">Neues Passwort</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="newPassword"
             type={showNewPassword ? "text" : "password"}
-            placeholder="New Password"
+            placeholder="Neues Passwort"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -116,13 +116,13 @@ export function ChangePasswordForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+        <Label htmlFor="confirmPassword">Neues Passwort bestätigen</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm New Password"
+            placeholder="Neues Passwort bestätigen"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required

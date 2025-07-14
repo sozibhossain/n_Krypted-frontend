@@ -102,7 +102,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-[#FFFFFF]">Personal Information</h1>
+        <h1 className="text-2xl font-semibold text-[#FFFFFF]">Persönliche Informationen</h1>
         {!isEditing && (
           <Button 
             variant="outline" 
@@ -121,7 +121,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
           {/* Name Field */}
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm text-[#FFFFFF]">
-              Your Name
+              Ihr Name
             </label>
             <Input
               id="name"
@@ -136,7 +136,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
           {/* Email Field */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm text-[#FFFFFF]">
-              Email Address
+              E-Mail-Adresse
             </label>
             <Input
               id="email"
@@ -152,7 +152,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
           {/* Phone Field */}
           <div className="space-y-2">
             <label htmlFor="phoneNumber" className="block text-sm text-[#FFFFFF]">
-              Phone
+              Telefon
             </label>
             <Input
               id="phoneNumber"
@@ -232,7 +232,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
               className="text-[#212121]"
               disabled={isLoading}
             >
-              Cancel
+              Stornieren
             </Button>
             <Button 
               type="submit" 

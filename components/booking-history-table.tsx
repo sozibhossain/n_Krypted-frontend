@@ -125,7 +125,7 @@ export default function BookingHistoryTable() {
     if (isLoading) {
         return (
             <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
-                <h2 className="text-xl font-semibold text-white mb-6">Booking History</h2>
+                <h2 className="text-xl font-semibold text-white mb-6">Buchungsverlauf</h2>
                 <div className="bg-zinc-900/60 rounded-lg overflow-hidden">
                     <div className="min-w-full overflow-x-auto">
                         <div className="grid grid-cols-5 bg-zinc-800 py-3 px-4">
@@ -168,7 +168,7 @@ export default function BookingHistoryTable() {
     if (error) {
         return (
             <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
-                <h2 className="text-xl font-semibold text-white mb-6">Booking History</h2>
+                <h2 className="text-xl font-semibold text-white mb-6">Buchungsverlauf</h2>
                 <div className="p-4 bg-red-900/20 border border-red-800 rounded-md">
                     <p className="text-red-400">Error loading bookings: {error.message}</p>
                 </div>
@@ -178,7 +178,7 @@ export default function BookingHistoryTable() {
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
-            <h2 className="text-xl font-semibold text-white mb-6">Booking History</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">Buchungsverlauf</h2>
 
             {/* Table for medium and large screens */}
             <div className="hidden sm:block bg-zinc-900/60 rounded-lg overflow-hidden">
@@ -187,19 +187,19 @@ export default function BookingHistoryTable() {
                         <thead>
                             <tr className="bg-zinc-800">
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Deal Name
+                                    Deal-Name
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Booking ID
+                                    Buchungs-ID
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Date
+                                    Datum
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Amount
+                                    Menge
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    View
+                                    Sicht
                                 </th>
                             </tr>
                         </thead>
