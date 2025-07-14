@@ -346,7 +346,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Notify Me"}
+          {isLoading ? "Processing..." : "Benachrichtigt mich"}
         </Button>
       );
     }
@@ -427,7 +427,7 @@ export function DealsCard({
                   />
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex justify-between gap-4">
                 <div>
                   <Link href={`/deals/${id}`}>
                     <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-sm sm:text-[14px]">

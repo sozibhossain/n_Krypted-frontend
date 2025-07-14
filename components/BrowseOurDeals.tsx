@@ -38,7 +38,7 @@ export function BrowseOurDeals() {
   const { data: response, isLoading } = useQuery({
     queryKey: ["deals"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get(`/api/deals`);
+      const { data } = await axiosInstance.get(`/api/deals?showAll=true`);
       return data;
     },
   });
