@@ -63,7 +63,7 @@ export function BrowseOurDeals() {
             <div className="w-5 h-9 bg-white rounded" />
             <div>
               <h1
-                className="text-[40px] font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
+                className="heading-size font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               >
                 Deals
