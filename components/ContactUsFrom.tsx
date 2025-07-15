@@ -146,7 +146,7 @@ export default function ContactUsForm() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter your full name"
+                  placeholder="Geben Sie Ihren vollständigen Namen ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                   required
@@ -165,7 +165,7 @@ export default function ContactUsForm() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your Email Address"
+                  placeholder="Geben Sie Ihre E-Mail-Adresse ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                   required
@@ -184,7 +184,7 @@ export default function ContactUsForm() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  placeholder="Enter your Phone Number"
+                  placeholder="Geben Sie Ihre Telefonnummer ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                 />

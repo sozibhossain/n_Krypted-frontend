@@ -45,7 +45,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
     setIsLoading(true)
     
     try {
-      const response = await fetch('https://n-krypted-backend-0g0t.onrender.com/api/auth/update-profile', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
               onChange={handleChange}
               disabled={!isEditing || !session}
               className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
-              placeholder="Enter your country"
+              placeholder="Geben Sie Ihr Land ein"
             />
           </div>
 
@@ -192,7 +192,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
               onChange={handleChange}
               disabled={!isEditing || !session}
               className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
-              placeholder="Enter your city/state"
+              placeholder="Geben Sie Ihre Stadt/Ihr Bundesland ein"
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
             onChange={handleChange}
             disabled={!isEditing || !session}
             className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
-            placeholder="Enter your road/area"
+            placeholder="Geben Sie Ihre Straße/Ihr Gebiet ein"
           />
         </div>
 
@@ -239,7 +239,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
               className="bg-white text-[#212121] hover:bg-white/90"
               disabled={isLoading || !session}
             >
-              {isLoading ? "Saving..." : "Save Changes"}
+              {isLoading ? "Speichern..." : "Änderungen speichern"}
             </Button>
           </div>
         )}
