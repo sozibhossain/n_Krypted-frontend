@@ -129,7 +129,6 @@ export default function BookingHistoryTable() {
     enabled: !!userId && !!accessToken,
   });
 
-  console.log("DDDDDDDDDDDDDDDDDDD", data);
 
   // Use TanStack Query to fetch a single booking
   const {
@@ -168,13 +167,13 @@ export default function BookingHistoryTable() {
         <div className="bg-zinc-900/60 rounded-lg overflow-hidden">
           <div className="min-w-full overflow-x-auto">
             <div className="grid grid-cols-5 bg-zinc-800 py-3 px-4">
-              <div className="text-sm font-medium text-gray-300">Deal Name</div>
+              <div className="text-sm font-medium text-gray-300">Deal</div>
               <div className="text-sm font-medium text-gray-300">
-                Booking ID
+                Buchungscode
               </div>
-              <div className="text-sm font-medium text-gray-300">Date</div>
-              <div className="text-sm font-medium text-gray-300">Amount</div>
-              <div className="text-sm font-medium text-gray-300">View</div>
+              <div className="text-sm font-medium text-gray-300">Datum</div>
+              <div className="text-sm font-medium text-gray-300">Menge</div>
+              <div className="text-sm font-medium text-gray-300">Details</div>
             </div>
             <div className="divide-y divide-zinc-800">
               {Array(8)
@@ -214,7 +213,7 @@ export default function BookingHistoryTable() {
         </h2>
         <div className="p-4 bg-red-900/20 border border-red-800 rounded-md">
           <p className="text-red-400">
-            Error loading bookings: {error.message}
+            Fehler beim Laden der Buchungen: {error.message}
           </p>
         </div>
       </div>
@@ -237,13 +236,13 @@ export default function BookingHistoryTable() {
                   scope="col"
                   className="py-3 px-4 text-left text-sm font-medium text-gray-300"
                 >
-                  Deal-Name
+                  Deal
                 </th>
                 <th
                   scope="col"
                   className="py-3 px-4 text-left text-sm font-medium text-gray-300"
                 >
-                  Buchungs-ID
+                  Buchungscode
                 </th>
                 <th
                   scope="col"
@@ -261,7 +260,7 @@ export default function BookingHistoryTable() {
                   scope="col"
                   className="py-3 px-4 text-left text-sm font-medium text-gray-300"
                 >
-                  Sicht
+                  Details
                 </th>
               </tr>
             </thead>
@@ -304,31 +303,31 @@ export default function BookingHistoryTable() {
             className="bg-zinc-900/60 rounded-lg p-4 space-y-2"
           >
             <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Deal Name</span>
+              <span className="text-gray-400 text-xs">Deal</span>
               <span className="text-white text-sm">
                 {booking?.dealsId?.title}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Booking ID</span>
+              <span className="text-gray-400 text-xs">Buchungscode</span>
               <span className="text-white text-sm">
                 #{booking?.bookingId?.slice(-3)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Date</span>
+              <span className="text-gray-400 text-xs">Datum</span>
               <span className="text-white text-sm">
                 {formatDate(booking?.createdAt)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Amount</span>
+              <span className="text-gray-400 text-xs">Menge</span>
               <span className="text-white text-sm">
                 {formatPrice(booking?.dealsId?.price)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-xs">View</span>
+              <span className="text-gray-400 text-xs">Details</span>
               <button
                 className="text-white hover:text-gray-300 transition-colors"
                 onClick={() => handleViewClick(booking._id)}
@@ -346,7 +345,7 @@ export default function BookingHistoryTable() {
         <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
-              Booking Details
+             Buchungsdetails
             </DialogTitle>
             <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
               <span className="sr-only">Close</span>
@@ -368,7 +367,7 @@ export default function BookingHistoryTable() {
           ) : detailsError ? (
             <div className="p-4 bg-red-900/20 border border-red-800 rounded-md">
               <p className="text-red-400">
-                Error loading booking details: {detailsError.message}
+                Fehler beim Laden der Buchungsdetails: {detailsError.message}
               </p>
             </div>
           ) : bookingDetails ? (
@@ -397,28 +396,28 @@ export default function BookingHistoryTable() {
 
               <div className="space-y-1">
                 <h4 className="text-sm font-medium text-gray-400">
-                  Description
+                  Beschreibung
                 </h4>
                 <div
                   className="list-item list-none"
                   dangerouslySetInnerHTML={{
                     __html:
                       bookingDetails?.data?.dealsId?.description ??
-                      "No description available",
+                      "Keine Beschreibung verfügbar",
                   }}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-gray-400">Price</h4>
+                  <h4 className="text-sm font-medium text-gray-400">Preis</h4>
                   <p className="text-lg font-semibold">
                     {formatPrice(bookingDetails?.data?.dealsId?.price)}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">
-                    Location
+                    Standort
                   </h4>
                   <p className="text-sm">
                     {bookingDetails?.data?.dealsId?.location
@@ -428,7 +427,7 @@ export default function BookingHistoryTable() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">
-                    Booking Date
+                    Buchungsdatum
                   </h4>
                   <p className="text-sm">
                     {formatDate(bookingDetails?.data?.createdAt)}
@@ -442,7 +441,7 @@ export default function BookingHistoryTable() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">
-                    Participations
+                    Beteiligungen
                   </h4>
                   <p className="text-sm">
                     {bookingDetails?.data.dealsId?.participations ?? "N/A"}
@@ -450,7 +449,7 @@ export default function BookingHistoryTable() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">
-                    Notifications
+                    Benachrichtigungen
                   </h4>
                   <p className="text-sm">
                     {bookingDetails?.data?.notifyMe ? "Enabled" : "Disabled"}
@@ -460,7 +459,7 @@ export default function BookingHistoryTable() {
 
               {bookingDetails?.data?.dealsId?.offers?.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">Offers</h4>
+                  <h4 className="text-sm font-medium text-gray-400">Angebote</h4>
                   <div className="bg-zinc-800/50 rounded-md p-3">
                     <ul className="list-disc list-inside space-y-1">
                       {(() => {
@@ -495,7 +494,7 @@ export default function BookingHistoryTable() {
               {bookingDetails?.data?.dealsId?.scheduleDates?.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium text-gray-400">
-                    Schedule Dates
+                    Termine planen
                   </h4>
                   <div className="bg-zinc-800/50 rounded-md p-3">
                     <ul className="list-disc list-inside space-y-1">
@@ -538,7 +537,7 @@ export default function BookingHistoryTable() {
                   onClick={() => setIsModalOpen(false)}
                   className="border-zinc-700 hover:bg-zinc-800 hover:text-white bg-white text-[black] rounded-md"
                 >
-                  Close
+                  Schließen
                 </Button>
               </div>
             </div>

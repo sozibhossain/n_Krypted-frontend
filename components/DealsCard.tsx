@@ -473,7 +473,7 @@ export function DealsCard({
           <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <h2 className="text-lg sm:text-xl font-semibold">
-                Booking Summary
+                Buchungsübersicht
               </h2>
             </div>
             <div className="flex gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -500,34 +500,36 @@ export function DealsCard({
                     </div>
                   )}
                   {scheduleDates && scheduleDates.length > 0 && (
-                    <div className="flex items-center gap-1 space-y-4">
+                    <div className="flex items-center justify-center gap-2 space-y-4">
                       <Calendar className="w-3 h-3" />
-                      <select
-                        value={selectedDate?._id || ""}
-                        onChange={(e) => {
-                          const selected = scheduleDates.find(
-                            (date) => date._id === e.target.value
-                          );
-                          setSelectedDate(selected || null);
-                        }}
-                        className="bg-gray-700  text-white  border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
-                      >
-                        <option value="" disabled>
-                          Select a date
-                        </option>
-                        {scheduleDates
-                          .filter(
-                            (date) =>
-                              date.active &&
-                              new Date(date.date) > new Date() &&
-                              date.bookedCount < date.participationsLimit
-                          )
-                          .map((date) => (
-                            <option key={date._id} value={date._id}>
-                              {formatDate(date.date)}
-                            </option>
-                          ))}
-                      </select>
+                      <div className="translate-y-[-7px]">
+                        <select
+                          value={selectedDate?._id || ""}
+                          onChange={(e) => {
+                            const selected = scheduleDates.find(
+                              (date) => date._id === e.target.value
+                            );
+                            setSelectedDate(selected || null);
+                          }}
+                          className="bg-gray-700  text-white  border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
+                        >
+                          <option value="" disabled>
+                            Select a date
+                          </option>
+                          {scheduleDates
+                            .filter(
+                              (date) =>
+                                date.active &&
+                                new Date(date.date) > new Date() &&
+                                date.bookedCount < date.participationsLimit
+                            )
+                            .map((date) => (
+                              <option key={date._id} value={date._id}>
+                                {formatDate(date.date)}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -537,17 +539,8 @@ export function DealsCard({
               </div>
             </div>
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base">
-              <div className="flex justify-between">
-                <span className="text-gray-300">Subtotal</span>
-                <span className="text-white">{price?.toFixed(2)} EUR</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Save</span>
-                <span className="text-white">0.00 EUR</span>
-              </div>
-              <hr className="border-gray-600" />
               <div className="flex justify-between font-semibold">
-                <span className="text-white">Total</span>
+                <span className="text-white">gesamt</span>
                 <span className="text-white">{price?.toFixed(2)} EUR</span>
               </div>
             </div>
@@ -572,7 +565,7 @@ export function DealsCard({
                   )}
                 </div>
                 <span className="text-white text-sm sm:text-base">
-                  Pay With PayPal
+                  Bezahlen mit PayPal
                 </span>
                 <div className="ml-auto">
                   <span className="text-blue-500 font-semibold text-sm sm:text-base">
@@ -600,7 +593,7 @@ export function DealsCard({
                   )}
                 </div>
                 <span className="text-white text-sm sm:text-base">
-                  Pay With Stripe
+                  Bezahlen mit Stripe
                 </span>
                 <div className="ml-auto">
                   <span className="text-blue-500 font-semibold text-sm sm:text-base">
@@ -614,7 +607,7 @@ export function DealsCard({
               disabled={isLoading || !selectedPaymentMethod || !selectedDate}
               className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-2 sm:py-3 text-sm sm:text-base"
             >
-              {isLoading ? "Processing..." : "Pay now"}
+              {isLoading ? "Verarbeitung..." : "Jetzt bezahlen"}
             </Button>
           </div>
         </DialogContent>
@@ -658,13 +651,14 @@ export function DealsCard({
           ) : (
             <div className="text-center p-3 sm:p-4">
               <p className="text-red-500 text-sm sm:text-base">
-                Failed to initialize payment. Please try again.
+                Die Zahlung konnte nicht initialisiert werden. Bitte versuchen
+                Sie es erneut.
               </p>
               <Button
                 onClick={() => createPaymentIntent()}
                 className="mt-3 sm:mt-4 bg-blue-500 hover:bg-blue-600 text-sm sm:text-base"
               >
-                Retry
+                Wiederholen
               </Button>
             </div>
           )}

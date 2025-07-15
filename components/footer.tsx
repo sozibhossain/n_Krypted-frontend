@@ -27,7 +27,7 @@ export function Footer() {
             </Link>
           </div>
           <p className="text-[#4E4E4E] py-4">
-            Join us on social media for exclusive updates, auction previews, and special offers!
+            Folgen Sie uns in den sozialen Medien für exklusive Updates, Auktionsvorschauen und Sonderangebote!
           </p>
 
           {/* Social Media Icons */}
@@ -133,7 +133,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between text-xs text-[#595959]">
-          <p>© 2025 Agency All rights reserved.</p>
+          <p>© 2025 Agentur. Alle Rechte vorbehalten.</p>
           <div className="space-x-4 pt-2 md:pt-0 lg:pt-0">
             <Link href="/suport">Support</Link>
             <Link href="/report">Geschäftsbedingungen</Link>
