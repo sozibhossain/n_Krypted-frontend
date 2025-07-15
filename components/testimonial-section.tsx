@@ -111,7 +111,7 @@ export function TestimonialSection() {
           </div>
 
           <h2 className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">
-            What does our client say?
+           Was sagt unsere Community?
           </h2>
         </div>
 

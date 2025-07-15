@@ -286,7 +286,7 @@ export function CategoriesAndSearchBar() {
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         type="text"
-                        placeholder="Search by title..."
+                        placeholder="Suche nach Titel..."
                         className="pl-10 pr-10 placeholder:text-[12px] lg:placeholder:text-[14px] bg-transparent !text-white border-transparent placeholder:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
                         value={searchQuery}
                         onChange={handleSearchChange}

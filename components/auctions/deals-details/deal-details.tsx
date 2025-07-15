@@ -494,7 +494,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           onClick={() => handleBooking(false)}
           disabled={isLoading || !selectedSchedule}
         >
-          {isLoading ? "Processing..." : "Book now"}
+          {isLoading ? "Wird bearbeitet..." : "Jetzt buchen"}
         </Button>
       );
     } else if (auction?.status === "deactivate") {

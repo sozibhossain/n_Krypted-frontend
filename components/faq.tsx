@@ -6,7 +6,7 @@ const faqs = [
      {
         question: "Was genau ist ein Walk Through eigentlich?",
         answer:
-            "Ein Walk Through ist eine kurze, geführte Tour durch besondere Orte – zum Beispiel durch kleine Läden, Ateliers, Werkstätten oder Cafés. Die Gastgeber:innen geben direinen persönlichen Einblick hinter die Kulissen – authentisch, nahbar und oft überraschend",
+            "Ein Walk Through ist eine kurze, geführte Tour zu besonderen Themen – etwa in kleinen Läden, Ateliers, Werkstätten oder Cafés. Die Gastgeber:innen geben dir einen persönlichen Einblick in ihr Fachgebiet oder ihre Leidenschaft; echt, direkt und voller neuer Perspektiven.",
     },
     {
         question: "Wie buche ich einen Walk Through?",

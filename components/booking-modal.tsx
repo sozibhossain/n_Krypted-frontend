@@ -67,7 +67,7 @@ export function BookingModal({ isOpen, onClose, dealId }: BookingModalProps) {
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md p-0 bg-black text-white overflow-hidden">
                 <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-2xl font-bold text-center">Booking Summary</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold text-center">Buchungsdetails</DialogTitle>
                 </DialogHeader>
 
                 <div className="p-6 space-y-6">

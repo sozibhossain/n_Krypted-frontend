@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
   /* Light theme variables */
   :root {
     --background: 36 33% 94%;
@@ -80,25 +79,25 @@
 
 /* Benedict font (added @font-face) */
 @font-face {
-  font-family: 'Benedict';
-  src: url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff2') format('woff2'),
-    url('./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff') format('woff');
-  font-weight: 400,500,600,700,900,1000;
+  font-family: "Benedict";
+  src: url("./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff2") format("woff2"),
+    url("./fonts/d85bfa7b5e2eb872c592f58f015ecdb4.woff") format("woff");
+  font-weight: 400, 500, 600, 700, 900, 1000;
   font-style: normal;
   font-display: swap;
 }
 
-
 .font-benedict {
   font-family: "Benedict" !important;
 }
-.bandit_font{
+.bandit_font {
   font-size: 40px;
- 
 }
-.heading-size{
-  font-size: 35px;
- 
+.heading-size {
+  font-size: 40px;
+}
+.logo-size {
+  font-size: 38px;
 }
 
 .ql-align-justify {
@@ -123,7 +122,6 @@
   position: relative;
   text-decoration: #d00;
 }
-
 
 .list-item ul li::before {
   content: "•";
@@ -159,8 +157,8 @@
   font-weight: bold;
   color: white !important;
 }
-.blogcontent{
-color: white !important;
+.blogcontent {
+  color: white !important;
 }
 
 .list-item h1 {
@@ -210,7 +208,6 @@ color: white !important;
   content: none;
 }
 
-
 /* Payment.css */
 .payment-container {
   max-width: 600px;
@@ -241,7 +238,8 @@ color: white !important;
   border-color: #0070ba;
 }
 
-.paypal-container, .dropin-container {
+.paypal-container,
+.dropin-container {
   margin-top: 20px;
   padding: 20px;
   background: white;

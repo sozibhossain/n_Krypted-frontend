@@ -358,7 +358,7 @@ export function DealsCard({
           onClick={() => handleBooking(false)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Book now"}
+          {isLoading ? "Wird bearbeitet..." : "Jetzt buchen"}
         </Button>
       );
     }

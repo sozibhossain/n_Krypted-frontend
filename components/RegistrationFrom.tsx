@@ -75,7 +75,7 @@ export function RegisterForm() {
           <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="username"
-            placeholder="Enter your Username"
+            placeholder="Gib deinen Benutzernamen ein"
             value={name}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -91,7 +91,7 @@ export function RegisterForm() {
           <Input
             id="email"
             type="email"
-            placeholder="Enter your Email"
+            placeholder="Gib deine E-Mail-Adresse ein"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -107,7 +107,7 @@ export function RegisterForm() {
           <Input
             id="phone"
             type="tel"
-            placeholder="Enter your Phone Number"
+            placeholder="Gib deine Telefonnummer ein"
             value={phoneNumber}
             onChange={(e) => setPhone(e.target.value)}
             className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
@@ -122,7 +122,7 @@ export function RegisterForm() {
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Create a Password"
+            placeholder="Erstelle ein Passwort"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -142,14 +142,14 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm a Password"
+            placeholder="Bestätige dein Passwort"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -169,7 +169,7 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
+      {/* <div className="flex items-center space-x-2">
         <Checkbox
           id="remember"
           checked={rememberMe}
@@ -181,20 +181,20 @@ export function RegisterForm() {
         >
           Erinnere dich an mich
         </label>
-      </div>
+      </div> */}
 
       <Button
         type="submit"
         className="w-full bg-white text-gray-900 hover:bg-gray-200"
         disabled={isLoading}
       >
-        {isLoading ? "Creating account..." : "Sign Up"}
+        {isLoading ? "Konto wird erstellt..." : "Registrieren"}
       </Button>
 
       <div className="text-center text-sm text-[#BABABA]">
         Hast du schon ein Konto?{" "}
         <Link href="/login" className="text-white hover:text-blue-400">
-          anmelden
+          Anmelden
         </Link>
       </div>
     </form>

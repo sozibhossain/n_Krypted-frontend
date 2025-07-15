@@ -187,10 +187,10 @@ export default function BookingHistoryTable() {
                         <thead>
                             <tr className="bg-zinc-800">
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Deal-Name
+                                    Deal
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Buchungs-ID
+                                    Buchungscode
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
                                     Datum
@@ -199,7 +199,7 @@ export default function BookingHistoryTable() {
                                     Menge
                                 </th>
                                 <th scope="col" className="py-3 px-4 text-left text-sm font-medium text-gray-300">
-                                    Sicht
+                                    Details
                                 </th>
                             </tr>
                         </thead>
