@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -9,6 +8,7 @@ import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { registerUser } from "@/app/actions/auth";
 import { toast } from "sonner";
 
@@ -21,14 +21,19 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false); // Added state for terms checkbox
   const router = useRouter();
 
-  // In your RegisterForm component
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       toast.error("Passwörter stimmen nicht überein");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast.error("Sie müssen den Nutzungsbedingungen zustimmen");
       return;
     }
 
@@ -44,11 +49,7 @@ export function RegisterForm() {
 
       if (result.success) {
         toast.success("Konto erfolgreich erstellt!");
-
-        // Store email in sessionStorage before redirecting
         sessionStorage.setItem("registerEmail", email);
-
-        // Redirect to verify-email with the email as a query parameter
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       } else {
         toast.error(result.message);
@@ -140,7 +141,7 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -167,24 +168,29 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* <div className="flex items-center space-x-2">
-        <Checkbox
-          id="remember"
-          checked={rememberMe}
-          onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-        />
-        <label
-          htmlFor="remember"
-          className="text-sm font-medium leading-none text-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          Erinnere dich an mich
-        </label>
-      </div> */}
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="terms"
+            checked={agreedToTerms}
+            onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+          />
+          <label
+            htmlFor="terms"
+            className="text-sm font-medium leading-none text-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Ich stimme den{" "}
+            <Link href="/report" className="text-white hover:text-blue-400">
+              Geschäftsbedingungen
+            </Link>{" "}
+          </label>
+        </div>
+      </div>
 
       <Button
         type="submit"
         className="w-full bg-white text-gray-900 hover:bg-gray-200"
-        disabled={isLoading}
+        disabled={isLoading || !agreedToTerms} // Disable button if terms not agreed
       >
         {isLoading ? "Konto wird erstellt..." : "Registrieren"}
       </Button>
