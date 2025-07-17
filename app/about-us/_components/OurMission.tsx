@@ -34,11 +34,11 @@ const OurMission = () => {
         {/* Image Section */}
         <div className="flex-1 flex justify-center lg:justify-end">
           <Image
-            src="/assets/picture1.png"
+            src="/assets/Unsere_Mission.jpg"
             alt="Auction speaker"
             height={1000}
             width={1000}
-            className="rounded-xl w-full max-w-[470px] h-auto sm:h-[550px] object-cover"
+            className="rounded-xl w-full max-w-[470px] h-auto sm:h-[650px] object-cover"
             priority
           />
         </div>
