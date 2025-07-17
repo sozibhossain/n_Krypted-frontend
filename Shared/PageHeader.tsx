@@ -13,17 +13,17 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   imge,
-  height = "300px",
+  height = "350px",
   backgroundSize = "cover",
 }: PageHeaderProps) {
-  const [currentHeight, setCurrentHeight] = React.useState("300px");
+  const [currentHeight, setCurrentHeight] = React.useState("350px");
 
   React.useEffect(() => {
     function handleResize() {
       if (window.innerWidth <= 480) {
         setCurrentHeight("200px"); // Mobile
       } else if (window.innerWidth <= 768) {
-        setCurrentHeight("300px"); // Tablet
+        setCurrentHeight("350px"); // Tablet
       } else {
         setCurrentHeight(height); // Desktop - uses the provided prop
       }

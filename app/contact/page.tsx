@@ -8,8 +8,7 @@ const page = () => {
     <div>
       <PageHeader
         title="Kontakt"
-        imge="/assets/contact-1.png"
-        backgroundSize="contain"
+        imge="/assets/contact-banner.jpg"
       />
       <div className="my-20 lg:mt-28 container">
         <div className="grid grid-cols-2 items-center">
