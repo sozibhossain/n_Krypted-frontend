@@ -12,7 +12,7 @@ const page = () => {
 
   return (
     <div className="">
-      <PageHeader title="Was sind Walk Throughz?" imge="/assets/about.png" />
+      <PageHeader title="Was sind Walk Throughz?" imge="/assets/Über_Uns.jpg" />
       <div className="mt-18 lg:mt-24 container">
         <div className="text-center mt-8">
           <h1 className="text-[25px] lg:text-[40px] font-semibold text-[#FFFFFF]">
