@@ -575,7 +575,9 @@ function DealsPage() {
           Kategorien
         </h3>
         {isLoadingCategories ? (
-          <div className="py-2 text-sm sm:text-base">Kategorien werden geladen...</div>
+          <div className="py-2 text-sm sm:text-base">
+            Kategorien werden geladen...
+          </div>
         ) : categoryError ? (
           <div className="text-red-500 py-2 text-sm sm:text-base">
             Error: {categoryError}
@@ -814,7 +816,7 @@ function DealsPage() {
               <SheetTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">
                   <FilterIcon className="h-4 w-4" />
-                  Filters
+                  Filter
                   {activeFiltersCount > 0 && (
                     <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full bg-primary text-primary-foreground">
                       {activeFiltersCount}
@@ -852,7 +854,8 @@ function DealsPage() {
             ) : dealsError ? (
               <div className="col-span-full text-center py-10">
                 <p className="text-red-500">
-                  Fehler beim Laden der Angebote. Bitte versuchen Sie es später erneut.
+                  Fehler beim Laden der Angebote. Bitte versuchen Sie es später
+                  erneut.
                 </p>
               </div>
             ) : (
@@ -881,7 +884,8 @@ function DealsPage() {
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <p className="text-gray-500">
-                        Es wurden keine Angebote gefunden, die Ihren Filtern entsprechen.
+                        Es wurden keine Angebote gefunden, die Ihren Filtern
+                        entsprechen.
                       </p>
                     </div>
                   )}
