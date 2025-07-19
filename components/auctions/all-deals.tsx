@@ -575,14 +575,14 @@ function DealsPage() {
           Kategorien
         </h3>
         {isLoadingCategories ? (
-          <div className="py-2 text-sm sm:text-base">Loading categories...</div>
+          <div className="py-2 text-sm sm:text-base">Kategorien werden geladen...</div>
         ) : categoryError ? (
           <div className="text-red-500 py-2 text-sm sm:text-base">
             Error: {categoryError}
           </div>
         ) : categories.length === 0 ? (
           <div className="py-2 text-sm sm:text-base text-gray-500">
-            No categories available
+            Keine Kategorien verfügbar
           </div>
         ) : (
           <div className="space-y-2 sm:space-y-3">
@@ -805,7 +805,6 @@ function DealsPage() {
 
   FilterSidebar.displayName = "FilterSidebar";
 
-  console.log(filteredDealsData);
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="container mx-auto px-4 py-8">
@@ -853,7 +852,7 @@ function DealsPage() {
             ) : dealsError ? (
               <div className="col-span-full text-center py-10">
                 <p className="text-red-500">
-                  Error loading deals. Please try again later.
+                  Fehler beim Laden der Angebote. Bitte versuchen Sie es später erneut.
                 </p>
               </div>
             ) : (
@@ -882,7 +881,7 @@ function DealsPage() {
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <p className="text-gray-500">
-                        No deals found matching your filters.
+                        Es wurden keine Angebote gefunden, die Ihren Filtern entsprechen.
                       </p>
                     </div>
                   )}

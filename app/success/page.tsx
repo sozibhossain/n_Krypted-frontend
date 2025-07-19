@@ -25,9 +25,9 @@ const PaymentSuccessPage: FC = () => {
             </svg>
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-800 mb-3">Payment Successful!</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-3">Zahlung erfolgreich!</h1>
           <p className="text-gray-600 mb-6">
-            Thank you for your payment. Your transaction has been completed successfully.
+            Vielen Dank für Ihre Zahlung. Ihre Transaktion wurde erfolgreich abgeschlossen.
           </p>
 
           <div className="mt-8">
@@ -35,7 +35,7 @@ const PaymentSuccessPage: FC = () => {
               href="/"
               className="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
             >
-              Return to Home
+              Zurück zu Home
             </Link>
           </div>
         </div>
