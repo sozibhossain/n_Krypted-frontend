@@ -19,10 +19,9 @@ export default function SupportPage() {
         <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">
                   
             <div className="w-full container">
-                <h1 className="text-[32px] font-semibold mb-5">Support</h1>
+                <h1 className="text-[32px] font-semibold mb-5">Unterstützung</h1>
                 <p className="mb-8 text-base text-[#FFFFFF] font-normal leading-[150%]">
-                    We&apos;re here to help! Whether you have a question about your Deals, need help with a Deal, or just want to
-                    say hi, our support team is ready to assist you.
+                    Wir helfen Ihnen gerne! Egal, ob Sie eine Frage zu Ihren Deals haben, Hilfe bei einem Deal benötigen oder einfach nur Hallo sagen möchten – unser Support-Team hilft Ihnen gerne weiter.
                 </p>
 
                 <div>

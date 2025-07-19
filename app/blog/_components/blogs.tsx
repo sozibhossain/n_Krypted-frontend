@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import BlogsCard from "@/components/card/blogsCard";
 import { Blog } from "./type";
 import { PageHeader } from "@/Shared/PageHeader";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -24,12 +26,31 @@ function Blogs() {
     fetchBlogs();
   }, []);
 
+  // Skeleton Loader Component
+  const SkeletonBlogCard = () => (
+    <div className="max-w-[370px]">
+      <Skeleton height={222} width="100%" className="rounded-t-xl" />
+      <div className="p-2">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton width={100} height={16} />
+          <Skeleton width={80} height={16} />
+        </div>
+        <Skeleton width="80%" height={20} count={2} />
+      </div>
+    </div>
+  );
+
   return (
     <section>
       <PageHeader title="Our Latest Blogs" imge="/assets/Blogbanner.jpg" />
       <div className="container my-24">
         {loading ? (
-          <p className="text-center text-white">Loading blogs...</p>
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+            {/* Display 3 skeleton cards while loading */}
+            {[...Array(3)].map((_, index) => (
+              <SkeletonBlogCard key={index} />
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
             {blogs.map((blog: Blog) => (
