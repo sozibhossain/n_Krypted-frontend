@@ -226,7 +226,7 @@ export function DealsCard({
 
   const handleBooking = async (notifyMe: boolean) => {
     if (!session?.user?.id) {
-      toast.success("Please sign in to book this deal");
+      toast.success("Bitte melden Sie sich an, um dieses Angebot zu buchen");
       return;
     }
 
