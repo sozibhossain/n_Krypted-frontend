@@ -151,7 +151,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch auction details");
+        throw new Error(errorData.message || "Auktionsdetails konnten nicht abgerufen werden");
       }
       return response.json();
     },
@@ -172,7 +172,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch reviews");
+        throw new Error(errorData.message || "Bewertungen konnten nicht abgerufen werden");
       }
       return response.json();
     },
@@ -208,7 +208,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const submitReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData) => {
       if (!token) {
-        throw new Error("Authentication required. Please log in.");
+        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
@@ -223,12 +223,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit review");
+        throw new Error(errorData.message || "Bewertung konnte nicht übermittelt werden");
       }
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Review submitted successfully", {
+      toast.success("Bewertung erfolgreich übermittelt", {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
@@ -238,7 +238,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEmail("");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to submit review", {
+      toast.error(error.message || "Bewertung konnte nicht übermittelt werden", {
         position: "top-right",
       });
     },
@@ -248,7 +248,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const deleteReviewMutation = useMutation({
     mutationFn: async ({ reviewId }: DeleteReviewData) => {
       if (!token) {
-        throw new Error("Authentication required. Please log in.");
+        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`,
@@ -261,12 +261,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete review");
+        throw new Error(errorData.message || "Die Bewertung konnte nicht gelöscht werden.");
       }
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Review deleted successfully", {
+      toast.success("Bewertung erfolgreich gelöscht", {
         position: "top-right",
       });
       setIsDeleteModalOpen(false);
@@ -274,7 +274,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete review", {
+      toast.error(error.message || "Die Bewertung konnte nicht gelöscht werden.", {
         position: "top-right",
       });
       setIsDeleteModalOpen(false);
@@ -290,7 +290,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       ratings,
     }: EditReviewData) => {
       if (!token) {
-        throw new Error("Authentication required. Please log in.");
+        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`,
@@ -308,12 +308,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update review");
+        throw new Error(errorData.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.");
       }
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Review updated successfully", { position: "top-right" });
+      toast.success("Bewertung erfolgreich aktualisiert", { position: "top-right" });
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
       setIsEditModalOpen(false);
       setReviewToEdit(null);
@@ -321,7 +321,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditRating(0);
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update review", {
+      toast.error(error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.", {
         position: "top-right",
       });
     },
@@ -350,13 +350,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create payment intent");
+        throw new Error("Zahlungsabsicht konnte nicht erstellt werden");
       }
 
       const data = await response.json();
       setClientSecret(data.clientSecret);
     } catch (error) {
-      toast.error("Failed to initialize payment");
+      toast.error("Initialisierung der Zahlung fehlgeschlagen");
       console.error(error);
     } finally {
       setStripeLoading(false);
@@ -422,11 +422,11 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   const handleBooking = async (notifyMe = false) => {
     if (!session?.data?.user?.id) {
-      toast.error("Please log in to book this deal");
+      toast.error("Bitte melden Sie sich an, um dieses Angebot zu buchen");
       return;
     }
     if (!notifyMe && !selectedSchedule) {
-      toast.error("Please select a schedule date");
+      toast.error("Bitte wählen Sie ein Planungsdatum aus");
       return;
     }
     setIsBookingModalOpen(true);
@@ -466,10 +466,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         setIsPaymentModalOpen(true);
       } else {
         const error = await response.json();
-        throw new Error(error.message || "Something went wrong");
+        throw new Error(error.message || "Da ist etwas schiefgelaufen");
       }
     } catch (error) {
-      toast.error("Something went wrong: " + (error as Error).message);
+      toast.error("Da ist etwas schiefgelaufen: " + (error as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -513,7 +513,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           className="w-full bg-[#FFFFFF] text-[#212121] h-[40px] md:h-[40px]"
           disabled
         >
-          Unavailable
+         Nicht verfügbar
         </Button>
       );
     }
@@ -641,18 +641,18 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       <div className="space-y-6 pb-[20px] md:pb-[120px]">
         <h2 className="text-[32px] text-[#FFFFFF] font-semibold">
-          Customer Reviews
+          Kundenrezensionen
         </h2>
         <div>
           <p className="text-xl text-[#FFFFFF] font-medium">
-            Be the first to review &quot;This Deal&quot;
+            Seien Sie der Erste, der diesen Deal bewertet
           </p>
         </div>
         <div className="space-y-4 mt-6">
           {isLoadingReviews ? (
-            <p className="text-white">Loading reviews...</p>
+            <p className="text-white">Bewertungen werden geladen …</p>
           ) : errorReviews ? (
-            <p className="text-red-500">Error loading reviews</p>
+            <p className="text-red-500">Fehler beim Laden der Bewertungen</p>
           ) : reviewsData?.reviews?.length > 0 ? (
             reviewsData.reviews.map((review: Review) => (
               <div
