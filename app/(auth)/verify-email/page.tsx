@@ -1,6 +1,6 @@
-import Image from "next/image"
-import { VerifyEmailForm } from "@/components/VerifyEmailForm"
-import { Suspense } from "react"
+import Image from "next/image";
+import { VerifyEmailForm } from "@/components/VerifyEmailForm";
+import { Suspense } from "react";
 
 export default function VerifyEmailPage() {
   return (
@@ -34,24 +34,31 @@ export default function VerifyEmailPage() {
                 <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">Verify your email</h2>
-            <p className="max-w-md text-gray-300">Please enter the verification code sent to your email</p>
+            <h2 className="mb-2 text-4xl font-bold">
+              Bestätigen Sie Ihre E-Mail
+            </h2>
+            <p className="max-w-md text-gray-300">
+              Bitte geben Sie den Bestätigungscode ein, der Ihnen per E-Mail
+              zugesandt wurde.
+            </p>
           </div>
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Verify OTP</h1>
+            <h1 className="text-2xl font-bold">OTP überprüfen</h1>
             <p className="text-gray-400">
-              An OTP has been sent to your email
+              Ein OTP wurde an Ihre E-Mail gesendet
               <br />
-              Please verify it below
+              Bitte überprüfen Sie es unten
             </p>
           </div>
-          <Suspense fallback={<div>Loading...</div>}><VerifyEmailForm /></Suspense>
+          <Suspense fallback={<div>Laden...</div>}>
+            <VerifyEmailForm />
+          </Suspense>
         </div>
       </div>
     </div>
-  )
+  );
 }

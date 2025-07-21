@@ -63,18 +63,18 @@ export function VerifyEmailForm() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to resend verification code")
+        throw new Error("Der Bestätigungscode konnte nicht erneut gesendet werden.")
       }
       return await response.json()
     },
     onSuccess: () => {
-      toast.success("New verification code sent!")
+      toast.success("Neuer Bestätigungscode gesendet!")
       setOtp(Array(6).fill(""))
       setCanResend(false)
       startResendTimer()
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to resend code. Please try again.")
+      toast.error(error.message || "Der Code konnte nicht erneut gesendet werden. Bitte versuchen Sie es erneut.")
     }
   })
 
@@ -115,9 +115,9 @@ export function VerifyEmailForm() {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Verify Your Email</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Bestätigen Sie Ihre E-Mail</h2>
       <p className="text-center mb-6">
-        Enter the 6-digit code sent to <span className="font-semibold">{email}</span>
+        Geben Sie den 6-stelligen Code ein, der an <span className="font-semibold">{email}</span>
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
         <CustomOtpInput 
@@ -143,7 +143,7 @@ export function VerifyEmailForm() {
           onClick={() => router.push("/register")}
           className="text-blue-600 hover:underline text-sm"
         >
-          Back to Register
+          Zurück zur Registrierung
         </button>
         <button
           type="button"
