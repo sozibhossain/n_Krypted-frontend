@@ -339,18 +339,18 @@ const Notifications = () => {
                   {markingAsRead ? "Markierung..." : "Alle als gelesen markieren"}
                 </Button>
               )}
-            </div>bookings/notify
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {notifications.length === 0 ? (
             <div className="text-center py-8">
               <BellRing className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-white mb-2">
                 Noch keine Benachrichtigungen
               </h3>
               <p className="text-gray-500">
-                {"You'll see notifications here when there's activity on your deals."}
+                {"Sie sehen hier Benachrichtigungen, wenn bei Ihren Deals Aktivität stattfindet."}
               </p>
             </div>
           ) : (
