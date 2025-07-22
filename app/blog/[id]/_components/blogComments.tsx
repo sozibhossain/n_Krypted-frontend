@@ -90,7 +90,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
     return (
         <div className="">
             <div className="mb-4">
-                <h1 className="text-2xl font-bold text-white">Leave a comment</h1>
+                <h1 className="text-2xl font-bold text-white">Hinterlasse einen Kommentar</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 {!session?.user && (

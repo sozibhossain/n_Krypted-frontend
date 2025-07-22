@@ -141,7 +141,7 @@ export function TestimonialSection() {
                 {feedback.name}
               </h4>
               <p className="text-white text-sm text-muted-foreground">
-                Verified Bidder
+                Verifizierter Kunde
               </p>
             </div>
 

@@ -92,11 +92,11 @@ export default function ContactUsForm() {
 
       setSubmitStatus({
         success: true,
-        message: "Vielen Dank für Ihre Nachricht. Wir melden uns so schnell wie möglich bei Ihnen!",
+        message:
+          "Vielen Dank für Ihre Nachricht. Wir melden uns so schnell wie möglich bei Ihnen!",
       });
 
       // Log the full response for debugging
-     
     } catch (error) {
       console.error("Feedback submission error:", error);
       setSubmitStatus({
@@ -165,7 +165,7 @@ export default function ContactUsForm() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Geben Sie Ihre E-Mail-Adresse ein"
+                  placeholder="Gib deine E-Mail-Anschrift ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                   required
@@ -184,7 +184,7 @@ export default function ContactUsForm() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  placeholder="Geben Sie Ihre Telefonnummer ein"
+                  placeholder="Gib deine Telefonnummer ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                 />

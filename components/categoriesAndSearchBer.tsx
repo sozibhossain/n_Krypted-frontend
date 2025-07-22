@@ -253,7 +253,7 @@ export function CategoriesAndSearchBar() {
                         onClick={() => handleCategorySelect("")}
                         className={!selectedCategory ? "bg-gray-100" : ""}
                       >
-                        Frankfurt am Main
+                        
                       </DropdownMenuItem>
                       {isLoadingCategories ? (
                         <DropdownMenuItem disabled>

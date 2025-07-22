@@ -63,13 +63,22 @@ export default function Layout({ children }: LayoutProps) {
           {/* <div className="md:hidden w-6"></div> 
           <div className="hidden md:block"></div> */}
           {/* Logo */}
-          <div className="ml-[-50px] hidden lg:block">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="text-center">
+            <div>
+            <Link href="/" className="">
+              <div className="py-1">
                 <div className="flex justify-center">
-                  <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
+                  <Image
+                    src="/assets/logo-icon.png"
+                    alt="Logo"
+                    width={1000}
+                    height={1000}
+                    className="h-[37px] w-[95px]"
+                  />
                 </div>
-                <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
+                <h1
+                  className="text-[32px] logo-size font-normal font-benedict text-white leading-[120%]
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                >
                   Walk Throughz
                 </h1>
               </div>
