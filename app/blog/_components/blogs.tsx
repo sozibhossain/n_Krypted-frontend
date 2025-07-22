@@ -43,6 +43,18 @@ function Blogs() {
   return (
     <section>
       <PageHeader title="Our Latest Blogs" imge="/assets/Blogbanner.jpg" />
+
+      <div className="container my-24">
+        <h1 className="text-3xl font-bold mb-8 text-center text-white">
+          Was ist der aktuelle Zweck von Walk Throughz?
+        </h1>
+        <p className="text-center text-gray-300 mb-12">
+          Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten
+          Bürger*innen und Lokationen enger miteinander vernetzen und echte,
+          bleibende Bindungen zu Orten schaffen – durch das Teilen von lokalem
+          Fachwissen, Leidenschaft und Persönlichkeit.
+        </p>
+      </div>
       <div className="container my-24">
         {loading ? (
           <div className="grid grid-cols-1 gap-12 md:grid-cols-3">

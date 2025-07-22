@@ -152,7 +152,7 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
       onSubmit={handleSubmit}
       className="max-w-[800px] h-[480px] overflow-y-auto hide-scrollbar p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto"
     >
-      <h2 className="text-xl font-bold mb-4 text-white">Complete Payment</h2>
+      <h2 className="text-xl font-bold mb-4 text-white">Buchung abschließen</h2>
       <PaymentElement
         id="payment-element"
         options={{
@@ -169,10 +169,10 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
           {isLoading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Processing...
+              Verarbeitung...
             </div>
           ) : (
-            "Pay now"
+            "Jetzt zahlen"
           )}
         </span>
       </button>

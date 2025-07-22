@@ -81,7 +81,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     <div className="py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white pb-4">
+          <h1 className="text-3xl md:text-[31px] leading-[110%] font-bold text-white pb-4">
             {blog.title}
           </h1>
           <div className="flex  items-center space-x-4">
@@ -109,9 +109,9 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           <Image
             src={blog.image || "/default-image.jpg"}
             alt={blog.title || "Blog image"}
-            width={1000}
-            height={1000}
-            className="object-cover w-full h-[530px] "
+            width={3000}
+            height={3000}
+            className="object-cover w-full"
             priority
           />
         </div>
@@ -127,7 +127,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             `}</style>
 
             <div
-              className="list-item list-none !text-white blogcontent"
+              className="list-item list-none !text-white blogcontent mt-10"
               dangerouslySetInnerHTML={{
                 __html: blog?.description ?? "Blog Description",
               }}

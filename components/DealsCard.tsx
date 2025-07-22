@@ -540,7 +540,7 @@ export function DealsCard({
             </div>
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base">
               <div className="flex justify-between font-semibold">
-                <span className="text-white">gesamt</span>
+                <span className="text-white">Gesamt (inkl. MwSt.)</span>
                 <span className="text-white">{price?.toFixed(2)} EUR</span>
               </div>
             </div>

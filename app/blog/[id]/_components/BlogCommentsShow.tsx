@@ -87,7 +87,7 @@ export function BlogCommentsSection({ blogId }: BlogCommentsSectionProps) {
     return (
       <section className="container lg:mt-24 bg-white rounded-2xl py-6">
         <div className="text-black text-center">
-          No comments available at the moment.
+          Zurzeit sind keine Kommentare verfügbar.
         </div>
       </section>
     );
