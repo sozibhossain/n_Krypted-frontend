@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@radix-ui/react-dialog";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 interface LogOutModalProps {
@@ -17,18 +18,29 @@ const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen, onConfirmLogou
       <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-md bg-[#212121] text-white border-none z-50 focus:outline-none p-5 rounded-lg w-[500px] backdrop-blur-lg">
         <div className="flex flex-col items-center justify-center py-4">
           {/* Logo */}
-          <div className="mb-4">
-            <div className="text-center">
-              <div className="flex justify-center">
-                <Image src="/assets/logoheader.png" alt="Logo" width={100} height={100} className="h-[30px] w-[80px]" />
+          <div>
+            <Link href="/" className="">
+              <div className="py-1">
+                <div className="flex justify-center">
+                  <Image
+                    src="/assets/logo-icon.png"
+                    alt="Logo"
+                    width={1000}
+                    height={1000}
+                    className="h-[37px] w-[95px]"
+                  />
+                </div>
+                <h1
+                  className="text-[32px] logo-size font-normal font-benedict text-white leading-[120%]
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                >
+                  Walk Throughz
+                </h1>
               </div>
-              <h1 className="font-benedict font-normal text-[25px] leading-[120%] tracking-[0] text-white drop-shadow-[0_0_5px_white]">
-                Walk Throughz
-              </h1>
-            </div>
+            </Link>
           </div>
           <DialogTitle className="text-xl font-bold text-center">
-            Are You Sure To Log Out?
+            Möchten Sie sich wirklich abmelden?
           </DialogTitle>
           <div className="flex gap-4 mt-6 w-full">
             <button

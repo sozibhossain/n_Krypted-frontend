@@ -98,7 +98,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                         <input
                             type="text"
                             name="name"
-                            placeholder="Your name"
+                            placeholder="Ihr Name"
                             value={formData.name}
                             onChange={handleChange}
                             required
@@ -107,7 +107,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                         <input
                             type="email"
                             name="email"
-                            placeholder="Your email"
+                            placeholder="Ihre E-Mail"
                             value={formData.email}
                             onChange={handleChange}
                             required
@@ -117,7 +117,7 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                 )}
                 <textarea
                     name="message"
-                    placeholder="Your comment"
+                    placeholder="Ihr Kommentar"
                     value={formData.message}
                     onChange={handleChange}
                     required
@@ -134,13 +134,13 @@ function BlogComments({ blogId }: BlogCommentsProps) {
                             className="mt-1"
                         />
                         <label htmlFor="saveInfo" className='mt-[3px]'>
-                            Save my name and email in this browser for the next time I comment.
+                            Speichern Sie meinen Namen und E-Mail in diesem Browser für meinen nächsten Kommentar.
                         </label>
                     </div>
                 )}
                 <div>
                     <button type="submit" className="bg-white text-black px-8 py-2 rounded">
-                        Submit
+                        Einreichen
                     </button>
                 </div>
                 {message && <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-500' : 'text-red-500'}`}>

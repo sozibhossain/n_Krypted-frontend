@@ -87,10 +87,14 @@ export function DealsCard({
     isExpired: false,
   });
   const [clientSecret, setClientSecret] = useState<string>("");
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null); // Added to store paymentIntentId
   const [stripeLoading, setStripeLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<ScheduleDate | null>(null);
+  const [quantity, setQuantity] = useState(1); // State for quantity
 
   const token = session?.user?.accessToken ?? "";
+
+  console.log(paymentIntentId)
 
   // Timer logic - only run if timer is "on"
   useEffect(() => {
@@ -158,6 +162,7 @@ export function DealsCard({
   useEffect(() => {
     const firstAvailable = getFirstAvailableDate();
     setSelectedDate(firstAvailable);
+    setQuantity(1); // Reset quantity when component mounts
   }, [scheduleDates]);
 
   const createPaymentIntent = async () => {
@@ -175,7 +180,8 @@ export function DealsCard({
           body: JSON.stringify({
             userId: session?.user?.id,
             bookingId: bookingId,
-            price: price,
+            price: price * quantity, // Total price
+            quantity, // Include quantity
           }),
         }
       );
@@ -186,6 +192,7 @@ export function DealsCard({
 
       const data = await response.json();
       setClientSecret(data.clientSecret);
+      setPaymentIntentId(data.paymentIntentId); // Store paymentIntentId
     } catch (error) {
       toast.error("Failed to initialize payment");
       console.error(error);
@@ -233,6 +240,7 @@ export function DealsCard({
     const availableDate = getFirstAvailableDate();
     if (!notifyMe && status === "activate" && availableDate) {
       setSelectedDate(availableDate);
+      setQuantity(1); // Reset quantity when opening booking summary
       setIsBookingSummaryOpen(true);
     } else {
       await bookingPayment(notifyMe);
@@ -267,13 +275,14 @@ export function DealsCard({
     }
 
     try {
-      // eslint-disable-next-line
-      const requestBody: any = {
+      const requestBody = {
         userId: session?.user?.id,
         dealsId: id,
         notifyMe,
         scheduleDate: dateToSend.date,
         scheduleId: dateToSend._id,
+        price: price * quantity, // Total price
+        quantity, // Include quantity
       };
 
       const response = await fetch(
@@ -510,8 +519,9 @@ export function DealsCard({
                               (date) => date._id === e.target.value
                             );
                             setSelectedDate(selected || null);
+                            setQuantity(1); // Reset quantity when date changes
                           }}
-                          className="bg-gray-700  text-white  border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
+                          className="bg-gray-700 text-white border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
                         >
                           <option value="" disabled>
                             Select a date
@@ -533,15 +543,59 @@ export function DealsCard({
                     </div>
                   )}
                 </div>
-                <div className="text-base sm:text-lg font-semibold text-white mt-4 sm:mt-2 ">
-                  {price?.toFixed(2)} EUR
+                <div className="text-base sm:text-lg font-semibold text-white mt-4 sm:mt-2">
+                  <div className="flex items-center gap-2">
+                    <span>Menge:</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        onClick={() => {
+                          if (quantity > 1) {
+                            setQuantity(quantity - 1);
+                          }
+                        }}
+                        disabled={quantity <= 1}
+                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </Button>
+                      <span className="w-12 text-center">{quantity}</span>
+                      <Button
+                        onClick={() => {
+                          const maxAvailable = selectedDate
+                            ? selectedDate.participationsLimit -
+                              selectedDate.bookedCount
+                            : 1;
+                          if (quantity < maxAvailable) {
+                            setQuantity(quantity + 1);
+                          } else {
+                            toast.error(
+                              `Maximum ${maxAvailable} tickets available for this date`
+                            );
+                          }
+                        }}
+                        disabled={
+                          !selectedDate ||
+                          quantity >=
+                            (selectedDate.participationsLimit -
+                              selectedDate.bookedCount)
+                        }
+                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base">
               <div className="flex justify-between font-semibold">
                 <span className="text-white">Gesamt (inkl. MwSt.)</span>
-                <span className="text-white">{price?.toFixed(2)} EUR</span>
+                <span className="text-white">
+                  {(price * quantity).toFixed(2)} EUR
+                </span>
               </div>
             </div>
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
@@ -618,7 +672,7 @@ export function DealsCard({
         <DialogContent className="p-4 sm:p-5 w-full max-w-md">
           {bookingId && (
             <PayPalCheckout
-              amount={price}
+              amount={price * quantity} // Total price
               userId={session?.user?.id ?? ""}
               bookingId={bookingId}
             />
@@ -644,8 +698,11 @@ export function DealsCard({
                 },
               }}
             >
-              <div className="scale-y-[111%] scale-x-[113%] ">
-                <StripeCheckout bookingId={bookingId} price={price} />
+              <div className="scale-y-[111%] scale-x-[113%]">
+                <StripeCheckout
+                  bookingId={bookingId}
+                  price={price * quantity} // Total price
+                />
               </div>
             </Elements>
           ) : (
