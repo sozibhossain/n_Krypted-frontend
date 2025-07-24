@@ -94,7 +94,7 @@ export function DealsCard({
 
   const token = session?.user?.accessToken ?? "";
 
-  console.log(paymentIntentId)
+  console.log(paymentIntentId);
 
   // Timer logic - only run if timer is "on"
   useEffect(() => {
@@ -495,10 +495,16 @@ export function DealsCard({
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 space-y-4">
                 <h3 className="font-semibold text-white mb-1 text-sm sm:text-base">
                   {title}
                 </h3>
+
+                <Link href={`/deals/${id}`} className="space-y-3">
+                  <div className="flex items-center gap-1 text-white font-normal cursor-pointer text-sm sm:text-[14px]">
+                    <span>Details zum Deal</span>
+                  </div>
+                </Link>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-gray-300 space-y-1 sm:space-y-0">
                   {location && (
                     <div className="flex items-center gap-1">
@@ -545,8 +551,8 @@ export function DealsCard({
                 </div>
                 <div className="text-base sm:text-lg font-semibold text-white mt-4 sm:mt-2">
                   <div className="flex items-center gap-2">
-                    <span>Menge:</span>
-                    <div className="flex items-center gap-1">
+                    <span className="text-sm text-white pl-4">Anzahl</span>
+                    <div className="flex items-center gap-1 ml-[75px]">
                       <Button
                         onClick={() => {
                           if (quantity > 1) {
@@ -559,7 +565,9 @@ export function DealsCard({
                       >
                         -
                       </Button>
-                      <span className="w-12 text-center">{quantity}</span>
+                      <span className="w-12 text-center text-sm">
+                        {quantity}
+                      </span>
                       <Button
                         onClick={() => {
                           const maxAvailable = selectedDate
@@ -577,8 +585,8 @@ export function DealsCard({
                         disabled={
                           !selectedDate ||
                           quantity >=
-                            (selectedDate.participationsLimit -
-                              selectedDate.bookedCount)
+                            selectedDate.participationsLimit -
+                              selectedDate.bookedCount
                         }
                         className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
                         aria-label="Increase quantity"
@@ -661,7 +669,7 @@ export function DealsCard({
               disabled={isLoading || !selectedPaymentMethod || !selectedDate}
               className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-2 sm:py-3 text-sm sm:text-base"
             >
-              {isLoading ? "Verarbeitung..." : "Jetzt bezahlen"}
+              {isLoading ? "Wird bearbeitet..." : "Jetzt bezahlen"}
             </Button>
           </div>
         </DialogContent>
