@@ -859,7 +859,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 space-y-4">
                 <h3 className="font-semibold text-white mb-1">
                   {auction?.title}
                 </h3>
@@ -882,9 +882,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   )}
                 </div>
                 <div className="text-lg font-semibold text-white mt-2">
-                  <div className="flex items-center gap-2">
-                    <span>Menge:</span>
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center">
+                    <span className="text-sm pl-[15px] font-semibold">Anzahl</span>
+                    <div className="flex items-center gap-1 ml-[50px]">
                       <Button
                         onClick={() => {
                           if (quantity > 1) {
@@ -897,7 +897,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                       >
                         -
                       </Button>
-                      <span className="w-12 text-center">{quantity}</span>
+                      <span className="w-12 text-center text-sm">{quantity}</span>
                       <Button
                         onClick={() => {
                           const maxAvailable = selectedSchedule
