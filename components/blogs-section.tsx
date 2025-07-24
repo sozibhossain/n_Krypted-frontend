@@ -55,7 +55,7 @@ export function BlogsSection() {
 
       <div className="py-8">
         {loading ? (
-          <p className="text-center">Loading blogs...</p>
+          <p className="text-center text-white">Blogs werden geladen …</p>
         ) : (
           <div className="grid grid-cols-1 gap-14 sm:grid-cols-2 md:grid-cols-3">
             {blogs?.slice(0, 6).map((blog: Blog) => (

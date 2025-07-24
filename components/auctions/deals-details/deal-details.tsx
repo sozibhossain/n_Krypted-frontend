@@ -133,6 +133,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   >(null);
   const [clientSecret, setClientSecret] = useState<string>("");
   const [stripeLoading, setStripeLoading] = useState(false);
+  const [quantity, setQuantity] = useState(1); // Added state for quantity
 
   const session = useSession();
   const token = session?.data?.user?.accessToken;
@@ -203,6 +204,14 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   // Check if there are no schedules at all
   const noSchedulesAvailable = auction?.scheduleDates?.length === 0;
+
+  // Set default schedule on mount
+  useEffect(() => {
+    if (availableSchedules.length > 0 && !selectedSchedule) {
+      setSelectedSchedule(availableSchedules[0]);
+      setQuantity(1); // Reset quantity when schedule changes
+    }
+  }, [availableSchedules]);
 
   // Submit review mutation
   const submitReviewMutation = useMutation({
@@ -344,7 +353,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           body: JSON.stringify({
             userId: session?.data?.user?.id,
             bookingId: bookingId,
-            price: auction?.price,
+            price: auction?.price * quantity, // Total price
+            quantity, // Include quantity
           }),
         }
       );
@@ -429,6 +439,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       toast.error("Bitte wählen Sie ein Planungsdatum aus");
       return;
     }
+    setQuantity(1); // Reset quantity when opening booking modal
     setIsBookingModalOpen(true);
   };
 
@@ -456,6 +467,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             notifyMe: auction?.status === "deactivate" || allSchedulesFull,
             dealId: auctionId,
             scheduleDate: selectedSchedule?.date,
+            price: auction?.price * quantity, // Total price
+            quantity, // Include quantity
           }),
         }
       );
@@ -513,7 +526,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           className="w-full bg-[#FFFFFF] text-[#212121] h-[40px] md:h-[40px]"
           disabled
         >
-         Nicht verfügbar
+          Nicht verfügbar
         </Button>
       );
     }
@@ -608,7 +621,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                           ? "ring-2 ring-blue-400"
                           : ""
                       }`}
-                      onClick={() => setSelectedSchedule(schedule)}
+                      onClick={() => {
+                        setSelectedSchedule(schedule);
+                        setQuantity(1); // Reset quantity when schedule changes
+                      }}
                       disabled={!schedule.active}
                     >
                       <Calendar className="w-4 h-4" />
@@ -847,7 +863,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 <h3 className="font-semibold text-white mb-1">
                   {auction?.title}
                 </h3>
-                <div className="flex items-center gap-4 text-sm text-gray-300">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-gray-300 space-y-1 sm:space-y-0">
                   {auction?.location && (
                     <div className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
@@ -866,26 +882,64 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   )}
                 </div>
                 <div className="text-lg font-semibold text-white mt-2">
-                  ${auction?.price?.toFixed(2) || "0.00"}
+                  <div className="flex items-center gap-2">
+                    <span>Menge:</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        onClick={() => {
+                          if (quantity > 1) {
+                            setQuantity(quantity - 1);
+                          }
+                        }}
+                        disabled={quantity <= 1}
+                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </Button>
+                      <span className="w-12 text-center">{quantity}</span>
+                      <Button
+                        onClick={() => {
+                          const maxAvailable = selectedSchedule
+                            ? selectedSchedule.participationsLimit -
+                              selectedSchedule.bookedCount
+                            : 1;
+                          if (quantity < maxAvailable) {
+                            setQuantity(quantity + 1);
+                          } else {
+                            toast.error(
+                              `Maximum ${maxAvailable} tickets available for this date`
+                            );
+                          }
+                        }}
+                        disabled={
+                          !selectedSchedule ||
+                          quantity >=
+                            (selectedSchedule.participationsLimit -
+                              selectedSchedule.bookedCount)
+                        }
+                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
-                <span className="text-gray-300">Subtotal</span>
+                <span className="text-gray-300">Zwischensumme</span>
                 <span className="text-white">
-                  ${auction?.price?.toFixed(2) || "0.00"}
+                  ${(auction?.price * quantity).toFixed(2) || "0.00"}
                 </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Save</span>
-                <span className="text-white">$0.00</span>
               </div>
               <hr className="border-gray-600" />
               <div className="flex justify-between font-semibold">
-                <span className="text-white">Total</span>
+                <span className="text-white">TGesamt</span>
                 <span className="text-white">
-                  ${auction?.price?.toFixed(2) || "0.00"}
+                  ${(auction?.price * quantity).toFixed(2) || "0.00"}
                 </span>
               </div>
             </div>
@@ -952,12 +1006,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Stripe Checkout Modal */}
+      {/* Payment Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent className="p-10 border-[#FFFFFF33] text-white">
           {selectedPaymentMethod === "paypal" && bookingId && (
             <PayPalCheckout
-              amount={auction?.price || 0}
+              amount={auction?.price * quantity || 0} // Total price
               userId={session?.data?.user?.id ?? ""}
               bookingId={bookingId}
             />
@@ -982,7 +1036,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   <div className="scale-y-[118%] scale-x-[120%]">
                     <StripeCheckout
                       bookingId={bookingId}
-                      price={auction?.price || 0}
+                      price={auction?.price * quantity || 0} // Total price
                     />
                   </div>
                 </Elements>

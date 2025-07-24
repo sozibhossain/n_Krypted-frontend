@@ -135,11 +135,14 @@
 
 .list-item ul li::before {
   content: "•";
-  @apply text-gray-700;
+  @apply text-white;
   position: absolute;
   left: -1em;
 }
 
+.list-item strong {
+  color: #fff !important;
+}
 .list-item ol {
   counter-reset: item;
 }

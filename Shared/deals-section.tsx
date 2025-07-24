@@ -175,7 +175,7 @@ export function DealsSection() {
                 <CarouselItem className="basis-full pl-2 md:pl-4">
                   <div className="flex justify-center items-center h-40 sm:h-64">
                     <p className="text-white text-center text-sm sm:text-base">
-                      No deals available at the moment.
+                      Zurzeit sind keine Angebote verfügbar.
                     </p>
                   </div>
                 </CarouselItem>

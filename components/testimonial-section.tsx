@@ -53,7 +53,7 @@ export function TestimonialSection() {
   if (isLoading) {
     return (
       <section className="container lg:mt-24 py-[50px]">
-        <div className="text-white text-center">Loading feedback...</div>
+        <div className="text-white text-center">Feedback wird geladen ….</div>
       </section>
     );
   }
@@ -63,7 +63,7 @@ export function TestimonialSection() {
     return (
       <section className="container lg:mt-24 py-[50px]">
         <div className="text-white text-center">
-          Failed to load feedback. Please try again later.
+          Das Feedback konnte nicht geladen werden. Bitte versuchen Sie es später noch einmal.
         </div>
       </section>
     );

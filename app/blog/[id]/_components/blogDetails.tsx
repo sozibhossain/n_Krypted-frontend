@@ -55,8 +55,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <p>Loading blog post...</p>
+      <div className="flex justify-center items-center h-64 text-white">
+        <p>Blogbeitrag wird geladen …</p>
       </div>
     );
   }
@@ -76,6 +76,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
       </div>
     );
   }
+
+  console.log(blog)
 
   return (
     <div className="py-10">

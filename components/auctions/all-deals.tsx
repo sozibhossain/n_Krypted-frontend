@@ -618,7 +618,7 @@ function DealsPage() {
         </h3>
         {uniqueLocations.length === 0 ? (
           <div className="py-2 text-sm sm:text-base text-gray-500">
-            {allDealsData ? "No locations available" : "Loading locations..."}
+            {allDealsData ? "Keine Standorte verfügbar" : "Standorte werden geladen..."}
           </div>
         ) : (
           <DropdownMenu>

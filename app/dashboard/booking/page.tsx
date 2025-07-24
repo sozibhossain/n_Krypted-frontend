@@ -52,6 +52,8 @@ interface Booking {
   } | null;
   isBooked: boolean;
   notifyMe: boolean;
+  quantity: number;
+  price: number;
   scheduleDate: string;
   createdAt: string;
   updatedAt: string;
@@ -155,6 +157,8 @@ export default function BookingsPage() {
     pageNumbers.push(totalPages);
   }
 
+  console.log(bookings);
+
   return (
     <Layout>
       <div className="py-6">
@@ -187,6 +191,7 @@ export default function BookingsPage() {
                     <TableHead>Details</TableHead>
                     <TableHead>Schedule Date</TableHead>
                     <TableHead>Time</TableHead>
+                    <TableHead>Quantity</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Booking Status</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
@@ -227,11 +232,12 @@ export default function BookingsPage() {
                         {format(new Date(booking.createdAt), "yyyy-MM-dd")}
                         <div>3:00 PM</div>
                       </TableCell>
+
+                      <TableCell className="text-[#212121] text-base font-medium py-4 text-center">
+                        {booking.quantity}
+                      </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        $
-                        {booking.dealsId
-                          ? booking.dealsId.price.toFixed(2)
-                          : "50.00"}
+                        ${booking.price.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
                         {booking.isBooked
