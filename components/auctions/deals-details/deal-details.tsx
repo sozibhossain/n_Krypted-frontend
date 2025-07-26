@@ -25,6 +25,7 @@ import StripeCheckout from "@/components/pyment/StripeCheckout";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { formatDate } from "@/utils/time-utils";
+import Link from "next/link";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -139,6 +140,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const token = session?.data?.user?.accessToken;
   const queryClient = useQueryClient();
 
+  const [agbConsent, setAgbConsent] = useState(false); // State for AGB checkbox
+  const [privacyConsent, setPrivacyConsent] = useState(false); // State for privacy checkbox
+
   // Fetch auction details
   const {
     data: auctionData,
@@ -152,7 +156,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Auktionsdetails konnten nicht abgerufen werden");
+        throw new Error(
+          errorData.message || "Auktionsdetails konnten nicht abgerufen werden"
+        );
       }
       return response.json();
     },
@@ -173,7 +179,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Bewertungen konnten nicht abgerufen werden");
+        throw new Error(
+          errorData.message || "Bewertungen konnten nicht abgerufen werden"
+        );
       }
       return response.json();
     },
@@ -217,7 +225,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const submitReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData) => {
       if (!token) {
-        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
+        throw new Error(
+          "Authentifizierung erforderlich. Bitte melden Sie sich an."
+        );
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
@@ -232,7 +242,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Bewertung konnte nicht übermittelt werden");
+        throw new Error(
+          errorData.message || "Bewertung konnte nicht übermittelt werden"
+        );
       }
       return response.json();
     },
@@ -247,9 +259,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEmail("");
     },
     onError: (error) => {
-      toast.error(error.message || "Bewertung konnte nicht übermittelt werden", {
-        position: "top-right",
-      });
+      toast.error(
+        error.message || "Bewertung konnte nicht übermittelt werden",
+        {
+          position: "top-right",
+        }
+      );
     },
   });
 
@@ -257,7 +272,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   const deleteReviewMutation = useMutation({
     mutationFn: async ({ reviewId }: DeleteReviewData) => {
       if (!token) {
-        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
+        throw new Error(
+          "Authentifizierung erforderlich. Bitte melden Sie sich an."
+        );
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`,
@@ -270,7 +287,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Die Bewertung konnte nicht gelöscht werden.");
+        throw new Error(
+          errorData.message || "Die Bewertung konnte nicht gelöscht werden."
+        );
       }
       return response.json();
     },
@@ -283,9 +302,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
     },
     onError: (error) => {
-      toast.error(error.message || "Die Bewertung konnte nicht gelöscht werden.", {
-        position: "top-right",
-      });
+      toast.error(
+        error.message || "Die Bewertung konnte nicht gelöscht werden.",
+        {
+          position: "top-right",
+        }
+      );
       setIsDeleteModalOpen(false);
       setReviewToDelete(null);
     },
@@ -299,7 +321,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       ratings,
     }: EditReviewData) => {
       if (!token) {
-        throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich an.");
+        throw new Error(
+          "Authentifizierung erforderlich. Bitte melden Sie sich an."
+        );
       }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${reviewId}`,
@@ -317,12 +341,17 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.");
+        throw new Error(
+          errorData.message ||
+            "Die Aktualisierung der Bewertung ist fehlgeschlagen."
+        );
       }
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Bewertung erfolgreich aktualisiert", { position: "top-right" });
+      toast.success("Bewertung erfolgreich aktualisiert", {
+        position: "top-right",
+      });
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
       setIsEditModalOpen(false);
       setReviewToEdit(null);
@@ -330,9 +359,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditRating(0);
     },
     onError: (error) => {
-      toast.error(error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.", {
-        position: "top-right",
-      });
+      toast.error(
+        error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
+        {
+          position: "top-right",
+        }
+      );
     },
   });
 
@@ -709,13 +741,14 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             ))
           ) : (
             <p className="text-white">
-              No reviews yet. Be the first to review!
+              Bisher sind keine Bewertungen vorhanden. Schreiben Sie die erste
+              Bewertung!
             </p>
           )}
         </div>
         <div className="gap-2">
           <span className="text-base text-[#FFFFFF] font-medium mb-5">
-            Your rating:
+            Ihre Bewertung:
           </span>
           <StarRating
             rating={reviewRating}
@@ -725,7 +758,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </div>
         <form onSubmit={handleSubmitReview} className="space-y-4">
           <Textarea
-            placeholder="Your review"
+            placeholder="Ihre Bewertung"
             className="min-h-[150px] border border-[#FFFFFF] text-[#FFFFFF] placeholder:text-white"
             value={reviewComment}
             onChange={(e) => setReviewComment(e.target.value)}
@@ -740,7 +773,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             />
             <Input
               className="border border-[#FFFFFF] placeholder:text-white text-white"
-              placeholder="Email"
+              placeholder="E-Mail"
               type="email"
               required
               value={email}
@@ -752,7 +785,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             type="submit"
             disabled={submitReviewMutation.isPending}
           >
-            {submitReviewMutation.isPending ? "Submitting..." : "Submit"}
+            {submitReviewMutation.isPending ? "Senden..." : "Einreichen"}
           </Button>
         </form>
       </div>
@@ -845,7 +878,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Booking Summary</h2>
+              <h2 className="text-xl font-semibold">Buchungsübersicht</h2>
             </div>
             <div className="flex gap-4 mb-6">
               <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -863,66 +896,72 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 <h3 className="font-semibold text-white mb-1">
                   {auction?.title}
                 </h3>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-gray-300 space-y-1 sm:space-y-0">
-                  {auction?.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      <span>
-                        {auction.location.city}, {auction.location.country}
+                <div className="translate-y-[10px] translate-x-[-15px]">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-gray-300 space-y-1 sm:space-y-0">
+                    {auction?.location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>
+                          {auction.location.city}, {auction.location.country}
+                        </span>
+                      </div>
+                    )}
+                    {selectedSchedule && (
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        <span className="text-sm text-nowrap">
+                          {formatDate(selectedSchedule.date)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-lg font-semibold text-white mt-2">
+                    <div className="flex items-center">
+                      <span className="text-sm pl-[15px] font-semibold">
+                        Anzahl
                       </span>
-                    </div>
-                  )}
-                  {selectedSchedule && (
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      <span className="text-sm text-nowrap">
-                        {formatDate(selectedSchedule.date)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="text-lg font-semibold text-white mt-2">
-                  <div className="flex items-center">
-                    <span className="text-sm pl-[15px] font-semibold">Anzahl</span>
-                    <div className="flex items-center gap-1 ml-[50px]">
-                      <Button
-                        onClick={() => {
-                          if (quantity > 1) {
-                            setQuantity(quantity - 1);
+                      <div className="flex items-center gap-1 ml-[50px]">
+                        <Button
+                          onClick={() => {
+                            if (quantity > 1) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
+                          disabled={quantity <= 1}
+                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          aria-label="Decrease quantity"
+                        >
+                          -
+                        </Button>
+                        <span className="w-12 text-center text-sm">
+                          {quantity}
+                        </span>
+                        <Button
+                          onClick={() => {
+                            const maxAvailable = selectedSchedule
+                              ? selectedSchedule.participationsLimit -
+                                selectedSchedule.bookedCount
+                              : 1;
+                            if (quantity < maxAvailable) {
+                              setQuantity(quantity + 1);
+                            } else {
+                              toast.error(
+                                `Maximum ${maxAvailable} tickets available for this date`
+                              );
+                            }
+                          }}
+                          disabled={
+                            !selectedSchedule ||
+                            quantity >=
+                              selectedSchedule.participationsLimit -
+                                selectedSchedule.bookedCount
                           }
-                        }}
-                        disabled={quantity <= 1}
-                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
-                        aria-label="Decrease quantity"
-                      >
-                        -
-                      </Button>
-                      <span className="w-12 text-center text-sm">{quantity}</span>
-                      <Button
-                        onClick={() => {
-                          const maxAvailable = selectedSchedule
-                            ? selectedSchedule.participationsLimit -
-                              selectedSchedule.bookedCount
-                            : 1;
-                          if (quantity < maxAvailable) {
-                            setQuantity(quantity + 1);
-                          } else {
-                            toast.error(
-                              `Maximum ${maxAvailable} tickets available for this date`
-                            );
-                          }
-                        }}
-                        disabled={
-                          !selectedSchedule ||
-                          quantity >=
-                            (selectedSchedule.participationsLimit -
-                              selectedSchedule.bookedCount)
-                        }
-                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
-                        aria-label="Increase quantity"
-                      >
-                        +
-                      </Button>
+                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -963,13 +1002,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   )}
                 </div>
-                <span className="text-white">Pay With PayPal</span>
+                <span className="text-white">Bezahlen mit PayPal</span>
                 <div className="ml-auto">
                   <span className="text-blue-500 font-semibold">PayPal</span>
                 </div>
               </div>
               <div
-                className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
+                className={`flex items-center gap-3 px-2 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "stripe"
                     ? "border-blue-500 bg-blue-500/10"
                     : "border-gray-600"
@@ -987,19 +1026,105 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   )}
                 </div>
-                <span className="text-white">Pay With Stripe</span>
+                <span className="text-white flex gap-2 mt-3">
+                  Bezahlen mit Stripe
+                  <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                    {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
+                    <div className="flex space-x-1">
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/visa.png"
+                          alt="Maestro"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/maestro.png"
+                          alt="Maestro"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/amex.png"
+                          alt="American Express"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </span>
+
                 <div className="ml-auto">
                   <span className="text-blue-500 font-semibold">Stripe</span>
                 </div>
               </div>
             </div>
+            <div className="space-y-4 text-sm text-white pb-4">
+              {/* AGB Zustimmung */}
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-1 accent-blue-500"
+                  name="agbConsent"
+                  checked={agbConsent}
+                  onChange={(e) => setAgbConsent(e.target.checked)} // Update state
+                />
+                <span>
+                  Ich habe die Allgemeinen{" "}
+                  <Link
+                    href="/report"
+                    className="underline text-blue-400 hover:text-blue-300"
+                  >
+                    Geschäftsbedingungen
+                  </Link>{" "}
+                  gelesen und akzeptiere sie.
+                </span>
+              </label>
+
+              {/* Datenschutzhinweis */}
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-1 accent-blue-500"
+                  name="privacyConsent"
+                  checked={privacyConsent}
+                  onChange={(e) => setPrivacyConsent(e.target.checked)} // Update state
+                />
+                <span>
+                  Ich habe die{" "}
+                  <Link
+                    href="/refund-policies"
+                    className="underline text-blue-400 hover:text-blue-300"
+                  >
+                    Datenschutzerklärung
+                  </Link>{" "}
+                  zur Kenntnis genommen.
+                </span>
+              </label>
+            </div>
+
             <DialogFooter className="flex gap-3 justify-end pt-0 border-t-0">
               <Button
                 onClick={confirmBooking}
                 className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-3"
-                disabled={isLoading || !selectedPaymentMethod}
+                disabled={
+                  isLoading ||
+                  !selectedPaymentMethod ||
+                  !agbConsent ||
+                  !privacyConsent
+                } // Updated condition
               >
-                {isLoading ? "Processing..." : "Proceed to Payment"}
+                {isLoading ? "Verarbeitung..." : "Weiter zur Zahlung"}
               </Button>
             </DialogFooter>
           </div>

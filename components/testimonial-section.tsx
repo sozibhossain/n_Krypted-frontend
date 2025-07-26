@@ -1,5 +1,5 @@
 "use client";
-import { MoveLeft, MoveRight} from "lucide-react";
+import { MoveLeft, MoveRight } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -13,6 +13,7 @@ type Feedback = {
   message: string;
   createdAt: string;
   updatedAt: string;
+  isApproved: boolean; // Add isApproved field
 };
 
 type FeedbackResponse = {
@@ -37,16 +38,23 @@ export function TestimonialSection() {
     },
   });
 
+
+
+  // Filter feedbacks to only include those with isApproved: true
+  const approvedFeedbacks = data?.feedbacks?.filter(
+    (feedback) => feedback.isApproved
+  ) || [];
+
   const handlePrev = () => {
-    if (!data?.feedbacks?.length) return;
+    if (!approvedFeedbacks.length) return;
     setCurrentIndex(
-      (prev) => (prev - 1 + data.feedbacks.length) % data.feedbacks.length
+      (prev) => (prev - 1 + approvedFeedbacks.length) % approvedFeedbacks.length
     );
   };
 
   const handleNext = () => {
-    if (!data?.feedbacks?.length) return;
-    setCurrentIndex((prev) => (prev + 1) % data.feedbacks.length);
+    if (!approvedFeedbacks.length) return;
+    setCurrentIndex((prev) => (prev + 1) % approvedFeedbacks.length);
   };
 
   // Show loading state
@@ -69,30 +77,14 @@ export function TestimonialSection() {
     );
   }
 
-  // If no feedback data
-  if (!data.feedbacks || data.feedbacks.length === 0) {
-    return (
-      <section className="container lg:mt-24 py-[50px]">
-        <div className="text-white text-center">
-          No feedback available at the moment.
-        </div>
-      </section>
-    );
+  // If no approved feedback data
+  if (!approvedFeedbacks.length) {
+    return 
   }
 
-  const feedback = data.feedbacks[currentIndex];
+  const feedback = approvedFeedbacks[currentIndex];
 
-  console.log(feedback);
-
-  // Format date to be more readable
-  // const formattedDate = new Date(feedback.createdAt).toLocaleDateString(
-  //   "en-US",
-  //   {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   }
-  // );
+  
 
   return (
     <section className="container lg:mt-24 py-[50px]">
@@ -111,19 +103,18 @@ export function TestimonialSection() {
           </div>
 
           <h2 className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">
-           Was sagt unsere Community?
+            Was sagt unsere Community?
           </h2>
         </div>
 
         <div className="col-span-6 md:col-span-4 lg:col-span-4">
-          <div className=" flex flex-col mb-5 pl-6 gap-4">
-            {/* <Quote className="absolute left-0 top-0 h-5 w-5 text-white" /> */}
+          <div className="flex flex-col mb-5 pl-6 gap-4">
             <Image
               src="/assets/E.png"
               alt="quote"
               width={50}
               height={50}
-              className=" h-[32px] w-[44px] text-white"
+              className="h-[32px] w-[44px] text-white"
             />
             <p className="text-white text-lg overflow-hidden">
               {feedback.message}
@@ -131,21 +122,18 @@ export function TestimonialSection() {
           </div>
           <div className="flex items-center gap-4">
             <div className="relative h-12 w-12 overflow-hidden rounded-full bg-gray-700 flex items-center justify-center">
-              {/* Using initials as placeholder since we don't have images in the API response */}
               <span className="text-white text-lg font-bold">
                 {feedback.name.charAt(0)}
               </span>
             </div>
             <div>
-              <h4 className="text-white text-sm lg:text-lg font-medium ">
+              <h4 className="text-white text-sm lg:text-lg font-medium">
                 {feedback.name}
               </h4>
               <p className="text-white text-sm text-muted-foreground">
                 Verifizierter Kunde
               </p>
             </div>
-
-           
 
             <div className="ml-auto flex gap-2">
               <button

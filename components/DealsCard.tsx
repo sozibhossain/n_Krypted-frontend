@@ -92,6 +92,9 @@ export function DealsCard({
   const [selectedDate, setSelectedDate] = useState<ScheduleDate | null>(null);
   const [quantity, setQuantity] = useState(1); // State for quantity
 
+  const [agbConsent, setAgbConsent] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+
   const token = session?.user?.accessToken ?? "";
 
   console.log(paymentIntentId);
@@ -505,94 +508,96 @@ export function DealsCard({
                     <span>Details zum Deal</span>
                   </div>
                 </Link>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-gray-300 space-y-1 sm:space-y-0">
-                  {location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      <span>
-                        {location.city}, {location.country}
-                      </span>
-                    </div>
-                  )}
-                  {scheduleDates && scheduleDates.length > 0 && (
-                    <div className="flex items-center justify-center gap-2 space-y-4">
-                      <Calendar className="w-3 h-3" />
-                      <div className="translate-y-[-7px]">
-                        <select
-                          value={selectedDate?._id || ""}
-                          onChange={(e) => {
-                            const selected = scheduleDates.find(
-                              (date) => date._id === e.target.value
-                            );
-                            setSelectedDate(selected || null);
-                            setQuantity(1); // Reset quantity when date changes
-                          }}
-                          className="bg-gray-700 text-white border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
-                        >
-                          <option value="" disabled>
-                            Select a date
-                          </option>
-                          {scheduleDates
-                            .filter(
-                              (date) =>
-                                date.active &&
-                                new Date(date.date) > new Date() &&
-                                date.bookedCount < date.participationsLimit
-                            )
-                            .map((date) => (
-                              <option key={date._id} value={date._id}>
-                                {formatDate(date.date)}
-                              </option>
-                            ))}
-                        </select>
+                <div className="translate-y-[-5px] translate-x-[-15px]">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-gray-300 sm:space-y-0">
+                    {location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>
+                          {location.city}, {location.country}
+                        </span>
                       </div>
-                    </div>
-                  )}
-                </div>
-                <div className="text-base sm:text-lg font-semibold text-white mt-4 sm:mt-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-white pl-4">Anzahl</span>
-                    <div className="flex items-center gap-1 ml-[75px]">
-                      <Button
-                        onClick={() => {
-                          if (quantity > 1) {
-                            setQuantity(quantity - 1);
+                    )}
+                    {scheduleDates && scheduleDates.length > 0 && (
+                      <div className="flex items-center justify-center gap-2 space-y-4">
+                        <Calendar className="w-3 h-3" />
+                        <div className="translate-y-[-7px]">
+                          <select
+                            value={selectedDate?._id || ""}
+                            onChange={(e) => {
+                              const selected = scheduleDates.find(
+                                (date) => date._id === e.target.value
+                              );
+                              setSelectedDate(selected || null);
+                              setQuantity(1); // Reset quantity when date changes
+                            }}
+                            className="bg-gray-700 text-white border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
+                          >
+                            <option value="" disabled>
+                              Select a date
+                            </option>
+                            {scheduleDates
+                              .filter(
+                                (date) =>
+                                  date.active &&
+                                  new Date(date.date) > new Date() &&
+                                  date.bookedCount < date.participationsLimit
+                              )
+                              .map((date) => (
+                                <option key={date._id} value={date._id}>
+                                  {formatDate(date.date)}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-base sm:text-lg font-semibold text-white mt-4 sm:mt-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white pl-4">Anzahl</span>
+                      <div className="flex items-center gap-1 ml-[75px]">
+                        <Button
+                          onClick={() => {
+                            if (quantity > 1) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
+                          disabled={quantity <= 1}
+                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          aria-label="Decrease quantity"
+                        >
+                          -
+                        </Button>
+                        <span className="w-12 text-center text-sm">
+                          {quantity}
+                        </span>
+                        <Button
+                          onClick={() => {
+                            const maxAvailable = selectedDate
+                              ? selectedDate.participationsLimit -
+                                selectedDate.bookedCount
+                              : 1;
+                            if (quantity < maxAvailable) {
+                              setQuantity(quantity + 1);
+                            } else {
+                              toast.error(
+                                `Maximum ${maxAvailable} tickets available for this date`
+                              );
+                            }
+                          }}
+                          disabled={
+                            !selectedDate ||
+                            quantity >=
+                              selectedDate.participationsLimit -
+                                selectedDate.bookedCount
                           }
-                        }}
-                        disabled={quantity <= 1}
-                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
-                        aria-label="Decrease quantity"
-                      >
-                        -
-                      </Button>
-                      <span className="w-12 text-center text-sm">
-                        {quantity}
-                      </span>
-                      <Button
-                        onClick={() => {
-                          const maxAvailable = selectedDate
-                            ? selectedDate.participationsLimit -
-                              selectedDate.bookedCount
-                            : 1;
-                          if (quantity < maxAvailable) {
-                            setQuantity(quantity + 1);
-                          } else {
-                            toast.error(
-                              `Maximum ${maxAvailable} tickets available for this date`
-                            );
-                          }
-                        }}
-                        disabled={
-                          !selectedDate ||
-                          quantity >=
-                            selectedDate.participationsLimit -
-                              selectedDate.bookedCount
-                        }
-                        className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
-                        aria-label="Increase quantity"
-                      >
-                        +
-                      </Button>
+                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -636,7 +641,7 @@ export function DealsCard({
                 </div>
               </div>
               <div
-                className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg cursor-pointer ${
+                className={`flex items-center gap-2 sm:gap-3 px-2 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "stripe"
                     ? "border-blue-500 bg-blue-500/10"
                     : "border-gray-600"
@@ -654,8 +659,40 @@ export function DealsCard({
                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   )}
                 </div>
-                <span className="text-white text-sm sm:text-base">
+                <span className="text-white flex gap-2 mt-3">
                   Bezahlen mit Stripe
+                  <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                    {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
+                    <div className="flex space-x-1">
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/visa.png"
+                          alt="Maestro"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/maestro.png"
+                          alt="Maestro"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                      <div className="flex items-center justify-center bg-white">
+                        <Image
+                          src="/assets/amex.png"
+                          alt="American Express"
+                          width={60}
+                          height={30}
+                          className="h-5 w-7 "
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </span>
                 <div className="ml-auto">
                   <span className="text-blue-500 font-semibold text-sm sm:text-base">
@@ -664,9 +701,60 @@ export function DealsCard({
                 </div>
               </div>
             </div>
+            <div className="space-y-4 text-sm text-white pb-4">
+              {/* AGB Zustimmung */}
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-1 accent-blue-500"
+                  name="agbConsent"
+                  checked={agbConsent}
+                  onChange={(e) => setAgbConsent(e.target.checked)} // Update state
+                />
+                <span>
+                  Ich habe die Allgemeinen{" "}
+                  <Link
+                    href="/report"
+                    className="underline text-blue-400 hover:text-blue-300"
+                  >
+                    Geschäftsbedingungen
+                  </Link>{" "}
+                  gelesen und akzeptiere sie.
+                </span>
+              </label>
+
+              {/* Datenschutzhinweis */}
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-1 accent-blue-500"
+                  name="privacyConsent"
+                  checked={privacyConsent}
+                  onChange={(e) => setPrivacyConsent(e.target.checked)} // Update state
+                />
+                <span>
+                  Ich habe die{" "}
+                  <Link
+                    href="/refund-policies"
+                    className="underline text-blue-400 hover:text-blue-300"
+                  >
+                    Datenschutzerklärung
+                  </Link>{" "}
+                  zur Kenntnis genommen.
+                </span>
+              </label>
+            </div>
             <Button
               onClick={() => bookingPayment(false)}
-              disabled={isLoading || !selectedPaymentMethod || !selectedDate}
+              disabled={
+                isLoading ||
+                !selectedPaymentMethod ||
+                !selectedDate ||
+                !agbConsent ||
+                !privacyConsent
+              } // Updated condition
               className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-2 sm:py-3 text-sm sm:text-base"
             >
               {isLoading ? "Wird bearbeitet..." : "Jetzt bezahlen"}

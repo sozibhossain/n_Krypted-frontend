@@ -11,7 +11,7 @@ import {
   FileText,
   Settings,
   LogOut,
-  House,
+  MessageSquareMore,
 } from "lucide-react";
 import {
   Sidebar,
@@ -48,9 +48,9 @@ export function AppSidebar({ }: AppSidebarProps) {
 
   return (
     <>
-      <Sidebar className="border-r-0 w-[108px]" collapsible="none">
+      <Sidebar className="border-r-0 w-[120px]" collapsible="none">
         <SidebarContent className="p-4 bg-[#212121]">
-          <SidebarMenu className="space-y-2 pt-[100px]">
+          <SidebarMenu className="space-y-2 pt-16">
             <>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -109,6 +109,19 @@ export function AppSidebar({ }: AppSidebarProps) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/reviews")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/reviews" className="flex flex-col items-center text-center">
+                    <MessageSquareMore className={`h-5 w-5 ${isActive("/dashboard/reviews") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/reviews") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Booking reviews
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -137,6 +150,19 @@ export function AppSidebar({ }: AppSidebarProps) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/feedback")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/feedback" className="flex flex-col items-center">
+                    <MessageSquareMore className={`h-5 w-5 ${isActive("/dashboard/feedback") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/feedback") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      Feedback
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -151,7 +177,7 @@ export function AppSidebar({ }: AppSidebarProps) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
+              {/* <SidebarMenuItem>
                 <div
                   className="group py-8 flex justify-center"
                 >
@@ -162,7 +188,7 @@ export function AppSidebar({ }: AppSidebarProps) {
                     </span>
                   </Link>
                 </div>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </>
           </SidebarMenu>
         </SidebarContent>
