@@ -5,8 +5,6 @@ import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
 import { Calendar, UserRound } from "lucide-react";
-import BlogComments from "./blogComments";
-import { BlogCommentsSection } from "./BlogCommentsShow";
 
 interface BlogDetailsProps {
   id?: string;
@@ -136,12 +134,12 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             />
           </>
 
-          <div className="pt-[150px]">
+          {/* <div className="pt-[150px]">
             <BlogCommentsSection blogId={blogId} />
-          </div>
+          </div> */}
         </div>
-
-        <BlogComments blogId={blogId} />
+{/* 
+        <BlogComments blogId={blogId} /> */}
       </div>
     </div>
   );

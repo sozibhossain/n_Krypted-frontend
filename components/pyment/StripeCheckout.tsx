@@ -1,8 +1,11 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -33,55 +36,57 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
       return;
     }
 
-    stripe.retrievePaymentIntent(clientSecret).then(async ({ paymentIntent }) => {
-      switch (paymentIntent?.status) {
-        case "succeeded":
-          setMessage("Payment succeeded!");
-          toast.success("Payment succeeded!");
-          
-          // Call your API to confirm payment
-          try {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${session?.user?.accessToken}`,
-                },
-                body: JSON.stringify({
-                  paymentIntentId: paymentIntent.id,
-                  bookingId,
-                  price,
-                  userId: session?.user?.id,
-                }),
+    stripe
+      .retrievePaymentIntent(clientSecret)
+      .then(async ({ paymentIntent }) => {
+        switch (paymentIntent?.status) {
+          case "succeeded":
+            setMessage("Payment succeeded!");
+            toast.success("Payment succeeded!");
+
+            // Call your API to confirm payment
+            try {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-payment`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session?.user?.accessToken}`,
+                  },
+                  body: JSON.stringify({
+                    paymentIntentId: paymentIntent.id,
+                    bookingId,
+                    price,
+                    userId: session?.user?.id,
+                  }),
+                }
+              );
+
+              if (!response.ok) {
+                throw new Error("Failed to confirm payment");
               }
-            );
 
-            if (!response.ok) {
-              throw new Error("Failed to confirm payment");
+              router.push("/success");
+            } catch (error) {
+              console.error("Payment confirmation failed:", error);
+              toast.error("Payment confirmation failed");
             }
-
-            router.push("/success");
-          } catch (error) {
-            console.error("Payment confirmation failed:", error);
-            toast.error("Payment confirmation failed");
-          }
-          break;
-        case "processing":
-          setMessage("Your payment is processing.");
-          toast.info("Your payment is processing.");
-          break;
-        case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
-          toast.error("Payment failed. Please try again.");
-          break;
-        default:
-          setMessage("Something went wrong.");
-          toast.error("Something went wrong.");
-          break;
-      }
-    });
+            break;
+          case "processing":
+            setMessage("Your payment is processing.");
+            toast.info("Your payment is processing.");
+            break;
+          case "requires_payment_method":
+            setMessage("Your payment was not successful, please try again.");
+            toast.error("Payment failed. Please try again.");
+            break;
+          default:
+            setMessage("Something went wrong.");
+            toast.error("Something went wrong.");
+            break;
+        }
+      });
   }, [stripe, router, bookingId, price, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,7 +118,7 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
       // Handle successful payment
       setMessage("Payment succeeded!");
       toast.success("Payment succeeded!");
-      
+
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/stripe/confirm-payment`,

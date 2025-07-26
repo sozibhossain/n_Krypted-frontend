@@ -20,8 +20,8 @@ const page = () => {
             <Image
               src="/assets/kontact.jpg"
               alt="Auction speaker"
-              height={472}
-              width={370}
+              height={1000}
+              width={1000}
               className="rounded-xl  w-full max-w-[470px] h-auto object-fill"
               priority
             />

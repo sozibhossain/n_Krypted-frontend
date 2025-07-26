@@ -29,7 +29,7 @@ export function HeroBanner() {
                 Deine Stadt neu – durch kurze, persönliche Einblicke direkt von
                 den Menschen, die sie gestalten. Ob Blumenladen, Galerie oder
                 Kaffeerösterei: Überall wartet eine eigene kleine Welt auf Dich.
-                <div>
+                <div className="text-white">
                   In kleinen Gruppen entdeckst Du neue Perspektiven, spannende
                   Themen – und triffst Leute, die Deine Interessen teilen.
                 </div>
