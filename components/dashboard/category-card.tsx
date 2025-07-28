@@ -97,7 +97,6 @@ export function CategoryCard({
       toast("Failed to update category");
     }
   };
-
   return (
     <Card className="overflow-hidden">
       <div className="aspect-video relative">
