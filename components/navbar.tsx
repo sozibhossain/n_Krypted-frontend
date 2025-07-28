@@ -100,7 +100,7 @@ export function Navbar() {
                     alt="Logo"
                     width={1000}
                     height={1000}
-                    className="h-[37px] w-[95px]"
+                    className="h-[30px] w-[80px] lg:h-[37px] lg:w-[95px]"
                   />
                 </div>
                 <h1
