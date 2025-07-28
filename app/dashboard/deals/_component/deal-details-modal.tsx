@@ -111,7 +111,8 @@ export default function DealDetailsModal({
           </div>
         ) : error ? (
           <div className="p-4 text-center text-red-500">
-            Failed to load deal details. Please check the deal ID or try again later.
+            Failed to load deal details. Please check the deal ID or try again
+            later.
           </div>
         ) : deal ? (
           <div className="space-y-6">
@@ -120,7 +121,9 @@ export default function DealDetailsModal({
                 <h2 className="text-2xl font-bold">{deal.title}</h2>
                 <p className="text-gray-500 text-sm">ID: {deal._id}</p>
               </div>
-              <Badge variant={deal.status === "activate" ? "default" : "outline"}>
+              <Badge
+                variant={deal.status === "activate" ? "default" : "outline"}
+              >
                 {deal.status === "activate" ? "Active" : "Inactive"}
               </Badge>
             </div>
@@ -130,7 +133,10 @@ export default function DealDetailsModal({
             {deal.images && deal.images.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {deal.images.map((image, index) => (
-                  <div key={index} className="relative h-48 rounded-md overflow-hidden">
+                  <div
+                    key={index}
+                    className="relative h-48 rounded-md overflow-hidden"
+                  >
                     <Image
                       src={image || "/placeholder.svg"}
                       alt={`${deal.title} image ${index + 1}`}
@@ -155,11 +161,15 @@ export default function DealDetailsModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardContent className="pt-6">
-                  <h3 className="text-lg font-semibold mb-2">Deal Information</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Deal Information
+                  </h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-[#212121]">Price:</span>
-                      <span className="font-medium">${deal.price.toFixed(2)}</span>
+                      <span className="font-medium">
+                        ${deal.price.toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#212121]">Location:</span>
@@ -175,7 +185,7 @@ export default function DealDetailsModal({
                         {deal.category?.categoryName || "Uncategorized"}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <span className="text-[#212121]">Participations:</span>
                       <span className="font-medium">{deal.participations}</span>
                     </div>
@@ -186,7 +196,7 @@ export default function DealDetailsModal({
                     <div className="flex justify-between">
                       <span className="text-[#212121]">Time (minutes):</span>
                       <span className="font-medium">{deal.time} minutes</span>
-                    </div>
+                    </div> */}
                     {deal.bookingCount !== undefined && (
                       <div className="flex justify-between">
                         <span className="text-[#212121]">Booking Count:</span>
@@ -203,13 +213,17 @@ export default function DealDetailsModal({
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-[#212121]">Created:</span>
-                      <span className="font-medium">{formatDate(deal.createdAt)}</span>
+                      <span className="font-medium">
+                        {formatDate(deal.createdAt)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#212121]">Last Updated:</span>
-                      <span className="font-medium">{formatDate(deal.updatedAt)}</span>
+                      <span className="font-medium">
+                        {formatDate(deal.updatedAt)}
+                      </span>
                     </div>
-                    {deal.scheduleDates && deal.scheduleDates.length > 0 ? (
+                    {/* {deal.scheduleDates && deal.scheduleDates.length > 0 ? (
                       <div className="space-y-2">
                         <span className="text-[#212121]">Schedule Dates:</span>
                         <ul className="list-disc pl-5">
@@ -233,7 +247,7 @@ export default function DealDetailsModal({
                       <div className="text-sm text-gray-500">
                         No schedule dates available
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </CardContent>
               </Card>
@@ -243,7 +257,7 @@ export default function DealDetailsModal({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Category Details</h3>
                 <div className="flex items-center space-x-4">
-                  {deal.category.image && (
+                  {/* {deal.category.image && (
                     <div className="relative h-16 w-16 rounded-md overflow-hidden">
                       <Image
                         src={deal.category.image || "/placeholder.svg"}
@@ -252,7 +266,7 @@ export default function DealDetailsModal({
                         className="object-cover"
                       />
                     </div>
-                  )}
+                  )} */}
                   <div>
                     <p className="font-medium">{deal.category.categoryName}</p>
                     <p className="text-sm text-gray-500">
