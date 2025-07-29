@@ -7,7 +7,7 @@ const page = () => {
     <div className="">
       <PageHeader
         title="Notifications"
-        imge="/assets/herobg.png"
+        imge="/assets/notifications.jpg"
       
       />
       <div className="py-28 container">

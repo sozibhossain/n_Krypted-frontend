@@ -163,6 +163,19 @@ export function AppSidebar({ }: AppSidebarProps) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/dashboard/users")}
+                  className="group py-8 flex justify-center hover:bg-[#ffffff] data-[active=true]:bg-[#ffffff]"
+                >
+                  <Link href="/dashboard/users" className="flex flex-col items-center">
+                    <Users className={`h-5 w-5 ${isActive("/dashboard/users") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`} />
+                    <span className={`text-[12px] font-medium ${isActive("/dashboard/users") ? "text-[#212121]" : "text-[#ffffff] group-hover:text-[#212121]"}`}>
+                      All users
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
