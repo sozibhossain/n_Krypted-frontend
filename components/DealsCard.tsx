@@ -713,12 +713,12 @@ export function DealsCard({
                   onChange={(e) => setAgbConsent(e.target.checked)} // Update state
                 />
                 <span>
-                  Ich habe die Allgemeinen{" "}
+                  Ich habe die {" "}
                   <Link
                     href="/report"
                     className="underline text-blue-400 hover:text-blue-300"
                   >
-                    Geschäftsbedingungen
+                   Allgemeinen Geschäftsbedingungen
                   </Link>{" "}
                   gelesen und akzeptiere sie.
                 </span>

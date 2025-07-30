@@ -146,7 +146,7 @@ export default function ContactUsForm() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Geben Sie Ihren vollständigen Namen ein"
+                  placeholder="Gib deinen vollständigen Namen ein"
                   className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                   required
@@ -222,7 +222,7 @@ export default function ContactUsForm() {
               className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Einreichen..." : "Einreichen"}
+              {isSubmitting ? "Wird gesendet..." : "Einreichen"}
             </button>
           </div>
         </form>
