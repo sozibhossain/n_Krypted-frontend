@@ -34,10 +34,10 @@ export function Footer() {
               </div>
             </Link>
           </div>
-          <p className="text-[#4E4E4E] py-4">
+          <div className="text-[#4E4E4E] py-4">
             Folge uns in den sozialen Medien{" "}
             <div>für exklusive Updates und Sonderangebote!</div>
-          </p>
+          </div>
 
           {/* Social Media Icons */}
           <div className="flex space-x-4 mt-2">

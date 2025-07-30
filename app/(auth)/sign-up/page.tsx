@@ -11,10 +11,10 @@ export default function SignUpPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2 text-nowrap ml-[-13%]">
               Werde Teil von Walk Throughz
             </h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">
+            <div className="text-white text-[14px] lg:text-[16px] font-normal">
               Registriere dich kostenlos{" "}
               <div>und starte deine ersten Walk Throughz</div>
-            </p>
+            </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             <RegisterForm />
@@ -55,7 +55,7 @@ export default function SignUpPage() {
               Willkommen bei Walk Throughz
             </h2>
             <p className="max-w-md text-gray-300">
-             Registriere dich heute und erhalten Zugang zum Kundenportal.
+              Registriere dich heute und erhalten Zugang zum Kundenportal.
             </p>
           </div>
         </div>

@@ -13,11 +13,11 @@ export default function SupportPage() {
           <h1 className="text-[32px] font-semibold mb-5">
             Wir sind für dich da
           </h1>
-          <p className="mb-8 text-base text-[#FFFFFF] font-normal leading-[150%]">
+          <div className="mb-8 text-base text-[#FFFFFF] font-normal leading-[150%]">
             Du hast eine Frage zu deiner Buchung, brauchst Hilfe bei einem Deal
             oder möchtest uns einfach mal Hallo sagen? Wir sind für dich da{" "}
             <p>– persönlich, schnell und unkompliziert.</p>
-          </p>
+          </div>
 
           <div>
             <ContactForm />
