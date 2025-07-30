@@ -3,7 +3,7 @@ import { PageHeader } from "@/Shared/PageHeader";
 export default function TermsAndConditions() {
   return (
     <div>
-      <PageHeader title="Geschäftsbedingungen" imge="/assets/51004.jpg" />
+      <PageHeader title="Geschäftsbedingungen" imge="/assets/report.jpg" />
 
       <div className="bg-black min-h-screen py-12">
         {" "}
