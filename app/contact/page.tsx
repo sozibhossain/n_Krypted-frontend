@@ -1,5 +1,4 @@
 import ContactForm from "@/components/contactForm";
-import { FaqSection } from "@/components/faq-section";
 import { PageHeader } from "@/Shared/PageHeader";
 import Image from "next/image";
 
@@ -30,9 +29,9 @@ const page = () => {
             <ContactForm />
           </div>
         </div>
-        <div className="mt-[120px] lg:mt-[120px] mb-[120px]">
+        {/* <div className="mt-[120px] lg:mt-[120px] mb-[120px]">
           <FaqSection />
-        </div>
+        </div> */}
       </div>
     </div>
   );

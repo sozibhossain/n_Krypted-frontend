@@ -13,13 +13,13 @@ const OurMission = () => {
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               style={{ fontFamily: "cursive" }}
             >
-             Unsere Mission  
+              Unsere Mission
             </h1>
           </div>
           <h3 className="text-xl sm:text-2xl lg:text-[32px] text-white font-semibold mt-4 sm:mt-5">
             Was ist der aktuelle Zweck von Walk Throughz?
           </h3>
-          <p className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
+          <div className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
             Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten
             Bürger*innen und Lokationen enger miteinander vernetzen und echte,
             bleibende Bindungen zu Orten schaffen – durch das Teilen von lokalem
@@ -28,7 +28,7 @@ const OurMission = () => {
             den Austausch über Themen, die inspirieren. Wir wollen verhindern,
             dass unsere Städte unpersönlich und leblos werden. Stattdessen
             setzen wir Impulse, die sie aktiv, menschlich und dynamisch halten.
-          </p>
+          </div>
         </div>
 
         {/* Image Section */}

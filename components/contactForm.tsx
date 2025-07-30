@@ -178,7 +178,7 @@ export default function ContactForm() {
             name="message"
             value={formData.message}
             onChange={handleChange}
-            placeholder="Gib deine Nachricht ein "
+            placeholder="Schreib eine Nachricht"
             className="w-full h-[150px] sm:h-[189px] lg:h-[189px] p-3 pb-8 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
             disabled={isSubmitting}
             required
@@ -191,7 +191,7 @@ export default function ContactForm() {
             className="bg-white text-black px-4 sm:px-6 py-2 rounded-md hover:bg-white/90 transition-colors text-sm sm:text-base disabled:opacity-70"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Absenden..." : "Einreichen"}
+            {isSubmitting ? "Wird gesendet..." : "Einreichen"}
           </button>
         </div>
       </form>

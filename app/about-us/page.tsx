@@ -20,21 +20,19 @@ const page = () => {
             lokal, lebendig und persönlich.
           </h1>
 
-          <p className="mt-3 text-base lg:text-xl text-[#E0E0E0] leading-[150%]">
+          <div className="mt-3 text-base lg:text-xl text-[#E0E0E0] leading-[150%]">
             Wir bringen Menschen mit besonderen Orten und spannenden Themen
             zusammen.{" "}
-            <div>
+            <p>
               Ob Rundgänge durch neue Niche Stores, Einblicke in Fashion-Labels,
               kurze Führungen durch kreative Werkstätten, Cafés oder Orte, die
               man sonst übersieht – bei Walk Throughz holen wir für euch das
-              Besondere aus jeder Location heraus.
-            
-            Jeder Walk Through dauert zwischen 30 und 60 Minuten und wird direkt
-            von den Menschen gestaltet, die die Orte mit Leben füllen. So
-            entsteht eine neue Art, Stadt zu erleben – spontan, nahbar und
-            inspirierend.
-            </div>
-          </p>
+              Besondere aus jeder Location heraus. Jeder Walk Through dauert
+              zwischen 30 und 60 Minuten und wird direkt von den Menschen
+              gestaltet, die die Orte mit Leben füllen. So entsteht eine neue
+              Art, Stadt zu erleben – spontan, nahbar und inspirierend.
+            </p>
+          </div>
         </div>
 
         <div>

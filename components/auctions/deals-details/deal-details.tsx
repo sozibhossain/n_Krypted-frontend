@@ -693,7 +693,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </h2>
         <div>
           <p className="text-xl text-[#FFFFFF] font-medium">
-            Seien Sie der Erste, der diesen Deal bewertet
+            Hinterlasse gerne dein Feedback hier!
           </p>
         </div>
         <div className="space-y-4 mt-6">
@@ -741,14 +741,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             ))
           ) : (
             <p className="text-white">
-              Bisher sind keine Bewertungen vorhanden. Schreiben Sie die erste
-              Bewertung!
+              Dein Feedback hilft uns unsere Deals besser zu gestalten.
             </p>
           )}
         </div>
         <div className="gap-2">
           <span className="text-base text-[#FFFFFF] font-medium mb-5">
-            Ihre Bewertung:
+            Deine Bewertung
           </span>
           <StarRating
             rating={reviewRating}
@@ -758,7 +757,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </div>
         <form onSubmit={handleSubmitReview} className="space-y-4">
           <Textarea
-            placeholder="Ihre Bewertung"
+            placeholder="Deine Bewertung"
             className="min-h-[150px] border border-[#FFFFFF] text-[#FFFFFF] placeholder:text-white"
             value={reviewComment}
             onChange={(e) => setReviewComment(e.target.value)}
@@ -766,14 +765,14 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             <Input
               className="border border-[#FFFFFF] placeholder:text-white text-white"
-              placeholder="Name"
+              placeholder="Gib deinen vollständigen Namen ein "
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <Input
               className="border border-[#FFFFFF] placeholder:text-white text-white"
-              placeholder="E-Mail"
+              placeholder="Gib deine E-Mail-Anschrift ein"
               type="email"
               required
               value={email}
@@ -785,7 +784,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             type="submit"
             disabled={submitReviewMutation.isPending}
           >
-            {submitReviewMutation.isPending ? "Senden..." : "Einreichen"}
+            {submitReviewMutation.isPending ? "Wird gesendet..." : "Einreichen"}
           </Button>
         </form>
       </div>
@@ -967,16 +966,9 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 </div>
               </div>
             </div>
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between">
-                <span className="text-gray-300">Zwischensumme</span>
-                <span className="text-white">
-                  ${(auction?.price * quantity).toFixed(2) || "0.00"}
-                </span>
-              </div>
-              <hr className="border-gray-600" />
+            <div className="space-y-4 mb-6 mt-10">
               <div className="flex justify-between font-semibold">
-                <span className="text-white">TGesamt</span>
+                <span className="text-white">Gesamt (inkl. MwSt.)</span>
                 <span className="text-white">
                   ${(auction?.price * quantity).toFixed(2) || "0.00"}
                 </span>
@@ -1079,12 +1071,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   onChange={(e) => setAgbConsent(e.target.checked)} // Update state
                 />
                 <span>
-                  Ich habe die Allgemeinen{" "}
+                  Ich habe die{" "}
                   <Link
                     href="/report"
                     className="underline text-blue-400 hover:text-blue-300"
                   >
-                    Geschäftsbedingungen
+                    Allgemeinen Geschäftsbedingungen
                   </Link>{" "}
                   gelesen und akzeptiere sie.
                 </span>

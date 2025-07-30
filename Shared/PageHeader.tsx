@@ -50,7 +50,7 @@ export function PageHeader({
       }}
     >
       <div className={cn("relative z-10 flex flex-col items-center")}>
-        <h1 className="bandit_font [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] font-benedict text-white text-center mb-5">
+        <h1 className="bandit_font [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] font-benedict text-white text-center mb-5 ">
           {title}
         </h1>
 

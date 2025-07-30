@@ -1,8 +1,14 @@
-import { Facebook, Instagram, Twitter, Globe } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import NewsletterSubscription from "./Subscribe"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Facebook, Instagram, Twitter, Globe } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import NewsletterSubscription from "./Subscribe";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function Footer() {
   return (
@@ -22,13 +28,16 @@ export function Footer() {
                     className="h-[30px] w-[80px] lg:h-[37px] lg:w-[95px]"
                   />
                 </div>
-                <h1 className="font-benedict text-[32px] font-medium mb-2 text-[#212121] mt-1 leading-[120%] logo-size">Walk Throughz</h1>
+                <h1 className="font-benedict text-[32px] font-medium mb-2 text-[#212121] mt-1 leading-[120%] logo-size">
+                  Walk Throughz
+                </h1>
               </div>
             </Link>
           </div>
-          <p className="text-[#4E4E4E] py-4">
-            Folgen Sie uns in den sozialen Medien für exklusive Updates, Auktionsvorschauen und Sonderangebote!
-          </p>
+          <div className="text-[#4E4E4E] py-4">
+            Folge uns in den sozialen Medien{" "}
+            <div>für exklusive Updates und Sonderangebote!</div>
+          </div>
 
           {/* Social Media Icons */}
           <div className="flex space-x-4 mt-2">
@@ -51,7 +60,12 @@ export function Footer() {
               aria-label="Instagram"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
-              <Image src="/assets/tiktok.png" alt="Linkedin" width={20} height={20} />
+              <Image
+                src="/assets/tiktok.png"
+                alt="Linkedin"
+                width={20}
+                height={20}
+              />
             </Link>
             <Link
               href=""
@@ -69,10 +83,10 @@ export function Footer() {
             <li>
               <Link href="/">Home</Link>
             </li>
-             <li>
+            <li>
               <Link href="/about-us">Über uns</Link>
             </li>
-             <li>
+            <li>
               <Link href="/deals">Deals</Link>
             </li>
             <li>
@@ -81,17 +95,17 @@ export function Footer() {
             <li>
               <Link href="/faq">FAQ</Link>
             </li>
-           
-           
-            
+
             <li>
               <Link href="/contact">Kontakt</Link>
             </li>
           </ul>
         </div>
 
-         <div>
-          <h3 className="font-semibold text-lg mb-3 text-[#212121]">Walk Throughz Sites</h3>
+        <div>
+          <h3 className="font-semibold text-lg mb-3 text-[#212121]">
+            Walk Throughz Sites
+          </h3>
           <Select defaultValue="usa">
             <SelectTrigger className="w-[200px] rounded-full bg-white text-[#4E4E4E] border border-gray-300 px-4 py-2 flex items-center gap-2">
               <Globe size={18} />
@@ -118,16 +132,40 @@ export function Footer() {
           {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
           <div className="flex space-x-4">
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
-              <Image src="/assets/Paypal.png" alt="PayPal" width={60} height={30} className="h-6 w-auto" />
+              <Image
+                src="/assets/Paypal.png"
+                alt="PayPal"
+                width={60}
+                height={30}
+                className="h-6 w-auto"
+              />
             </div>
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
-              <Image src="/assets/amex.png" alt="American Express" width={60} height={30} className="h-6 w-auto" />
+              <Image
+                src="/assets/amex.png"
+                alt="American Express"
+                width={60}
+                height={30}
+                className="h-6 w-auto"
+              />
             </div>
             <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
-              <Image src="/assets/maestro.png" alt="Maestro" width={60} height={30} className="h-6 w-auto" />
+              <Image
+                src="/assets/maestro.png"
+                alt="Maestro"
+                width={60}
+                height={30}
+                className="h-6 w-auto"
+              />
             </div>
-              <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
-              <Image src="/assets/visa.png" alt="Maestro" width={60} height={30} className="h-6 w-auto" />
+            <div className="flex items-center justify-center bg-white rounded-md p-1 shadow-sm border border-gray-200">
+              <Image
+                src="/assets/visa.png"
+                alt="Maestro"
+                width={60}
+                height={30}
+                className="h-6 w-auto"
+              />
             </div>
           </div>
         </div>
@@ -142,5 +180,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
