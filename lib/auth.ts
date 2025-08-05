@@ -59,7 +59,11 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Authentication error:", error);
-          throw new Error(error.message);
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          } else {
+            throw new Error("Authentication error");
+          }
         }
       },
     }),

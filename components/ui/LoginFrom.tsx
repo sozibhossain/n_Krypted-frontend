@@ -46,7 +46,11 @@ export function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.message);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Ein unbekannter Fehler ist aufgetreten");
+      }
     } finally {
       setIsLoading(false);
     }
