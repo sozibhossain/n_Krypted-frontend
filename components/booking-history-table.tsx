@@ -129,7 +129,6 @@ export default function BookingHistoryTable() {
     enabled: !!userId && !!accessToken,
   });
 
-
   // Use TanStack Query to fetch a single booking
   const {
     data: bookingDetails,
@@ -271,7 +270,7 @@ export default function BookingHistoryTable() {
                     {booking?.dealsId?.title}
                   </td>
                   <td className="py-3 px-4 text-sm text-white">
-                    #{booking?.bookingId?.slice(-3)}
+                    #{booking?.bookingId?.slice(-4)}
                   </td>
                   <td className="py-3 px-4 text-sm text-white">
                     {formatDate(booking?.createdAt)}
@@ -345,7 +344,7 @@ export default function BookingHistoryTable() {
         <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
-             Buchungsdetails
+              Buchungsdetails
             </DialogTitle>
             <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
               <span className="sr-only">Close</span>
@@ -459,7 +458,9 @@ export default function BookingHistoryTable() {
 
               {bookingDetails?.data?.dealsId?.offers?.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">Angebote</h4>
+                  <h4 className="text-sm font-medium text-gray-400">
+                    Angebote
+                  </h4>
                   <div className="bg-zinc-800/50 rounded-md p-3">
                     <ul className="list-disc list-inside space-y-1">
                       {(() => {

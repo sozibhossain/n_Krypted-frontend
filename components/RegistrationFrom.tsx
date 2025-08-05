@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
@@ -21,8 +21,14 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [firstChecked, setFirstChecked] = useState(false);
+  const [secondChecked, setSecondChecked] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false); // Added state for terms checkbox
   const router = useRouter();
+
+  useEffect(() => {
+    setAgreedToTerms(firstChecked && secondChecked);
+  }, [firstChecked, secondChecked]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,12 +174,13 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-4">
+        {/* First Checkbox */}
         <div className="flex items-center space-x-2">
           <Checkbox
             id="terms"
-            checked={agreedToTerms}
-            onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+            checked={firstChecked}
+            onCheckedChange={(checked) => setFirstChecked(checked as boolean)}
           />
           <label
             htmlFor="terms"
@@ -182,7 +189,26 @@ export function RegisterForm() {
             Ich stimme den{" "}
             <Link href="/report" className="text-white hover:text-blue-400">
               Geschäftsbedingungen
+            </Link>
+          </label>
+        </div>
+
+        {/* Second Checkbox */}
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="privacy"
+            checked={secondChecked}
+            onCheckedChange={(checked) => setSecondChecked(checked as boolean)}
+          />
+          <label
+            htmlFor="privacy"
+            className="text-sm font-medium leading-none text-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Ich habe die{" "}
+            <Link href="/refund-policies" className="text-white hover:text-blue-400">
+              Datenschutzerklärung
             </Link>{" "}
+            gelesen und akzeptiert.
           </label>
         </div>
       </div>

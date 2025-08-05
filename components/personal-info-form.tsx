@@ -95,6 +95,7 @@ export default function PersonalInfoForm({
       });
 
       setIsEditing(false);
+      window.location.reload();
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -172,7 +173,7 @@ export default function PersonalInfoForm({
               htmlFor="phoneNumber"
               className="block text-sm text-[#FFFFFF]"
             >
-              Telefon
+              Mobilnummer
             </label>
             <Input
               id="phoneNumber"
@@ -203,7 +204,7 @@ export default function PersonalInfoForm({
           {/* City/State Field */}
           <div className="space-y-2">
             <label htmlFor="cityState" className="block text-sm text-[#FFFFFF]">
-              City/State
+              Stadt/Bundesland/Adresse
             </label>
             <Input
               id="cityState"
@@ -218,7 +219,7 @@ export default function PersonalInfoForm({
         </div>
 
         {/* Road/Area Field */}
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <label htmlFor="roadArea" className="block text-sm text-[#FFFFFF]">
             Road/Area
           </label>
@@ -231,7 +232,7 @@ export default function PersonalInfoForm({
             className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
             placeholder="Geben Sie Ihre Straße/Ihr Gebiet ein"
           />
-        </div>
+        </div> */}
 
         {isEditing && (
           <div className="flex justify-end space-x-4">

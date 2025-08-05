@@ -28,7 +28,6 @@ interface UserData {
   cityState?: string;
   roadArea?: string;
   avatar?: string;
-  // Add any other fields you expect from the API
 }
 
 export default function Dashboard() {
@@ -43,33 +42,33 @@ export default function Dashboard() {
   const userId = session?.user?.id;
   const accessToken = session?.user?.accessToken;
 
-  // Fetch user from the API using session user ID
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!userId) return;
+  // Fetch user data
+  const fetchUserData = async () => {
+    if (!userId) return;
 
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/single-user/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch user");
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/single-user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
+      );
 
-        const data = await res.json();
-        setUserData(data.data);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        toast.error("Failed to load user data");
+      if (!res.ok) {
+        throw new Error("Failed to fetch user");
       }
-    };
 
+      const data = await res.json();
+      setUserData(data.data || data.user || data);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      toast.error("Failed to load user data");
+    }
+  };
+
+  useEffect(() => {
     fetchUserData();
   }, [userId, accessToken]);
 
@@ -81,32 +80,29 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
+    // Validate file
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      toast.error("Bitte laden Sie ein JPEG-, PNG- oder WebP-Bild hoch");
+      toast.error("Please upload a JPEG, PNG, or WebP image");
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("Die Bildgröße sollte weniger als 2 MB betragen");
+      toast.error("Image size should be less than 2MB");
       return;
     }
 
     try {
       setIsUploading(true);
-      const accessToken = session?.user?.accessToken;
-      const userId = session?.user?.id;
-
-      if (!userId) {
-        throw new Error("Benutzersitzung ist ungültig – fehlende ID");
+      if (!userId || !accessToken) {
+        throw new Error("Invalid user session");
       }
 
       const formData = new FormData();
       formData.append("avatar", file);
-      formData.append("userId", userId); // Add user ID to the form data
+      formData.append("userId", userId);
 
-      // First request - upload the avatar
+      // Upload avatar
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`,
         {
@@ -118,24 +114,19 @@ export default function Dashboard() {
         }
       );
 
-      // Check response content type
+      // Handle response
       const contentType = response.headers.get("content-type");
       if (!contentType?.includes("application/json")) {
         const text = await response.text();
-        throw new Error(
-          text.includes("<html")
-            ? "Server error"
-            : `Unexpected response: ${text.slice(0, 100)}`
-        );
+        throw new Error(text.includes("<html") ? "Server error" : text);
       }
 
       const data = await response.json();
-
       if (!response.ok || !data.success) {
         throw new Error(data.message || "Profile update failed");
       }
 
-      // Update session with new avatar
+      // Update session
       await update({
         ...session,
         user: {
@@ -144,31 +135,13 @@ export default function Dashboard() {
         },
       });
 
-      // Second request - fetch updated user data
-      const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/single-user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch updated profile");
-      }
-
-      const userData = await userResponse.json();
-      setUserData(userData.user || userData); // Adjust based on your API response structure
+      // Refresh user data
+      await fetchUserData();
 
       toast.success("Profilbild erfolgreich aktualisiert");
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "An error occurred during upload"
-      );
+      toast.error(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -178,10 +151,10 @@ export default function Dashboard() {
   const handleLogout = async () => {
     try {
       await signOut({ callbackUrl: "/" });
-      toast.success("Erfolgreich abgemeldet");
+      toast.success("Ausloggen erfolgreich.");
     } catch (error) {
-      console.error("Error during logout:", error);
-      toast.error("Abmeldung fehlgeschlagen");
+      console.error("Logout error:", error);
+      toast.error("Logout failed");
     } finally {
       setShowLogoutDialog(false);
     }
@@ -195,6 +168,7 @@ export default function Dashboard() {
     <div>
       <PageHeader title="My Profile" imge="/assets/profile1.jpg" />
       <div className="flex flex-col md:flex-row min-h-screen text-white container pt-[80px]">
+        {/* Sidebar */}
         <div className="w-full md:w-80 p-6 flex flex-col items-center md:sticky md:top-0 md:h-screen">
           <div className="flex flex-col items-center mb-8">
             <div className="relative w-32 h-32 mb-2 group">
@@ -231,6 +205,7 @@ export default function Dashboard() {
             <p className="text-sm text-gray-400">{email}</p>
           </div>
 
+          {/* Navigation */}
           <nav className="w-full space-y-2">
             <button
               onClick={() => setActiveTab("personal-info")}
@@ -241,7 +216,7 @@ export default function Dashboard() {
               }`}
             >
               <User className="mr-3 h-5 w-5" />
-              <span>Persönliche Informationen</span>
+              <span>Personal Information</span>
             </button>
             <button
               onClick={() => setActiveTab("change-password")}
@@ -252,7 +227,7 @@ export default function Dashboard() {
               }`}
             >
               <Lock className="mr-3 h-5 w-5" />
-              <span>Kennwort ändern</span>
+              <span>Change Password</span>
             </button>
             <button
               onClick={() => setActiveTab("booking-history")}
@@ -263,7 +238,7 @@ export default function Dashboard() {
               }`}
             >
               <Calendar className="mr-3 h-5 w-5" />
-              <span>Buchungsverlauf</span>
+              <span>Booking History</span>
             </button>
             <button
               onClick={() => setActiveTab("notify-me")}
@@ -272,7 +247,7 @@ export default function Dashboard() {
               }`}
             >
               <Bell className="mr-3 h-5 w-5" />
-              <span>Benachrichtigungsliste</span>
+              <span>Notification List</span>
             </button>
             <button
               onClick={() => setShowLogoutDialog(true)}
@@ -284,6 +259,7 @@ export default function Dashboard() {
           </nav>
         </div>
 
+        {/* Main Content */}
         <div className="flex-1 p-6 md:p-10 container">
           {activeTab === "personal-info" && userData && (
             <PersonalInfoForm
@@ -313,7 +289,7 @@ export default function Dashboard() {
               </div>
             </div>
             <DialogTitle className="text-center">
-              Möchten Sie sich wirklich abmelden?
+              Are you sure you want to log out?
             </DialogTitle>
           </DialogHeader>
           <DialogFooter className="flex flex-row justify-center gap-4 sm:justify-center mt-4">

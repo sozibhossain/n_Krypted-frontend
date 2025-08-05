@@ -566,6 +566,24 @@ function DealsPage() {
     [updateParams]
   );
 
+  const resetAllFilters = useCallback(() => {
+    setSelectedCategory("");
+    setSelectedCountry("");
+    setSelectedCity("");
+    setPriceRange([0, 100]);
+    setSelectedDealType("");
+
+    updateParams({
+      categoryName: null,
+      country: null,
+      city: null,
+      minPrice: "0",
+      maxPrice: "100",
+      dealType: null,
+      page: "1",
+    });
+  }, [updateParams]);
+
   // Filter Sidebar Component
   const FilterSidebar = () => (
     <div className="space-y-6 bg-white p-4 sm:p-5 rounded-lg shadow-sm w-full max-w-full lg:max-w-[300px]">
@@ -702,7 +720,7 @@ function DealsPage() {
                 min="0"
                 max="100"
                 step="1"
-                value={Math.round(priceRange[0])}
+                value={priceRange[0]}
                 onChange={(e) => {
                   const newMin = Math.max(
                     0,
@@ -728,8 +746,7 @@ function DealsPage() {
                 type="number"
                 min="0"
                 max="100"
-                step="1"
-                value={Math.round(priceRange[1])}
+                value={priceRange[1]}
                 onChange={(e) => {
                   const newMax = Math.min(
                     100,
@@ -790,14 +807,7 @@ function DealsPage() {
           </div>
 
           <button
-            onClick={() => {
-              const newRange: [number, number] = [0, 100];
-              setPriceRange(newRange);
-              updateParams({
-                minPrice: "0",
-                maxPrice: "100",
-              });
-            }}
+            onClick={resetAllFilters}
             className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
             Reset

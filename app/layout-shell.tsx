@@ -23,6 +23,7 @@ export default function LayoutShell({
     "/verify-otp",
     "/login",
     "/sign-up",
+    "/verify-email",
   ];
 
   const shouldHideLayout = hiddenPaths.some((path) =>
