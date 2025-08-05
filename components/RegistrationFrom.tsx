@@ -84,13 +84,13 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">E-Mail-Adresse</Label>
+        <Label htmlFor="email">E-Mail</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="email"
             type="email"
-            placeholder="Gib deine E-Mail-Adresse ein"
+            placeholder="Gib deine E-Mail ein"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -100,13 +100,13 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Telefonnummer</Label>
+        <Label htmlFor="phone">Mobilnummer</Label>
         <div className="relative">
           <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="phone"
             type="tel"
-            placeholder="Gib deine Telefonnummer ein"
+            placeholder="Gib deine Mobilnummer ein"
             value={phoneNumber}
             onChange={(e) => setPhone(e.target.value)}
             className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"

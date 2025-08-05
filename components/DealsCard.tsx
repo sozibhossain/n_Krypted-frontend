@@ -443,7 +443,7 @@ export function DealsCard({
                 <div>
                   <Link href={`/deals/${id}`}>
                     <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-sm sm:text-[14px]">
-                      <span>Show more</span>
+                      <span>Mehr anzeigen</span>
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </Link>
@@ -713,12 +713,12 @@ export function DealsCard({
                   onChange={(e) => setAgbConsent(e.target.checked)} // Update state
                 />
                 <span>
-                  Ich habe die {" "}
+                  Ich habe die{" "}
                   <Link
                     href="/report"
                     className="underline text-blue-400 hover:text-blue-300"
                   >
-                   Allgemeinen Geschäftsbedingungen
+                    Allgemeinen Geschäftsbedingungen
                   </Link>{" "}
                   gelesen und akzeptiere sie.
                 </span>

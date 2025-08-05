@@ -44,7 +44,7 @@ const OurVision = () => {
             größeren Ganzen fühlen. Langfristig wollen wir mit Walk Throughz ein
             neues Stadtgefühl etablieren: eine Kultur der Offenheit, der Neugier
             und des lokalen Engagements. Walk Throughz soll in vielen Städten
-            der Welt wachsen – als Netzwerk für urbane Inspiration,
+            der Welt wachsen, als Netzwerk für urbane Inspiration,
             Mikro-entdeckungen und echte Verbindung. Denn je mehr wir teilen,
             desto mehr entsteht.
           </p>

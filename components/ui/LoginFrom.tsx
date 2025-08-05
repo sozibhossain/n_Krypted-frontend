@@ -46,7 +46,7 @@ export function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Fehler bei der Anmeldung");
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -66,13 +66,13 @@ export function SignInForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">E-Mail-Adresse</Label>
+        <Label htmlFor="email">E-Mail</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="email"
             type="email"
-            placeholder="Gib deine E-Mail-Adresse ein"
+            placeholder="Gib deine E-Mail ein"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

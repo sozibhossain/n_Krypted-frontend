@@ -1,75 +1,86 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Edit } from "lucide-react"
-import { useSession } from "next-auth/react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Edit } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 interface PersonalInfoData {
-  name: string
-  email: string
-  phoneNumber: string
-  country?: string
-  cityState?: string
-  roadArea?: string
+  name: string;
+  email: string;
+  phoneNumber: string;
+  country?: string;
+  cityState?: string;
+  roadArea?: string;
 }
 
-export default function PersonalInfoForm({ initialData }: { initialData: PersonalInfoData }) {
-  const { data: session, update: updateSession } = useSession()
+export default function PersonalInfoForm({
+  initialData,
+}: {
+  initialData: PersonalInfoData;
+}) {
+  const { data: session, update: updateSession } = useSession();
   const [formData, setFormData] = useState<PersonalInfoData>({
     name: initialData.name || "",
     email: initialData.email || "",
     phoneNumber: initialData.phoneNumber || "",
     country: initialData.country || "",
     cityState: initialData.cityState || "",
-    roadArea: initialData.roadArea || ""
-  })
-  const [isEditing, setIsEditing] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+    roadArea: initialData.roadArea || "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!session?.user?.id) {
-      toast.error('Authentication required')
-      return
+      toast.error("Authentication required");
+      return;
     }
 
-    setIsLoading(true)
-    
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(session?.user as { accessToken?: string })?.accessToken || ''}`
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          name: formData.name,
-          email: formData.email,
-          phoneNumber: formData.phoneNumber,
-          ...(formData.country && { country: formData.country }),
-          ...(formData.cityState && { cityState: formData.cityState }),
-          ...(formData.roadArea && { roadArea: formData.roadArea }),
-        })
-      })
+    setIsLoading(true);
 
-      const data = await response.json()
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-profile`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              (session?.user as { accessToken?: string })?.accessToken || ""
+            }`,
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            name: formData.name,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            ...(formData.country && { country: formData.country }),
+            ...(formData.cityState && { cityState: formData.cityState }),
+            ...(formData.roadArea && { roadArea: formData.roadArea }),
+          }),
+        }
+      );
+
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Profil konnte nicht aktualisiert werden')
+        throw new Error(
+          data.message || "Profil konnte nicht aktualisiert werden"
+        );
       }
 
-      toast.success('Profil erfolgreich aktualisiert')
-      
+      toast.success("Profil erfolgreich aktualisiert");
+
       await updateSession({
         ...session,
         user: {
@@ -80,37 +91,43 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
           country: formData.country,
           cityState: formData.cityState,
           roadArea: formData.roadArea,
-        }
-      })
-      
-      setIsEditing(false)
+        },
+      });
+
+      setIsEditing(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Profil konnte nicht aktualisiert werden')
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Profil konnte nicht aktualisiert werden"
+      );
       setFormData({
         name: initialData.name || "",
         email: initialData.email || "",
         phoneNumber: initialData.phoneNumber || "",
         country: initialData.country || "",
         cityState: initialData.cityState || "",
-        roadArea: initialData.roadArea || ""
-      })
+        roadArea: initialData.roadArea || "",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-[#FFFFFF]">Persönliche Informationen</h1>
+        <h1 className="text-2xl font-semibold text-[#FFFFFF]">
+          Persönliche Informationen
+        </h1>
         {!isEditing && (
-          <Button 
-            variant="outline" 
-            onClick={() => setIsEditing(true)} 
+          <Button
+            variant="outline"
+            onClick={() => setIsEditing(true)}
             className="text-sm bg-[#FFFFFF] text-[#212121] hover:bg-[#FFFFFF]/80"
             disabled={!session}
           >
-            <Edit className="mr-2 h-4 w-4"/>
+            <Edit className="mr-2 h-4 w-4" />
             Edit
           </Button>
         )}
@@ -136,7 +153,7 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
           {/* Email Field */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm text-[#FFFFFF]">
-              E-Mail-Adresse
+              E-Mail
             </label>
             <Input
               id="email"
@@ -151,7 +168,10 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
 
           {/* Phone Field */}
           <div className="space-y-2">
-            <label htmlFor="phoneNumber" className="block text-sm text-[#FFFFFF]">
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm text-[#FFFFFF]"
+            >
               Telefon
             </label>
             <Input
@@ -225,17 +245,17 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
                   phoneNumber: initialData.phoneNumber || "",
                   country: initialData.country || "",
                   cityState: initialData.cityState || "",
-                  roadArea: initialData.roadArea || ""
-                })
-                setIsEditing(false)
+                  roadArea: initialData.roadArea || "",
+                });
+                setIsEditing(false);
               }}
               className="text-[#212121]"
               disabled={isLoading}
             >
               Stornieren
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-white text-[#212121] hover:bg-white/90"
               disabled={isLoading || !session}
             >
@@ -245,5 +265,5 @@ export default function PersonalInfoForm({ initialData }: { initialData: Persona
         )}
       </form>
     </div>
-  )
+  );
 }

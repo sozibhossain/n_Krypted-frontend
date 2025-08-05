@@ -571,7 +571,7 @@ function DealsPage() {
     <div className="space-y-6 bg-white p-4 sm:p-5 rounded-lg shadow-sm w-full max-w-full lg:max-w-[300px]">
       {/* Categories */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Kategorien
         </h3>
         {isLoadingCategories ? (
@@ -613,12 +613,14 @@ function DealsPage() {
 
       {/* Locations */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Städte
         </h3>
         {uniqueLocations.length === 0 ? (
           <div className="py-2 text-sm sm:text-base text-gray-500">
-            {allDealsData ? "Keine Standorte verfügbar" : "Standorte werden geladen..."}
+            {allDealsData
+              ? "Keine Standorte verfügbar"
+              : "Standorte werden geladen..."}
           </div>
         ) : (
           <DropdownMenu>
@@ -686,7 +688,7 @@ function DealsPage() {
 
       {/* Price Range Slider */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Preisspanne
         </h3>
         <div className="space-y-4 sm:space-y-6">

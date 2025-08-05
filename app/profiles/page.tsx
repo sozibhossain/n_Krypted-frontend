@@ -193,7 +193,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="My Profile" imge="/assets/herobg.png" />
+      <PageHeader title="My Profile" imge="/assets/profile1.jpg" />
       <div className="flex flex-col md:flex-row min-h-screen text-white container pt-[80px]">
         <div className="w-full md:w-80 p-6 flex flex-col items-center md:sticky md:top-0 md:h-screen">
           <div className="flex flex-col items-center mb-8">

@@ -54,9 +54,10 @@ export default function SignUpPage() {
             <h2 className="mb-2 text-4xl font-bold">
               Willkommen bei Walk Throughz
             </h2>
-            <p className="max-w-md text-gray-300">
-              Registriere dich heute und erhalten Zugang zum Kundenportal.
-            </p>
+            <div className="max-w-md text-gray-300">
+              Registriere dich heute
+              <div>und erhalte Zugang zum Kundenportal.</div>
+            </div>
           </div>
         </div>
       </div>

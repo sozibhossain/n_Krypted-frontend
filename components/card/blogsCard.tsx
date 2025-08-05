@@ -51,7 +51,7 @@ function BlogsCard({ blog }: { blog: Blog }) {
               </div>
             </div>
 
-            <h3 className="font-semibold text-lg leading-tight text-black group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 mb-4">
+            <h3 className="font-semibold text-lg leading-tight text-black group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 mb-4 min-h-[3rem]">
               {blog?.title}
             </h3>
 
