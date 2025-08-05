@@ -141,7 +141,7 @@ export default function ContactForm() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Gib deine E-Mail-Adresse ein "
+              placeholder="Gib deine E-Mail ein "
               className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
               disabled={isSubmitting}
               required
@@ -153,14 +153,14 @@ export default function ContactForm() {
               htmlFor="phone"
               className="block text-sm font-medium text-white pb-2"
             >
-              Telefonnummer
+              Mobilnummer
             </label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="Gib deine Telefonnummer ein "
+              placeholder="Gib deine Mobilnummer ein "
               className="w-full p-3 bg-[#212121] border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 text-white text-sm sm:text-base"
               disabled={isSubmitting}
             />

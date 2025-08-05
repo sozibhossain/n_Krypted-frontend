@@ -48,10 +48,10 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
-              Geben Sie die E-Mail-Adresse ein
+              Geben Sie die E-Mail ein
             </h1>
             <p className="text-white text-[14px] lg:text-[16px] font-normal">
-              Geben Sie Ihre E-Mail-Adresse ein, um den Link zu erhalten
+              Geben Sie Ihre E-Mail ein, um den Link zu erhalten
             </p>
           </div>
           <Suspense fallback={<div>Loading...</div>}>

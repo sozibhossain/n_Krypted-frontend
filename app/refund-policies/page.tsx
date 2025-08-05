@@ -1,5 +1,3 @@
-
-
 import { PageHeader } from "@/Shared/PageHeader";
 import Link from "next/link";
 
@@ -82,9 +80,9 @@ export default function RefundPoliciesPage() {
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Vor- und Nachname</li>
-              <li>E-Mail-Adresse</li>
+              <li>E-Mail</li>
               <li>Passwort (verschlüsselt gespeichert)</li>
-              <li>ggf. Telefonnummer</li>
+              <li>ggf. Mobilnummer</li>
               <li>bevorzugte Sprache und Stadt (optional)</li>
             </ul>
             <p className="mb-4">

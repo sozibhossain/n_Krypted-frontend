@@ -45,15 +45,22 @@ function Blogs() {
       <PageHeader title="Our Latest Blogs" imge="/assets/Blogbanner.jpg" />
 
       <div className="container my-24">
-        <h1 className="text-3xl font-bold mb-8 text-center text-white">
-          Was ist der aktuelle Zweck von Walk Throughz?
+        <h1 className="text-[28px] lg:text-[36px] font-bold mb-8 text-center text-white">
+          Stadtgedanken & Durchblicke
         </h1>
-        <p className="text-center text-gray-300 mb-12">
-          Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten
-          Bürger*innen und Lokationen enger miteinander vernetzen und echte,
-          bleibende Bindungen zu Orten schaffen – durch das Teilen von lokalem
-          Fachwissen, Leidenschaft und Persönlichkeit.
-        </p>
+        <div className="text-center text-gray-300 mb-12">
+          Unser Blog ist für alle, die Städte lieben, mit all ihren Ecken, Ideen
+          und Begegnungen.
+          <div>
+            Bei uns geht’s um Themen, die das urbane Leben bewegen: Wie
+            entwickeln sich Städte? Wie entdeckt man neue Lieblingsorte?
+          </div>
+          <div>
+            Und was macht einen richtig guten Tag in der Stadt aus? Lies rein,
+            lass dich treiben und finde neue Perspektiven für dein eigenes
+            Stadterlebnis.
+          </div>
+        </div>
       </div>
       <div className="container my-24">
         {loading ? (

@@ -203,29 +203,32 @@ export function Navbar() {
                 </SheetTrigger>
                 <SheetContent
                   side="right"
-                  className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
+                  className="w-[280px] sm:w-[300px] bg-[#212121] border-l border-gray-700"
                 >
-                  <nav className="flex flex-col gap-4 pt-10">
+                  <nav className="flex flex-col gap-1 pt-10">
+                    {" "}
+                    {/* Reduced gap since we're adding padding to items */}
                     {navLinks.map((link) => (
                       <Link
                         key={link.name}
                         href={link.href}
                         onClick={() => setOpen(false)}
-                        className={`text-base font-medium transition-colors ${
+                        className={`px-3 py-2 rounded text-base font-medium transition-colors ${
                           isActive(link.href)
-                            ? "text-foreground"
-                            : "text-muted-foreground"
+                            ? "text-white font-semibold bg-gray-800"
+                            : "text-gray-400 hover:text-white hover:bg-gray-800"
                         }`}
                       >
                         {link.name}
                       </Link>
                     ))}
-
+                    {/* Divider between main links and account links */}
+                    <div className="border-t border-gray-700 my-2 mx-3"></div>
                     {!isLoggedIn ? (
                       <Link
                         href="/login"
                         onClick={() => setOpen(false)}
-                        className="text-base font-medium transition-colors text-muted-foreground hover:text-foreground"
+                        className="px-3 py-2 rounded text-base font-medium transition-colors text-gray-400 hover:text-white hover:bg-gray-800"
                       >
                         Login
                       </Link>
@@ -235,7 +238,7 @@ export function Navbar() {
                           <Link
                             href="/dashboard"
                             onClick={() => setOpen(false)}
-                            className="text-base font-medium transition-colors text-muted-foreground hover:text-foreground"
+                            className="px-3 py-2 rounded text-base font-medium transition-colors text-gray-400 hover:text-white hover:bg-gray-800"
                           >
                             Dashboard
                           </Link>
@@ -249,26 +252,31 @@ export function Navbar() {
                                 router.push("/notifications");
                                 setOpen(false);
                               }}
-                              className={`relative text-base font-medium transition-colors text-start ${
+                              className={`px-3 py-2 rounded text-start text-base font-medium transition-colors ${
                                 isActive("/notifications")
-                                  ? "text-foreground"
-                                  : "text-muted-foreground"
+                                  ? "text-white font-semibold bg-gray-800"
+                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
                               }`}
                             >
-                              Notifications {!isConnected && "(Offline)"}
-                              {notificationCount > 0 && (
-                                <span className="ml-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
-                                  {notificationCount}
-                                </span>
-                              )}
+                              <div className="flex items-center gap-2">
+                                <span>Notifications</span>
+                                {!isConnected && (
+                                  <span className="text-xs">(Offline)</span>
+                                )}
+                                {notificationCount > 0 && (
+                                  <span className="ml-auto bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
+                                    {notificationCount}
+                                  </span>
+                                )}
+                              </div>
                             </button>
                             <Link
                               href="/profiles"
                               onClick={() => setOpen(false)}
-                              className={`text-base font-medium transition-colors ${
+                              className={`px-3 py-2 rounded text-base font-medium transition-colors ${
                                 isActive("/profiles")
-                                  ? "text-foreground"
-                                  : "text-muted-foreground"
+                                  ? "text-white font-semibold bg-gray-800"
+                                  : "text-gray-400 hover:text-white hover:bg-gray-800"
                               }`}
                             >
                               My Account

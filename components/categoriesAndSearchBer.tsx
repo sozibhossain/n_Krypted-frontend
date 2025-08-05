@@ -220,6 +220,7 @@ export function CategoriesAndSearchBar() {
     "/sign-up",
     "/reset-password",
     "/forgot-password",
+    "/verify-email",
   ];
 
   // Get display text for location button
@@ -252,9 +253,7 @@ export function CategoriesAndSearchBar() {
                       <DropdownMenuItem
                         onClick={() => handleCategorySelect("")}
                         className={!selectedCategory ? "bg-gray-100" : ""}
-                      >
-                        
-                      </DropdownMenuItem>
+                      ></DropdownMenuItem>
                       {isLoadingCategories ? (
                         <DropdownMenuItem disabled>
                           Loading categories...

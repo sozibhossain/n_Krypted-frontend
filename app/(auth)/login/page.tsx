@@ -37,10 +37,12 @@ export default function SignInPage() {
             <h2 className="mb-2 text-4xl font-bold">
               Schön, dass du wieder da bist
             </h2>
-            <p className="max-w-md text-gray-300">
-              Bereit für deinen nächsten Walk Through? Es warten neue Locations
-              und überraschende Einblicke auf dich.
-            </p>
+            <div className="max-w-lg text-gray-300">
+              Bereit für deinen nächsten Walk Through?{" "}
+              <div>
+                Es warten neue Locations und überraschende Einblicke auf dich.
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -50,9 +52,10 @@ export default function SignInPage() {
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
               Willkommen zurück
             </h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">
-              Bitte gib deine Zugangsdaten ein, um fortzufahren.
-            </p>
+            <div className="text-white text-[14px] lg:text-[16px] font-normal">
+              Bitte gib deine Zugangsdaten ein,
+              <div>um fortzufahren.</div>
+            </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             <SignInForm />
