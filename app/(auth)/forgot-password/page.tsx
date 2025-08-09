@@ -48,11 +48,12 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
-              Geben Sie die E-Mail ein
+              Password vergessen?
             </h1>
-            <p className="text-white text-[14px] lg:text-[16px] font-normal">
-              Geben Sie Ihre E-Mail ein, um den Link zu erhalten
-            </p>
+            <div className="text-white text-[14px] lg:text-[16px] font-normal">
+              Gib deine E-Mail-Anschrift ein, um den Link zum Zurücksetzen
+              deines Passworts zu erhalten
+            </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             <ForgotPasswordForm />
