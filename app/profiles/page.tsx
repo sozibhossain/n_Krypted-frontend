@@ -216,7 +216,7 @@ export default function Dashboard() {
               }`}
             >
               <User className="mr-3 h-5 w-5" />
-              <span>Personal Information</span>
+              <span>Persönliche Informationen</span>
             </button>
             <button
               onClick={() => setActiveTab("change-password")}
@@ -227,7 +227,7 @@ export default function Dashboard() {
               }`}
             >
               <Lock className="mr-3 h-5 w-5" />
-              <span>Change Password</span>
+              <span>Passwort ändern </span>
             </button>
             <button
               onClick={() => setActiveTab("booking-history")}
@@ -238,7 +238,7 @@ export default function Dashboard() {
               }`}
             >
               <Calendar className="mr-3 h-5 w-5" />
-              <span>Booking History</span>
+              <span>Buchungshistorie </span>
             </button>
             <button
               onClick={() => setActiveTab("notify-me")}
@@ -247,7 +247,7 @@ export default function Dashboard() {
               }`}
             >
               <Bell className="mr-3 h-5 w-5" />
-              <span>Notification List</span>
+              <span>Benachrichtigungsliste</span>
             </button>
             <button
               onClick={() => setShowLogoutDialog(true)}

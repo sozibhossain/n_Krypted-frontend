@@ -63,13 +63,13 @@ export function ForgotPasswordForm() {
       className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg"
     >
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">E-Mail</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="email"
             type="email"
-            placeholder="Enter your Email"
+            placeholder="Gib deine E-Mail-Anschrift ein"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -83,7 +83,7 @@ export function ForgotPasswordForm() {
         className="w-full bg-white text-gray-900 hover:bg-gray-200"
         disabled={isLoading}
       >
-        {isLoading ? "Sending email..." : "Send email"}
+        {isLoading ? "Link wird verschickt..." : "Passwort zurücksetzen"}
       </Button>
     </form>
   );

@@ -129,7 +129,7 @@ export default function PersonalInfoForm({
             disabled={!session}
           >
             <Edit className="mr-2 h-4 w-4" />
-            Edit
+            Bearbeiten
           </Button>
         )}
       </div>
@@ -139,11 +139,12 @@ export default function PersonalInfoForm({
           {/* Name Field */}
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm text-[#FFFFFF]">
-              Ihr Name
+              Name
             </label>
             <Input
               id="name"
               name="name"
+              placeholder="Gib deinen Namen ein"
               value={formData.name || ""}
               onChange={handleChange}
               disabled={!isEditing || !session}
@@ -160,9 +161,10 @@ export default function PersonalInfoForm({
               id="email"
               name="email"
               type="email"
+              placeholder="Gib deine E-Mail ein"
               value={formData.email || ""}
               onChange={handleChange}
-              disabled={!isEditing || !session}
+              disabled={true}
               className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
             />
           </div>
@@ -178,6 +180,7 @@ export default function PersonalInfoForm({
             <Input
               id="phoneNumber"
               name="phoneNumber"
+              placeholder="Gib deine Mobilnummer ein"
               value={formData.phoneNumber || ""}
               onChange={handleChange}
               disabled={!isEditing || !session}
@@ -188,7 +191,7 @@ export default function PersonalInfoForm({
           {/* Country Field */}
           <div className="space-y-2">
             <label htmlFor="country" className="block text-sm text-[#FFFFFF]">
-              Country
+              Land
             </label>
             <Input
               id="country"
@@ -197,14 +200,14 @@ export default function PersonalInfoForm({
               onChange={handleChange}
               disabled={!isEditing || !session}
               className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
-              placeholder="Geben Sie Ihr Land ein"
+              placeholder="Gib dein Land ein"
             />
           </div>
 
           {/* City/State Field */}
           <div className="space-y-2">
             <label htmlFor="cityState" className="block text-sm text-[#FFFFFF]">
-              Stadt/Bundesland/Adresse
+              Stadt
             </label>
             <Input
               id="cityState"
@@ -213,7 +216,7 @@ export default function PersonalInfoForm({
               onChange={handleChange}
               disabled={!isEditing || !session}
               className="bg-transparent border-[#E0E0E0] text-[#FFFFFF]"
-              placeholder="Geben Sie Ihre Stadt/Ihr Bundesland ein"
+              placeholder="Gib deine Stadt ein"
             />
           </div>
         </div>
@@ -250,10 +253,10 @@ export default function PersonalInfoForm({
                 });
                 setIsEditing(false);
               }}
-              className="text-[#212121]"
+              className="text-[#212121] bg-white hover:bg-white/90"
               disabled={isLoading}
             >
-              Stornieren
+              Abbrechen
             </Button>
             <Button
               type="submit"
