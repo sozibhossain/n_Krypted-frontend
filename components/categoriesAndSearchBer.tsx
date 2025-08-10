@@ -221,6 +221,7 @@ export function CategoriesAndSearchBar() {
     "/reset-password",
     "/forgot-password",
     "/verify-email",
+    "/verify-otp",
   ];
 
   // Get display text for location button

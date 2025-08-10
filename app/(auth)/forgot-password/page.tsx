@@ -9,7 +9,7 @@ export default function ForgotPasswordPage() {
         <div className="relative flex h-full flex-col items-center justify-center">
           <div className="absolute inset-0">
             <Image
-              src="/assets/auth.jpg"
+              src="/assets/forgot-password.jpg"
               alt="Background"
               fill
               className="object-cover opacity-50"
