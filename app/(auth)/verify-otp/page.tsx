@@ -1,5 +1,5 @@
-import Image from "next/image"
-import { VerifyOtpForm } from "@/components/VerifyOtpForm"
+import Image from "next/image";
+import { VerifyOtpForm } from "@/components/VerifyOtpForm";
 
 export default function VerifyOtpPage() {
   return (
@@ -8,10 +8,10 @@ export default function VerifyOtpPage() {
         <div className="relative flex h-full flex-col items-center justify-center">
           <div className="absolute inset-0">
             <Image
-              src="/assets/auth.jpg"
+              src="/assets/OTP-Attachment.jpg"
               alt="Background"
               fill
-              className="object-cover opacity-50"
+              className="object-cover object-right-top opacity-50"
               priority
             />
           </div>
@@ -33,26 +33,29 @@ export default function VerifyOtpPage() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">Input the one-time code</h2>
+            <h2 className="mb-2 text-4xl font-bold">Passwort verlegt? </h2>
             <p className="max-w-md text-gray-300">
-              Discover amazing products and enjoy a seamless shopping experience with us.
+              Wir setzen dein Passwort sofort zurück, damit du ruckzuck wieder
+              in deinem Portal bist.
             </p>
           </div>
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#121212] lg:w-1/2">
         <div className="w-full max-w-md space-y-8  p-8 text-white">
-          <div className="text-center">
+          <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold">Verify OTP</h1>
             <p className="text-gray-400">
-              An OTP has been sent to your email
-              <br />
-              Please verify it below
+              Bitte gib den Bestätigungscode ein, den wir dir per E-Mail
+              gesendet haben.
+              
             </p>
+            <p>Wir haben dir einen 6-stelligen Code an xxxx geschickt. Trage ihn
+              hier ein, um deine E-Mail zu verifizieren.</p>
           </div>
           <VerifyOtpForm />
         </div>
       </div>
     </div>
-  )
+  );
 }
