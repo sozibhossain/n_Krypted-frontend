@@ -9,7 +9,7 @@ export default function VerifyEmailPage() {
         <div className="relative flex h-full flex-col items-center justify-center">
           <div className="absolute inset-0">
             <Image
-              src="/assets/auth.jpg"
+              src="/assets/OTP.jpg"
               alt="Background"
               fill
               className="object-cover opacity-50"
@@ -35,23 +35,24 @@ export default function VerifyEmailPage() {
               </svg>
             </div>
             <h2 className="mb-2 text-4xl font-bold">
-              Bestätigen Sie Ihre E-Mail
+              Schritt 1 – E-Mail bestätigen
             </h2>
-            <p className="max-w-md text-gray-300">
-              Bitte geben Sie den Bestätigungscode ein, der Ihnen per E-Mail
-              zugesandt wurde.
-            </p>
+            <div className="max-w-md text-gray-300">
+              Bitte gib den Bestätigungscode ein,
+              <div>den wir dir per E-Mail gesendet haben.</div>
+            </div>
           </div>
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
-        <div className="w-full max-w-md space-y-8  p-8 text-white">
+        <div className="w-full max-w-lg space-y-8  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">OTP überprüfen</h1>
+            <h1 className="text-2xl font-bold">
+              Code eingeben und<br/> E-Mail verifizieren{" "}
+            </h1>
             <p className="text-gray-400">
-              Ein OTP wurde an Ihre E-Mail gesendet
-              <br />
-              Bitte überprüfen Sie es unten
+              Wir haben dir einen 6-stelligen OTP Code geschickt. Trage ihn
+              unten ein, um deine E-Mail zu verifizieren.
             </p>
           </div>
           <Suspense fallback={<div>Laden...</div>}>

@@ -34,12 +34,10 @@ export default function ForgotPasswordPage() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">
-              Stellen Sie Ihr Passwort wieder her
-            </h2>
+            <h2 className="mb-2 text-4xl font-bold">Passwort verlegt?</h2>
             <p className="max-w-md text-gray-300">
-              Entdecken Sie tolle Produkte und genießen Sie bei uns ein
-              nahtloses Einkaufserlebnis.
+              Wir setzen dein Passwort sofort zurück, damit du ruckzuck wieder
+              in deinem Portal bist.
             </p>
           </div>
         </div>
@@ -48,11 +46,11 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
-              Password vergessen?
+              E-Mail einfügen
             </h1>
             <div className="text-white text-[14px] lg:text-[16px] font-normal">
-              Gib deine E-Mail-Anschrift ein, um den Link zum Zurücksetzen
-              deines Passworts zu erhalten
+              Gib deine E-Mail ein, um den Link zum Zurücksetzen deines
+              Passworts zu erhalten.
             </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
