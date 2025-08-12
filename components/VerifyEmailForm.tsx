@@ -50,9 +50,9 @@ export function VerifyEmailForm() {
       toast.success("E-Mail erfolgreich verifiziert!");
       router.push("/login");
     },
-    onError: (error) => {
-      console.error("Verification error:", error);
-      toast.error(error.message || "Ungültiger Bestätigungscode");
+    onError: () => {
+      // console.error("Verification error:", error);
+      toast.error("Ungültiger Bestätigungscode");
     },
   });
 
@@ -84,7 +84,7 @@ export function VerifyEmailForm() {
     onError: (error) => {
       toast.error(
         error.message ||
-          "Der Code konnte nicht erneut gesendet werden. Bitte versuchen Sie es erneut."
+          "Der Code konnte nicht erneut gesendet werden. Bitte versuche es erneut."
       );
     },
   });
@@ -118,7 +118,7 @@ export function VerifyEmailForm() {
     e.preventDefault();
     const otpValue = otp.join("");
     if (otpValue.length !== 6) {
-      toast.error("Please enter all 6 digits");
+      toast.error("Bitte gib alle 6 Ziffern ein");
       return;
     }
     verifyOtp();
@@ -127,11 +127,12 @@ export function VerifyEmailForm() {
   return (
     <div className="max-w-md mx-auto p-6 bg-[#212121]/10 rounded-lg shadow-md border border-gray-700">
       <h2 className="text-2xl font-bold text-center mb-6 text-white">
-        Bestätigen Sie Ihre E-Mail
+        Schritt 2 – Code eingeben
       </h2>
       <p className="text-center mb-6 text-gray-300">
-        Geben Sie den 6-stelligen Code ein, der an{" "}
+        Gib den 6-stelligen Code ein, den wir an{" "}
         <span className="font-semibold text-white">{email}</span>
+        <br /> verschickt haben.
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
         <CustomOtpInput
@@ -147,7 +148,7 @@ export function VerifyEmailForm() {
           disabled={isVerifying || isResending}
           className="w-full py-3 bg-white text-gray-900 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors font-medium"
         >
-          {isVerifying ? "Verifying..." : "Verify Email"}
+          {isVerifying ? "Wird verifiziert..." : "E-Mail verifizieren"}
         </button>
       </form>
 
@@ -166,10 +167,10 @@ export function VerifyEmailForm() {
           className="text-gray-400 hover:text-white hover:underline text-sm disabled:opacity-50"
         >
           {isResending
-            ? "Sending..."
+            ? "Wird gesendet..."
             : canResend
-            ? "Resend Code"
-            : `Resend in ${resendTimer}s`}
+            ? "Code erneut anfordern"
+            : `Wird gesendet in ${resendTimer} Sekunden`}
         </button>
       </div>
     </div>

@@ -39,7 +39,7 @@ export function RegisterForm() {
     }
 
     if (!agreedToTerms) {
-      toast.error("Sie müssen den Nutzungsbedingungen zustimmen");
+      toast.error("Du musst den Nutzungsbedingungen zustimmen");
       return;
     }
 
@@ -54,16 +54,14 @@ export function RegisterForm() {
       });
 
       if (result.success) {
-        toast.success("Konto erfolgreich erstellt!");
+        // toast.success("Konto erfolgreich erstellt!");
         sessionStorage.setItem("registerEmail", email);
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       } else {
         toast.error(result.message);
       }
     } catch {
-      toast.error(
-        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-      );
+      toast.error("Es ist ein Fehler aufgetreten. Bitte versuche es erneut.");
     } finally {
       setIsLoading(false);
     }
@@ -205,7 +203,10 @@ export function RegisterForm() {
             className="text-sm font-medium leading-none text-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Ich habe die{" "}
-            <Link href="/refund-policies" className="text-white hover:text-blue-400">
+            <Link
+              href="/refund-policies"
+              className="text-white hover:text-blue-400"
+            >
               Datenschutzerklärung
             </Link>{" "}
             gelesen und akzeptiert.
