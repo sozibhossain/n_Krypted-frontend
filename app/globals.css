@@ -13,36 +13,48 @@
 
 @layer base {
   /* Light theme variables */
-  :root {
-    --background: 36 33% 94%;
-    --foreground: 20 14.3% 4.1%;
-    --card: 36 33% 94%;
-    --card-foreground: 20 14.3% 4.1%;
-    --popover: 36 33% 94%;
-    --popover-foreground: 20 14.3% 4.1%;
-    --primary: 36 16% 34%;
-    --primary-foreground: 60 9.1% 97.8%;
-    --secondary: 36 33% 88%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 36 33% 88%;
-    --muted-foreground: 25 5.3% 44.7%;
-    --accent: 36 33% 88%;
-    --accent-foreground: 24 9.8% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --border: 36 33% 84%;
-    --input: 36 33% 84%;
-    --ring: 35 91.7% 32.9%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+:root {
+  --background: 0 0% 100%; /* White background */
+  --foreground: 0 0% 5%;   /* Black text */
+
+  --card: 0 0% 100%; 
+  --card-foreground: 0 0% 5%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 5%;
+
+   --primary: 0 0% 100%; /* White background */
+  --primary-foreground: 0 0% 5%; 
+
+  --secondary: 0 0% 95%;
+  --secondary-foreground: 0 0% 5%;
+
+  --muted: 0 0% 94%;
+  --muted-foreground: 0 0% 40%;
+
+  --accent: 0 0% 90%;
+  --accent-foreground: 0 0% 5%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 0 0% 80%;
+  --input: 0 0% 80%;
+  --ring: 0 0% 20%;
+
+  --radius: 0.5rem;
+
+  /* Sidebar */
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 0 0% 5%;
+  --sidebar-primary: 0 0% 0%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 94%;
+  --sidebar-accent-foreground: 0 0% 5%;
+  --sidebar-border: 0 0% 85%;
+  --sidebar-ring: 0 0% 20%;
+}
+
 
   /* Dark theme variables */
   .dark {

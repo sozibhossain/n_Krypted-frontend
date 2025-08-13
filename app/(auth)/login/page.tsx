@@ -40,7 +40,7 @@ export default function SignInPage() {
             <div className="max-w-lg text-gray-300">
               Bereit für deinen nächsten Walk Through?{" "}
               <div>
-                Es warten neue Locations und überraschende Einblicke auf dich.
+                Es warten neue Locations und spannende Einblicke auf dich.
               </div>
             </div>
           </div>

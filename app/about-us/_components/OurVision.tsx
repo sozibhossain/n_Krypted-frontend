@@ -39,14 +39,8 @@ const OurVision = () => {
             Was möchte Walk Throughz langfristig erreichen?
           </h3>
           <p className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
-            Wir träumen von Städten, die nicht nur bewohnt, sondern wirklich
-            gelebt werden – von Menschen, die sich wieder als Teil eines
-            größeren Ganzen fühlen. Langfristig wollen wir mit Walk Throughz ein
-            neues Stadtgefühl etablieren: eine Kultur der Offenheit, der Neugier
-            und des lokalen Engagements. Walk Throughz soll in vielen Städten
-            der Welt wachsen, als Netzwerk für urbane Inspiration,
-            Mikro-entdeckungen und echte Verbindung. Denn je mehr wir teilen,
-            desto mehr entsteht.
+            Wir träumen von Städten, die nicht nur bewohnt, sondern wirklich gelebt werden, von Menschen, die sich wieder als Teil eines größeren Ganzen fühlen. Langfristig wollen wir mit Walk Throughz ein neues Stadtgefühl etablieren: eine Kultur der Offenheit, der Neugier und des lokalen Engagements. Walk Throughz soll in vielen Städten der Welt wachsen, als Netzwerk für urbane Inspiration, Mikro-entdeckungen und echte Verbindung. Denn je mehr wir teilen, desto mehr entsteht.  
+
           </p>
           {/* <ul className="list-disc list-inside mt-4 sm:mt-5 text-white text-sm sm:text-base lg:text-[18px] leading-[150%] font-normal ml-4 sm:ml-5 md:text-nowrap space-y-2">
             <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>

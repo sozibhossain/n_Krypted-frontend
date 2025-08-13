@@ -28,7 +28,7 @@ const page = () => {
               kurze Führungen durch kreative Werkstätten, Cafés oder Orte, die
               man sonst übersieht – bei Walk Throughz holen wir für euch das
               Besondere aus jeder Location heraus. Jeder Walk Through dauert
-              zwischen ungefähr 30 und 60 Minuten und wird direkt von den
+              ungefähr zwischen 30 und 60 Minuten und wird direkt von den
               Menschen gestaltet, die die Orte mit Leben füllen. So entsteht
               eine neue Art, Stadt zu erleben.
             </p>

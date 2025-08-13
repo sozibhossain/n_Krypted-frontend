@@ -20,14 +20,8 @@ const OurMission = () => {
             Was ist der aktuelle Zweck von Walk Throughz?
           </h3>
           <div className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
-            Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten
-            Bürger*innen und Lokationen enger miteinander vernetzen und echte,
-            bleibende Bindungen zu Orten schaffen – durch das Teilen von lokalem
-            Fachwissen, Leidenschaft und Persönlichkeit. Walk Throughz bringt
-            Gleichgesinnte auf eine neue, ungezwungene Art zusammen und fördert
-            den Austausch über Themen, die inspirieren. Wir wollen verhindern,
-            dass unsere Städte unpersönlich und leblos werden. Stattdessen
-            setzen wir Impulse, die sie aktiv, menschlich und dynamisch halten.
+            Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten Bürger:innen und Lokationen enger miteinander vernetzen und echte, bleibende Bindungen zu Orten schaffen, durch das Teilen von lokalem Fachwissen, Leidenschaft und Persönlichkeit. Walk Throughz bringt Gleichgesinnte auf eine neue, ungezwungene Art zusammen und fördert den Austausch über Themen, die inspirieren. Wir wollen verhindern, dass unsere Städte unpersönlich und leblos werden. Stattdessen setzen wir Impulse, die sie aktiv, menschlich und dynamisch halten. 
+
           </div>
         </div>
 

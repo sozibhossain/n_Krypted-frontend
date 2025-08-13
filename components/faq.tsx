@@ -8,7 +8,7 @@ import {
 
 const faqs = [
   {
-    question: "Was genau ist ein Walk Through eigentlich?",
+    question: "Was genau ist eigentlich ein Walk Through?",
     answer:
       "Ein Walk Through ist eine kurze, geführte Tour zu besonderen Themen – etwa in kleinen Läden, Ateliers, Werkstätten oder Cafés. Die Gastgeber:innen geben dir einen persönlichen Einblick in ihr Fachgebiet oder ihre Leidenschaft; echt, direkt und voller neuer Perspektiven.",
   },
@@ -20,7 +20,7 @@ const faqs = [
   {
     question: "Wie lange dauert ein Walk Through?",
     answer:
-      "Die Dauer kann variieren – je nachdem, wie der Walk Through verläuft. Plane am besten etwa 30 bis 60 Minuten ein",
+      "Die Dauer kann variieren – je nachdem, wie der Walk Through verläuft. Plane am besten etwa 30 bis 60 Minuten ein.",
   },
   {
     question: "Muss ich pünktlich erscheinen? ",

@@ -244,7 +244,7 @@ export function CategoriesAndSearchBar() {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
-                        className="bg-transparent border-white text-white h-[52px] hover:bg-gray-800 hover:text-white w-full justify-between"
+                        className="bg-transparent border-white text-white h-[52px] hover:bg-white/10 hover:border-white/10 hover:text-white w-full justify-between"
                       >
                         <span>{selectedCategory || "Kategorien"}</span>
                         <ChevronDown className="h-4 w-4 ml-2" />
@@ -253,8 +253,8 @@ export function CategoriesAndSearchBar() {
                     <DropdownMenuContent align="start" className="w-[270px]">
                       <DropdownMenuItem
                         onClick={() => handleCategorySelect("")}
-                        className={!selectedCategory ? "bg-gray-100" : ""}
-                      ></DropdownMenuItem>
+                        className={!selectedCategory ? "bg-neutral-100" : ""}
+                      >Alle</DropdownMenuItem>
                       {isLoadingCategories ? (
                         <DropdownMenuItem disabled>
                           Loading categories...
@@ -268,7 +268,7 @@ export function CategoriesAndSearchBar() {
                             }
                             className={
                               selectedCategory === category.categoryName
-                                ? "bg-gray-100"
+                                ? "bg-neutral-100"
                                 : ""
                             }
                           >
@@ -296,22 +296,22 @@ export function CategoriesAndSearchBar() {
                         selectedCategory ||
                         selectedCountry ||
                         selectedCity) && (
-                        <button
-                          type="button"
-                          onClick={handleClearSearch}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 transition-colors duration-200 p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
-                          aria-label="Clear search and filters"
-                        >
-                          <X className="h-4 w-4 stroke-2" />
-                        </button>
-                      )}
+                          <button
+                            type="button"
+                            onClick={handleClearSearch}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white/20"
+                            aria-label="Clear search and filters"
+                          >
+                            <X className="h-4 w-4 stroke-2" />
+                          </button>
+                        )}
                     </div>
                     {/* Location Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="bg-white py-[25px] lg:h-[52px] text-black !rounded-l-none hover:bg-gray-100 border-0 gap-2"
+                          className="bg-white py-[25px] lg:h-[52px] text-black !rounded-l-none hover:bg-neutral-50 border-0 gap-2"
                         >
                           <MapPin className="h-4 w-4" />
                           <span>{getLocationDisplayText()}</span>
@@ -328,9 +328,9 @@ export function CategoriesAndSearchBar() {
                             handleCountrySelect("");
                             handleCitySelect("", "");
                           }}
-                          className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                          className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
                             !selectedCountry && !selectedCity
-                              ? "bg-gray-100"
+                              ? "bg-neutral-100"
                               : ""
                           }`}
                         >
@@ -342,9 +342,9 @@ export function CategoriesAndSearchBar() {
                             {/* Country Item */}
                             <div
                               onClick={() => handleCountrySelect(country)}
-                              className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                              className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
                                 selectedCountry === country && !selectedCity
-                                  ? "bg-gray-100"
+                                  ? "bg-neutral-100"
                                   : ""
                               }`}
                             >
@@ -359,8 +359,8 @@ export function CategoriesAndSearchBar() {
                                   onClick={() =>
                                     handleCitySelect(city, country)
                                   }
-                                  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-                                    selectedCity === city ? "bg-gray-100" : ""
+                                  className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
+                                    selectedCity === city ? "bg-neutral-100" : ""
                                   }`}
                                 >
                                   {city}

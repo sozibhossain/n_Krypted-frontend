@@ -8,7 +8,7 @@ export default function SignUpPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-md space-y-8 rounded-lg  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2 text-nowrap ml-[-13%]">
+            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2 lg:text-nowrap lg:ml-[-13%]">
               Werde Teil von Walk Throughz
             </h1>
             <div className="text-white text-[14px] lg:text-[16px] font-normal">
