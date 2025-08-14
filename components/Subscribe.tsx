@@ -60,7 +60,7 @@ export default function NewsletterSubscription() {
   return (
     <div className="max-w-lg  w-full">
       <h2 className="text-xl font-bold mb-4 text-black ">
-        Jetzt anmelden und keine Angebote mehr verpassen
+        Jetzt anmelden und keine Deals mehr verpassen
       </h2>
       <form
         onSubmit={handleSubmit}

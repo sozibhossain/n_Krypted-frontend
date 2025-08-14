@@ -5,11 +5,7 @@ import React from "react";
 const page = () => {
   return (
     <div className="">
-      <PageHeader
-        title="Notifications"
-        imge="/assets/notifications.jpg"
-      
-      />
+      <PageHeader title="Benachrichtigungen" imge="/assets/notifications.jpg" />
       <div className="py-28 container">
         <Notifications />
       </div>

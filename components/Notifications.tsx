@@ -188,7 +188,9 @@ const Notifications = () => {
           setNotificationCount(unreadCount);
         } else {
           console.error("Failed to fetch initial notifications:", data.message);
-          setError(data.message || "Abrufen der Benachrichtigungen fehlgeschlagen");
+          setError(
+            data.message || "Abrufen der Benachrichtigungen fehlgeschlagen"
+          );
         }
       } catch (error) {
         console.error("Error fetching initial notifications:", error);
@@ -336,7 +338,9 @@ const Notifications = () => {
                   onClick={markNotificationsAsRead}
                   disabled={markingAsRead}
                 >
-                  {markingAsRead ? "Markierung..." : "Alle als gelesen markieren"}
+                  {markingAsRead
+                    ? "Markierung..."
+                    : "Alle als gelesen markieren"}
                 </Button>
               )}
             </div>
@@ -350,7 +354,9 @@ const Notifications = () => {
                 Noch keine Benachrichtigungen
               </h3>
               <p className="text-gray-500">
-                {"Sie sehen hier Benachrichtigungen, wenn bei Ihren Deals Aktivität stattfindet."}
+                {
+                  "Du siehst hier Benachrichtigungen, wenn dein gewünschter Deal wieder verfügbar ist."
+                }
               </p>
             </div>
           ) : (
@@ -527,7 +533,9 @@ const Notifications = () => {
                       return (
                         <Button
                           key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "outline"}
+                          variant={
+                            currentPage === pageNum ? "default" : "outline"
+                          }
                           size="sm"
                           onClick={() => goToPage(pageNum)}
                           className="w-10 h-10 p-0"

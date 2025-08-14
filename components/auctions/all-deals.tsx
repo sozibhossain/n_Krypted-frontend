@@ -896,7 +896,7 @@ function DealsPage() {
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <p className="text-gray-500">
-                        Es wurden keine Angebote gefunden, die Ihren Filtern
+                        Es wurden keine Deals gefunden, die deinen Filtern
                         entsprechen.
                       </p>
                     </div>
