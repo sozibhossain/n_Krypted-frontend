@@ -42,7 +42,7 @@ function Blogs() {
 
   return (
     <section>
-      <PageHeader title="Our Latest Blogs" imge="/assets/Blogbanner.jpg" />
+      <PageHeader title="Unsere Blogs" imge="/assets/Blogbanner.jpg" />
 
       <div className="container my-24">
         <h1 className="text-[28px] lg:text-[36px] font-bold mb-8 text-center text-white">

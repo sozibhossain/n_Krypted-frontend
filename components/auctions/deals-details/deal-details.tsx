@@ -606,7 +606,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </div>
         <div className="md:col-span-6 order-3">
           <div className="space-y-4">
-            <h1 className="text-2xl md:text-3xl lg:text-[30px] font-semibold text-[#FFFFFF]">
+            <h1 className="text-2xl md:text-[28px] font-semibold text-[#FFFFFF]">
               {auction?.title || "Property Title"}
             </h1>
             <p className="text-lg md:text-xl text-[#E0E0E0] font-normal leading-[150%]">
@@ -632,7 +632,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </div>
             <div>
               <span className="text-xl md:text-2xl font-semibold text-[#FFFFFF]">
-                {auction?.price ? `$${auction.price.toFixed(2)}` : "$0.00"}
+                {auction?.price ? `€${auction.price.toFixed(2)}` : "€0.00"}
               </span>
             </div>
 
@@ -688,7 +688,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       />
 
       <div className="space-y-6 pb-[20px] md:pb-[120px]">
-        <h2 className="text-[32px] text-[#FFFFFF] font-semibold">
+        <h2 className="text-[24px] md:text-[28px] text-[#FFFFFF] font-semibold">
           Kundenrezensionen
         </h2>
         <div>

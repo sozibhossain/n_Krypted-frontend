@@ -20,7 +20,7 @@ export function HeroBanner() {
       <div className="relative h-full flex items-center">
         <div className="container">
           <div className="max-w-2xl ">
-            <div className="text-3xl md:text-4xl lg:text-[45px] font-bold text-white mb-4">
+            <div className="text-3xl md:text-4xl lg:text-[43px] font-bold text-white mb-4">
               Langeweile in der Stadt?
               <div className="mt-3">Nicht mit uns!</div>
             </div>

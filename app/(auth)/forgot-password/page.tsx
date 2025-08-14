@@ -35,10 +35,10 @@ export default function ForgotPasswordPage() {
               </svg>
             </div>
             <h2 className="mb-2 text-4xl font-bold">Passwort verlegt?</h2>
-            <p className="max-w-md text-gray-300">
-              Wir setzen dein Passwort sofort zurück, damit du ruckzuck wieder
-              in deinem Portal bist.
-            </p>
+            <div className="max-w-md text-gray-300">
+              Wir setzen dein Passwort sofort zurück,
+              <div>damit du ruckzuck wieder in deinem Portal bist.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8 p-8 text-white">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
-              E-Mail einfügen
+              Link anfordern
             </h1>
             <div className="text-white text-[14px] lg:text-[16px] font-normal">
               Gib deine E-Mail ein, um den Link zum Zurücksetzen deines

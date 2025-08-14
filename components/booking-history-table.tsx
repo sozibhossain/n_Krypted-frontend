@@ -147,7 +147,7 @@ export default function BookingHistoryTable() {
 
   // Format price function
   const formatPrice = (price: number) => {
-    return `$${price?.toFixed(2)}`;
+    return `€${price?.toFixed(2)}`;
   };
 
   // Handle view button click
@@ -223,7 +223,7 @@ export default function BookingHistoryTable() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
-      <h2 className="text-xl font-semibold text-white mb-6">Buchungsverlauf</h2>
+      <h2 className="text-2xl font-semibold text-white mb-6">Buchungsverlauf</h2>
 
       {/* Table for medium and large screens */}
       <div className="hidden sm:block bg-zinc-900/60 rounded-lg overflow-hidden">
