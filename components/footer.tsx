@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Globe } from "lucide-react";
+import { Facebook, Instagram, Globe, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import NewsletterSubscription from "./Subscribe";
@@ -72,7 +72,7 @@ export function Footer() {
               aria-label="Twitter"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
             >
-              <Twitter size={18} />
+              <X size={18} />
             </Link>
           </div>
         </div>

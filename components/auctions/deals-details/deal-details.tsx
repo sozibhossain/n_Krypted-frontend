@@ -464,7 +464,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   const handleBooking = async (notifyMe = false) => {
     if (!session?.data?.user?.id) {
-      toast.error("Bitte melden Sie sich an, um dieses Angebot zu buchen");
+      toast.error("Bitte melde dich an, um diese Funktion zu nutzen");
       return;
     }
     if (!notifyMe && !selectedSchedule) {
@@ -624,16 +624,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 }}
               />
             </p>
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-gray-500 -ml-[3px]">
               <MapPin className="w-4 h-4 text-white" />
-              <span className="text-lg md:text-xl text-[#E0E0E0] font-medium">
+              <span className="text-lg md:text-lg text-[#E0E0E0] font-medium">
                 {auction?.location.country}, {auction?.location.city}
               </span>
             </div>
             <div>
-              <span className="text-xl md:text-2xl font-semibold text-[#FFFFFF]">
-                {auction?.price ? `€${auction.price.toFixed(2)}` : "€0.00"}
-              </span>
+              <div className="text-xl font-semibold text-[#FFFFFF]">
+                <span className="mr-[3px]">€</span>{auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
+              </div>
             </div>
 
             {/* Schedule Dates Section */}
@@ -668,10 +668,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             ) : (
               <div className="text-white py-4">
                 {allSchedulesFull
-                  ? "All schedules are currently full. Please check back later."
+                  ? "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."
                   : noSchedulesAvailable
-                  ? "No schedules available for this deal."
-                  : "No available schedules at this time."}
+                  ? "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."
+                  : "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."}
               </div>
             )}
 
@@ -772,7 +772,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             />
             <Input
               className="border border-[#FFFFFF] placeholder:text-white text-white"
-              placeholder="Gib deine E-Mail-Anschrift ein"
+              placeholder="Gib deine E-Mail ein"
               type="email"
               required
               value={email}

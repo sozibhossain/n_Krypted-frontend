@@ -1,5 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +16,11 @@ interface LogOutModalProps {
   onConfirmLogout: () => void;
 }
 
-const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen, onConfirmLogout }: LogOutModalProps) => {
+const LogOutModal = ({
+  isLogoutDialogOpen,
+  setIsLogoutDialogOpen,
+  onConfirmLogout,
+}: LogOutModalProps) => {
   return (
     <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
       <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
@@ -40,7 +49,7 @@ const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen, onConfirmLogou
             </Link>
           </div>
           <DialogTitle className="text-xl font-bold text-center">
-            Möchten Sie sich wirklich abmelden?
+            Möchtest du dich wirklich abmelden?
           </DialogTitle>
           <div className="flex gap-4 mt-6 w-full">
             <button
@@ -48,13 +57,14 @@ const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen, onConfirmLogou
                 localStorage.clear();
                 signOut({ callbackUrl: "/login" });
               }}
-              className="flex-1 bg-[#ffffff] border border-white hover:bg-[#7d7260] hover:text-white p-2 rounded-lg"
+              className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg"
             >
               Yes
             </button>
+
             <button
               onClick={() => setIsLogoutDialogOpen(false)}
-              className="flex-1 border border-white !bg-[#212211] hover:bg-[#7d7260] hover:text-white p-2 rounded-lg"
+              className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg"
             >
               No
             </button>

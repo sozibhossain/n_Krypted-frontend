@@ -127,7 +127,7 @@ export function SignInForm() {
         className="w-full bg-white text-gray-900 hover:bg-gray-200"
         disabled={isLoading}
       >
-        {isLoading ? "Anmeldung erfolgt" : "Anmelden"}
+        {isLoading ? "Anmeldung erfolgt..." : "Anmelden"}
       </Button>
 
       <div className="relative flex items-center justify-center">
