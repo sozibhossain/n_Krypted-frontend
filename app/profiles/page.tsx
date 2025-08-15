@@ -10,14 +10,13 @@ import { PageHeader } from "@/Shared/PageHeader";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
 import { toast } from "sonner";
 import ProfileChangepassword from "@/components/profileChangepassword";
+import { DialogOverlay } from "@radix-ui/react-dialog";
+import Link from "next/link";
 
 interface UserData {
   id?: string;
@@ -148,17 +147,17 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut({ callbackUrl: "/" });
-      toast.success("Ausloggen erfolgreich.");
-    } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Logout failed");
-    } finally {
-      setShowLogoutDialog(false);
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await signOut({ callbackUrl: "/" });
+  //     toast.success("Ausloggen erfolgreich.");
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //     toast.error("Logout failed");
+  //   } finally {
+  //     setShowLogoutDialog(false);
+  //   }
+  // };
 
   const avatar = userData?.avatar || "/assets/default-avatar.png";
   const name = userData?.name || "N/A";
@@ -166,7 +165,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="My Profile" imge="/assets/profile1.jpg" />
+      <PageHeader title="Mein Profil" imge="/assets/profile1.jpg" />
       <div className="flex flex-col md:flex-row min-h-screen text-white container pt-[80px]">
         {/* Sidebar */}
         <div className="w-full md:w-80 p-6 flex flex-col items-center md:sticky md:top-0 md:h-screen">
@@ -280,34 +279,55 @@ export default function Dashboard() {
       </div>
 
       {/* Logout Dialog */}
+
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="sm:max-w-md bg-zinc-900 border-zinc-800 text-white">
-          <DialogHeader>
-            <div className="flex justify-center mb-2">
-              <div className="text-center text-xl font-semibold">
-                Walk Through
-              </div>
+        <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+        <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-md bg-[#212121] text-white border-none z-50 focus:outline-none p-5 rounded-lg w-[500px] backdrop-blur-lg">
+          <div className="flex flex-col items-center justify-center py-4">
+            {/* Logo */}
+            <div>
+              <Link href="/" className="">
+                <div className="py-1">
+                  <div className="flex justify-center">
+                    <Image
+                      src="/assets/logo-icon.png"
+                      alt="Logo"
+                      width={1000}
+                      height={1000}
+                      className="h-[37px] w-[95px]"
+                    />
+                  </div>
+                  <h1
+                    className="text-[32px] logo-size font-normal font-benedict text-white leading-[120%]
+                 [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                  >
+                    Walk Throughz
+                  </h1>
+                </div>
+              </Link>
             </div>
-            <DialogTitle className="text-center">
-              Are you sure you want to log out?
+            <DialogTitle className="text-xl font-bold text-center">
+              Möchtest du dich wirklich abmelden?
             </DialogTitle>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row justify-center gap-4 sm:justify-center mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowLogoutDialog(false)}
-              className="w-full sm:w-24 bg-zinc-800 border-zinc-700 hover:bg-zinc-700 text-white"
-            >
-              No
-            </Button>
-            <Button
-              onClick={handleLogout}
-              className="w-full sm:w-24 bg-zinc-800 hover:bg-zinc-700 text-white"
-              disabled={isUploading}
-            >
-              Yes
-            </Button>
-          </DialogFooter>
+            <div className="flex gap-4 mt-6 w-full">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  signOut({ callbackUrl: "/login" });
+                }}
+                className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg"
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={() => setShowLogoutDialog(false)}
+                className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg"
+              >
+                No
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

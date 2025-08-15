@@ -127,7 +127,7 @@ export function VerifyEmailForm() {
   return (
     <div className="max-w-md mx-auto p-6 bg-[#212121]/10 rounded-lg shadow-md border border-gray-700">
       <h2 className="text-2xl font-bold text-center mb-6 text-white">
-        Schritt 2 – Code eingeben
+        Code eingeben
       </h2>
       <p className="text-center mb-6 text-gray-300">
         Gib den 6-stelligen Code ein, den wir an{" "}
@@ -148,7 +148,7 @@ export function VerifyEmailForm() {
           disabled={isVerifying || isResending}
           className="w-full py-3 bg-white text-gray-900 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors font-medium"
         >
-          {isVerifying ? "Wird verifiziert..." : "E-Mail verifizieren"}
+          {isVerifying ? "Wird verifiziert..." : "E-Mail bestätigen"}
         </button>
       </form>
 

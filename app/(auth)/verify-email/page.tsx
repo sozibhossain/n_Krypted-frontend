@@ -34,12 +34,10 @@ export default function VerifyEmailPage() {
                 <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-4xl font-bold">
-              Schritt 1 – E-Mail bestätigen
-            </h2>
+            <h2 className="mb-2 text-4xl font-bold">E-Mail bestätigen</h2>
             <div className="max-w-md text-gray-300">
-              Bitte gib den Bestätigungscode ein,
-              <div>den wir dir per E-Mail gesendet haben.</div>
+              Wir haben dir soeben einen 6-stelligen Code an deine E-Mail
+              gesendet. Gib den Code im Feld rechts ein.
             </div>
           </div>
         </div>
@@ -47,13 +45,23 @@ export default function VerifyEmailPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-lg space-y-8  p-8 text-white">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">
-              Code eingeben und<br/> E-Mail verifizieren{" "}
-            </h1>
-            <p className="text-gray-400">
-              Wir haben dir einen 6-stelligen OTP Code geschickt. Trage ihn
-              unten ein, um deine E-Mail zu verifizieren.
-            </p>
+            <div className="py-1 scale-[125%]">
+              <div className="flex justify-center">
+                <Image
+                  src="/assets/logo-icon.png"
+                  alt="Logo"
+                  width={1000}
+                  height={1000}
+                  className="h-[30px] w-[80px] lg:h-[37px] lg:w-[95px]"
+                />
+              </div>
+              <h1
+                className="text-[32px] logo-size font-normal font-benedict text-white leading-[120%]
+                             [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+              >
+                Walk Throughz
+              </h1>
+            </div>
           </div>
           <Suspense fallback={<div>Laden...</div>}>
             <VerifyEmailForm />
