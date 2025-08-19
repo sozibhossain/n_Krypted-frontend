@@ -39,7 +39,6 @@ export function ForgotPasswordForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // toast.success("Passw erfolgreich gesendet");
         setOpenDialog(true);
       } else {
         toast.error(data.message);
@@ -55,8 +54,19 @@ export function ForgotPasswordForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-black px-6 py-8 rounded-xl border border-gray-700 shadow-lg max-w-md mx-auto"
+        className="space-y-6 px-6 py-8 rounded-xl border border-gray-700 shadow-lg max-w-lg mx-auto"
       >
+        <div className="text-center">
+          <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2">
+            Link anfordern
+          </h1>
+          <div className="text-white text-[14px] lg:text-[16px] font-normal">
+            Gib deine E-Mail ein,
+       
+              um den Link zum Zurücksetzen deines Passworts zu erhalten.
+          
+          </div>
+        </div>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-white">
             E-Mail
@@ -70,7 +80,7 @@ export function ForgotPasswordForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="pl-10 bg-gray-900 border-gray-700 text-white placeholder:text-gray-400"
+              className="pl-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
             />
           </div>
         </div>

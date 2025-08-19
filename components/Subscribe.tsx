@@ -1,12 +1,23 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function NewsletterSubscription() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Auto-clear message after 3 seconds
+  useEffect(() => {
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [message]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +54,10 @@ export default function NewsletterSubscription() {
         throw new Error(data.message || "Subscription failed");
       }
 
-      setMessage("Danke fürs Abonnieren");
+      setMessage("Danke fürs Abonnieren des Newsletters");
       setEmail("");
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "error"
-      );
+      setMessage(error instanceof Error ? error.message : "error");
       console.error("Subscription error:", error);
     } finally {
       setIsSubmitting(false);
@@ -58,8 +65,8 @@ export default function NewsletterSubscription() {
   };
 
   return (
-    <div className="max-w-lg  w-full">
-      <h2 className="text-xl font-bold mb-4 text-black ">
+    <div className="max-w-lg w-full">
+      <h2 className="text-xl font-bold mb-4 text-black">
         Jetzt anmelden und keine Deals mehr verpassen
       </h2>
       <form
@@ -88,7 +95,7 @@ export default function NewsletterSubscription() {
       {message && (
         <p
           className={`mt-2 text-sm ${
-            message.includes("Thanks") ? "text-green-500" : "text-red-500"
+            message.includes("Abonnieren") ? "text-green-500" : "text-red-500"
           }`}
         >
           {message}

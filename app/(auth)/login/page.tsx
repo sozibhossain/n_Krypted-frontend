@@ -47,7 +47,7 @@ export default function SignInPage() {
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
-        <div className="w-full max-w-md space-y-8 rounded-lg p-8 text-white">
+        <div className="w-full max-w-md space-y-8 rounded-lg p-8 text-white border border-gray-700">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
               Willkommen zurück

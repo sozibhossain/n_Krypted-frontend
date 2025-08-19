@@ -303,7 +303,9 @@ export function DealsCard({
       if (response.ok) {
         const data = await response.json();
         if (data.booking.notifyMe) {
-          toast.success("You'll be notified when spots become available");
+          toast.success(
+            "Du wirst im Kundenportal benachrichtigt, wenn Plätze verfügbar werden."
+          );
           setIsBookingSummaryOpen(false);
           return;
         }

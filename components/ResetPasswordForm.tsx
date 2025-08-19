@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Lock } from "lucide-react";
@@ -22,7 +21,6 @@ export function ResetPasswordForm() {
   const sharch = useSearchParams();
 
   useEffect(() => {
-    // Get email from URL search params
     const storedEmail = sharch.get("email");
     if (!storedEmail) {
       toast.error("E-Mail nicht in URL-Parametern gefunden");
@@ -31,9 +29,10 @@ export function ResetPasswordForm() {
     }
 
     if (sharch.get("token") === null && sharch.get("email") === null) {
-      window.location.href = "/"; // or use your router's redirect method
+      window.location.href = "/";
     }
-  }, [sharch, setEmail]); // Added all dependencies
+  }, [sharch]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -68,14 +67,11 @@ export function ResetPasswordForm() {
 
       if (response.ok) {
         toast.success("Passwort erfolgreich zurückgesetzt!");
-
-        // Clear session storage
         sessionStorage.removeItem("resetEmail");
         sessionStorage.removeItem("resetToken");
-
         router.push("/login");
       } else {
-        toast.success(
+        toast.error(
           data.message || "Das Zurücksetzen des Passworts ist fehlgeschlagen."
         );
       }
@@ -91,25 +87,27 @@ export function ResetPasswordForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 bg-[#FFFFFF]/10 px-[24px] py-[32px] rounded-lg"
+      className="space-y-6 bg-[#212121] px-[24px] py-[5px] rounded-lg text-white"
     >
       <div className="space-y-2">
-        <Label htmlFor="password">Neues Passwort</Label>
+        <Label htmlFor="password" className="text-white">
+          Neues Passwort
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-300" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="New Password"
+            placeholder="Neues Passwort"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-400"
+            className="absolute right-3 top-3 text-gray-300"
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -121,22 +119,24 @@ export function ResetPasswordForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
+        <Label htmlFor="confirmPassword" className="text-white">
+          Passwort bestätigen
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-300" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm a Password"
+            placeholder="Passwort bestätigen"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-3 text-gray-400"
+            className="absolute right-3 top-3 text-gray-300"
           >
             {showConfirmPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -149,10 +149,10 @@ export function ResetPasswordForm() {
 
       <Button
         type="submit"
-        className="w-full bg-white text-gray-900 hover:bg-gray-200"
+        className="w-full bg-white text-black hover:bg-gray-200"
         disabled={isLoading}
       >
-        {isLoading ? "Resetting password..." : "Continue"}
+        {isLoading ? "Passwort wird zurückgesetzt..." : "Zurücksetzen"}
       </Button>
     </form>
   );
