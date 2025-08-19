@@ -43,14 +43,26 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
-        <div className="w-full max-w-md space-y-8 p-8 text-white">
+        <div className="w-full max-w-lg space-y-8 p-8 text-white">
           <div className="text-center">
-            <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
-              Link anfordern
-            </h1>
-            <div className="text-white text-[14px] lg:text-[16px] font-normal">
-              Gib deine E-Mail ein, um den Link zum Zurücksetzen deines
-              Passworts zu erhalten.
+            <div>
+              <div className=" scale-[120%]">
+                <div className="flex justify-center">
+                  <Image
+                    src="/assets/logo-icon.png"
+                    alt="Logo"
+                    width={1000}
+                    height={1000}
+                    className="h-[30px] w-[80px] lg:h-[37px] lg:w-[95px]"
+                  />
+                </div>
+                <h1
+                  className="text-[32px] logo-size font-normal font-benedict text-white leading-[120%]
+                               [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff] mt-[7px]"
+                >
+                  Walk Throughz
+                </h1>
+              </div>
             </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>

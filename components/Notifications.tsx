@@ -397,7 +397,7 @@ const Notifications = () => {
                                 : "font-medium text-gray-900"
                             }`}
                           >
-                            {notification.message}
+                           
                           </p>
 
                           {dealTitle && !dealTitle.startsWith("Deal ID:") && (
