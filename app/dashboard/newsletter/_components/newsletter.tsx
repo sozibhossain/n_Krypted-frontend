@@ -73,7 +73,8 @@ export default function Newsletter() {
         description:
           "Failed to connect to backend. Make sure your Express server is running.",
         variant: "destructive",
-      });
+      }); 
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -115,6 +116,7 @@ export default function Newsletter() {
         description: "Failed to delete subscriber",
         variant: "destructive",
       });
+      console.log(error)
     }
   };
 
@@ -164,6 +166,7 @@ export default function Newsletter() {
         description: "Failed to send newsletter",
         variant: "destructive",
       });
+      console.log(error)
     } finally {
       setSendingNewsletter(false);
     }
