@@ -26,7 +26,9 @@ function ProfileChangepassword() {
     e.preventDefault();
 
     if (!userId) {
-      toast.error("User session is invalid - please log in again");
+      toast.error(
+        "Die Benutzersitzung ist ungültig. Bitte melden Sie sich erneut an."
+      );
       return;
     }
 
@@ -35,13 +37,13 @@ function ProfileChangepassword() {
     try {
       // Validate passwords match
       if (newPassword !== confirmPassword) {
-        throw new Error("New passwords don't match");
+        throw new Error("Die neuen Passwörter stimmen nicht überein!");
       }
 
       // Validate password strength
-      if (newPassword.length < 8) {
-        throw new Error("Password must be at least 8 characters");
-      }
+      // if (newPassword.length < 8) {
+      //   throw new Error("Password must be at least 8 characters");
+      // }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/change-password`,
@@ -68,7 +70,7 @@ function ProfileChangepassword() {
       }
 
       if (!data.success) {
-        throw new Error(data.message || "Password change failed");
+        throw new Error("Die Passwortänderung ist fehlgeschlagen");
       }
 
       toast.success("Passwort erfolgreich geändert");

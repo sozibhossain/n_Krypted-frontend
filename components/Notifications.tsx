@@ -6,7 +6,13 @@ import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BellRing, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  BellRing,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+} from "lucide-react";
 
 export interface Deal {
   _id: string;
@@ -230,11 +236,11 @@ const Notifications = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "deal_status_change":
-        return <Clock className="h-4 w-4 text-blue-500" />;
+        return <Clock className="h-4 w-4 text-white" />;
       case "new_deal":
-        return <BellRing className="h-4 w-4 text-green-500" />;
+        return <BellRing className="h-4 w-4 text-white" />;
       default:
-        return <BellRing className="h-4 w-4 text-gray-500" />;
+        return <BellRing className="h-4 w-4 text-white" />;
     }
   };
 
@@ -282,17 +288,17 @@ const Notifications = () => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <Card>
+        <Card className="bg-[#212121] border-gray-700">
           <CardContent>
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-start space-x-4">
-                  <Skeleton className="h-4 w-4 rounded-full" />
+                  <Skeleton className="h-4 w-4 rounded-full bg-gray-700" />
                   <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
+                    <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                    <Skeleton className="h-3 w-1/2 bg-gray-700" />
                   </div>
-                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-3 w-16 bg-gray-700" />
                 </div>
               ))}
             </div>
@@ -304,16 +310,20 @@ const Notifications = () => {
 
   if (error) {
     return (
-      <Card>
+      <Card className="bg-[#212121] border-gray-700">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-600">
+          <CardTitle className="flex items-center gap-2 text-white">
             <BellRing className="h-5 w-5" />
             Fehler beim Laden der Benachrichtigungen
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()} variant="outline">
+          <p className="text-gray-400 mb-4">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            variant="outline"
+            className="border-gray-600 text-white hover:bg-gray-700"
+          >
             Versuchen Sie es erneut
           </Button>
         </CardContent>
@@ -323,10 +333,10 @@ const Notifications = () => {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="bg-[#212121] border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center justify-between py-5">
-            <div className="!text-white flex gap-3 items-center justify-center">
+            <div className="text-white flex gap-3 items-center justify-center">
               <BellRing className="h-5 w-5" />
               Benachrichtigungen
             </div>
@@ -337,6 +347,7 @@ const Notifications = () => {
                   size="sm"
                   onClick={markNotificationsAsRead}
                   disabled={markingAsRead}
+                  className=""
                 >
                   {markingAsRead
                     ? "Markierung..."
@@ -349,7 +360,7 @@ const Notifications = () => {
         <CardContent>
           {notifications.length === 0 ? (
             <div className="text-center py-8">
-              <BellRing className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <BellRing className="h-12 w-12 mx-auto text-gray-600 mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">
                 Noch keine Benachrichtigungen
               </h3>
@@ -372,8 +383,8 @@ const Notifications = () => {
                     key={notification._id}
                     className={`flex items-start space-x-4 p-4 rounded-lg border transition-colors ${
                       notification.isRead
-                        ? "bg-gray-100 hover:bg-gray-200 text-gray-500"
-                        : "bg-white hover:bg-blue-50 border-l-[10px] border-l-blue-500 text-gray-900"
+                        ? "bg-[#2a2a2a] hover:bg-[#333333] text-gray-500 border-gray-700"
+                        : "bg-[#2a2a2a] hover:bg-[#333333] border-l-[10px] border-l-gray-500 text-white border-gray-700"
                     }`}
                   >
                     <div className="flex-shrink-0 mt-1">
@@ -394,18 +405,18 @@ const Notifications = () => {
                             className={`text-sm mb-1 ${
                               notification.isRead
                                 ? "font-normal text-gray-500"
-                                : "font-medium text-gray-900"
+                                : "font-medium text-white"
                             }`}
                           >
-                           
+                            {notification.message}
                           </p>
 
                           {dealTitle && !dealTitle.startsWith("Deal ID:") && (
                             <p
                               className={`text-sm mb-1 font-semibold ${
                                 notification.isRead
-                                  ? "text-gray-600"
-                                  : "text-gray-800"
+                                  ? "text-gray-500"
+                                  : "text-white"
                               }`}
                             >
                               {dealTitle}
@@ -417,16 +428,16 @@ const Notifications = () => {
                               <span
                                 className={`text-xs px-2 py-1 rounded-full ${
                                   dealStatus === "activate"
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-red-100 text-red-800"
+                                    ? "bg-gray-700 text-white"
+                                    : "bg-gray-800 text-gray-400"
                                 }`}
                               >
                                 {dealStatus}
                               </span>
                             )}
                             {dealLocation && (
-                              <span className="text-xs text-gray-500">
-                                📍 {dealLocation}
+                              <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <MapPin className="w-4 h-4" /> {dealLocation}
                               </span>
                             )}
                           </div>
@@ -435,8 +446,8 @@ const Notifications = () => {
                             <p
                               className={`text-sm mb-2 ${
                                 notification.isRead
-                                  ? "text-gray-400"
-                                  : "text-blue-600"
+                                  ? "text-gray-500"
+                                  : "text-gray-400"
                               }`}
                             >
                               Related to: {notification.auction.title}
@@ -450,7 +461,7 @@ const Notifications = () => {
 
                             {!notification.isRead &&
                               markingIndividual === notification._id && (
-                                <span className="text-xs text-blue-600">
+                                <span className="text-xs text-gray-400">
                                   Marking as read...
                                 </span>
                               )}
@@ -468,7 +479,7 @@ const Notifications = () => {
                             className={`text-sm mb-1 ${
                               notification.isRead
                                 ? "font-normal text-gray-500"
-                                : "font-medium text-gray-900"
+                                : "font-medium text-white"
                             }`}
                           >
                             {notification.message}
@@ -478,8 +489,8 @@ const Notifications = () => {
                             <p
                               className={`text-sm mb-2 ${
                                 notification.isRead
-                                  ? "text-gray-400"
-                                  : "text-blue-600"
+                                  ? "text-gray-500"
+                                  : "text-gray-400"
                               }`}
                             >
                               Related to: {notification.auction.title}
@@ -493,7 +504,7 @@ const Notifications = () => {
 
                             {!notification.isRead &&
                               markingIndividual === notification._id && (
-                                <span className="text-xs text-blue-600">
+                                <span className="text-xs text-gray-400">
                                   Marking as read...
                                 </span>
                               )}
@@ -513,6 +524,7 @@ const Notifications = () => {
                     size="sm"
                     onClick={prevPage}
                     disabled={currentPage === 1}
+                    className="border-gray-600 text-white hover:bg-gray-700"
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" />
                   </Button>
@@ -538,21 +550,25 @@ const Notifications = () => {
                           }
                           size="sm"
                           onClick={() => goToPage(pageNum)}
-                          className="w-10 h-10 p-0"
+                          className={`w-10 h-10 p-0 ${
+                            currentPage === pageNum
+                              ? "bg-gray-700 text-white border-gray-600"
+                              : "border-gray-600 text-white hover:bg-gray-700"
+                          }`}
                         >
                           {pageNum}
                         </Button>
                       );
                     })}
                     {totalPages > 5 && currentPage < totalPages - 2 && (
-                      <span className="px-2">...</span>
+                      <span className="px-2 text-gray-500">...</span>
                     )}
                     {totalPages > 5 && currentPage < totalPages - 2 && (
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => goToPage(totalPages)}
-                        className="w-10 h-10 p-0"
+                        className="w-10 h-10 p-0 border-gray-600 text-white hover:bg-gray-700"
                       >
                         {totalPages}
                       </Button>
@@ -564,6 +580,7 @@ const Notifications = () => {
                     size="sm"
                     onClick={nextPage}
                     disabled={currentPage === totalPages}
+                    className="border-gray-600 text-white hover:bg-gray-700"
                   >
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>

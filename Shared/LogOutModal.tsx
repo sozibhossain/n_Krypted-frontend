@@ -48,7 +48,7 @@ const LogOutModal = ({
               </div>
             </Link>
           </div>
-          <DialogTitle className="text-xl font-bold text-center">
+          <DialogTitle className="text-xl font-normal text-center">
             Möchtest du dich wirklich abmelden?
           </DialogTitle>
           <div className="flex gap-4 mt-6 w-full">
@@ -59,14 +59,14 @@ const LogOutModal = ({
               }}
               className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg"
             >
-              Yes
+              Ja
             </button>
 
             <button
               onClick={() => setIsLogoutDialogOpen(false)}
               className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg"
             >
-              No
+              Nein
             </button>
           </div>
         </div>

@@ -38,12 +38,9 @@ export function TestimonialSection() {
     },
   });
 
-
-
   // Filter feedbacks to only include those with isApproved: true
-  const approvedFeedbacks = data?.feedbacks?.filter(
-    (feedback) => feedback.isApproved
-  ) || [];
+  const approvedFeedbacks =
+    data?.feedbacks?.filter((feedback) => feedback.isApproved) || [];
 
   const handlePrev = () => {
     if (!approvedFeedbacks.length) return;
@@ -71,7 +68,8 @@ export function TestimonialSection() {
     return (
       <section className="container lg:mt-24 py-[50px]">
         <div className="text-white text-center">
-          Das Feedback konnte nicht geladen werden. Bitte versuchen Sie es später noch einmal.
+          Das Feedback konnte nicht geladen werden. Bitte versuchen Sie es
+          später noch einmal.
         </div>
       </section>
     );
@@ -79,12 +77,10 @@ export function TestimonialSection() {
 
   // If no approved feedback data
   if (!approvedFeedbacks.length) {
-    return 
+    return;
   }
 
   const feedback = approvedFeedbacks[currentIndex];
-
-  
 
   return (
     <section className="container lg:mt-24 py-[50px]">
@@ -116,7 +112,7 @@ export function TestimonialSection() {
               height={50}
               className="h-[32px] w-[44px] text-white"
             />
-            <p className="text-white text-lg overflow-hidden">
+            <p className="text-white text-sm md:text-lg overflow-hidden">
               {feedback.message}
             </p>
           </div>

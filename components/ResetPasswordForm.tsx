@@ -41,10 +41,10 @@ export function ResetPasswordForm() {
       return;
     }
 
-    if (password.length < 8) {
-      toast.error("Das Passwort muss mindestens 8 Zeichen lang sein");
-      return;
-    }
+    // if (password.length < 8) {
+    //   toast.error("Das Passwort muss mindestens 8 Zeichen lang sein");
+    //   return;
+    // }
 
     setIsLoading(true);
     const resetToken = sharch.get("token");

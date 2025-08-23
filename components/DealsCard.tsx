@@ -483,10 +483,10 @@ export function DealsCard({
         open={isBookingSummaryOpen}
         onOpenChange={setIsBookingSummaryOpen}
       >
-        <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none rounded-lg w-[95%] sm:w-full">
+        <DialogContent className="p-0 max-w-md bg-[#212121] text-white border-none rounded-lg w-[95%] sm:w-full">
           <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-lg sm:text-xl font-semibold">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">
                 Buchungsübersicht
               </h2>
             </div>
@@ -504,7 +504,6 @@ export function DealsCard({
                 <h3 className="font-semibold text-white mb-1 text-sm sm:text-base">
                   {title}
                 </h3>
-
                 <Link href={`/deals/${id}`} className="space-y-3">
                   <div className="flex items-center gap-1 text-white font-normal cursor-pointer text-sm sm:text-[14px]">
                     <span>Details zum Deal</span>
@@ -514,7 +513,7 @@ export function DealsCard({
                   <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-xs sm:text-sm text-gray-300 sm:space-y-0">
                     {location && (
                       <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
+                        <MapPin className="w-3 h-3 text-gray-300" />
                         <span>
                           {location.city}, {location.country}
                         </span>
@@ -522,7 +521,7 @@ export function DealsCard({
                     )}
                     {scheduleDates && scheduleDates.length > 0 && (
                       <div className="flex items-center justify-center gap-2 space-y-4">
-                        <Calendar className="w-3 h-3" />
+                        <Calendar className="w-3 h-3 text-gray-300" />
                         <div className="translate-y-[-7px]">
                           <select
                             value={selectedDate?._id || ""}
@@ -533,7 +532,7 @@ export function DealsCard({
                               setSelectedDate(selected || null);
                               setQuantity(1); // Reset quantity when date changes
                             }}
-                            className="bg-gray-700 text-white border-gray-600 rounded p-1 text-xs sm:text-sm border-none"
+                            className="bg-[#2a2a2a] text-white border-none rounded p-1 text-xs sm:text-sm"
                           >
                             <option value="" disabled>
                               Select a date
@@ -566,12 +565,12 @@ export function DealsCard({
                             }
                           }}
                           disabled={quantity <= 1}
-                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          className="w-8 h-8 bg-[#2a2a2a] text-white hover:bg-[#3f3f3f]"
                           aria-label="Decrease quantity"
                         >
                           -
                         </Button>
-                        <span className="w-12 text-center text-sm">
+                        <span className="w-12 text-center text-sm text-white">
                           {quantity}
                         </span>
                         <Button
@@ -594,7 +593,7 @@ export function DealsCard({
                               selectedDate.participationsLimit -
                                 selectedDate.bookedCount
                           }
-                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          className="w-8 h-8 bg-[#2a2a2a] text-white hover:bg-[#3f3f3f]"
                           aria-label="Increase quantity"
                         >
                           +
@@ -617,7 +616,7 @@ export function DealsCard({
               <div
                 className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "paypal"
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-gray-400 bg-gray-400/10"
                     : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("paypal")}
@@ -625,19 +624,19 @@ export function DealsCard({
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
                     selectedPaymentMethod === "paypal"
-                      ? "border-blue-500"
+                      ? "border-gray-400"
                       : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "paypal" && (
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400"></div>
                   )}
                 </div>
                 <span className="text-white text-sm sm:text-base">
                   Bezahlen mit PayPal
                 </span>
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold text-sm sm:text-base">
+                  <span className="text-gray-300 font-semibold text-sm sm:text-base">
                     PayPal
                   </span>
                 </div>
@@ -645,7 +644,7 @@ export function DealsCard({
               <div
                 className={`flex items-center gap-2 sm:gap-3 px-2 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "stripe"
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-gray-400 bg-gray-400/10"
                     : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("stripe")}
@@ -653,94 +652,90 @@ export function DealsCard({
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
                     selectedPaymentMethod === "stripe"
-                      ? "border-blue-500"
+                      ? "border-gray-400"
                       : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "stripe" && (
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400"></div>
                   )}
                 </div>
                 <span className="text-white flex gap-2 mt-3">
                   Bezahlen mit Stripe
                   <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                    {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
                     <div className="flex space-x-1">
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/visa.png"
-                          alt="Maestro"
+                          alt="Visa"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/maestro.png"
                           alt="Maestro"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/amex.png"
                           alt="American Express"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
                     </div>
                   </div>
                 </span>
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold text-sm sm:text-base">
+                  <span className="text-gray-300 font-semibold text-sm sm:text-base">
                     Stripe
                   </span>
                 </div>
               </div>
             </div>
             <div className="space-y-4 text-sm text-white pb-4">
-              {/* AGB Zustimmung */}
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
                   required
-                  className="mt-1 accent-blue-500"
+                  className="mt-1 accent-gray-400"
                   name="agbConsent"
                   checked={agbConsent}
-                  onChange={(e) => setAgbConsent(e.target.checked)} // Update state
+                  onChange={(e) => setAgbConsent(e.target.checked)}
                 />
                 <span>
                   Ich habe die{" "}
                   <Link
                     href="/report"
-                    className="underline text-blue-400 hover:text-blue-300"
+                    className="underline text-gray-300 hover:text-gray-100"
                   >
                     Allgemeinen Geschäftsbedingungen
                   </Link>{" "}
                   gelesen und akzeptiere sie.
                 </span>
               </label>
-
-              {/* Datenschutzhinweis */}
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
                   required
-                  className="mt-1 accent-blue-500"
+                  className="mt-1 accent-gray-400"
                   name="privacyConsent"
                   checked={privacyConsent}
-                  onChange={(e) => setPrivacyConsent(e.target.checked)} // Update state
+                  onChange={(e) => setPrivacyConsent(e.target.checked)}
                 />
                 <span>
                   Ich habe die{" "}
                   <Link
                     href="/refund-policies"
-                    className="underline text-blue-400 hover:text-blue-300"
+                    className="underline text-gray-300 hover:text-gray-100"
                   >
                     Datenschutzerklärung
                   </Link>{" "}
@@ -756,7 +751,7 @@ export function DealsCard({
                 !selectedDate ||
                 !agbConsent ||
                 !privacyConsent
-              } // Updated condition
+              }
               className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-2 sm:py-3 text-sm sm:text-base"
             >
               {isLoading ? "Wird bearbeitet..." : "Jetzt bezahlen"}

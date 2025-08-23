@@ -149,7 +149,7 @@ export default function BlogsPage() {
             setIsDialogOpen(open);
           }}>
             <DialogTrigger asChild>
-              <Button className="bg-[#212121]">
+              <Button className="bg-[#212121] text-white">
                 <Plus className="mr-2 h-4 w-4" /> Add Blog
               </Button>
             </DialogTrigger>

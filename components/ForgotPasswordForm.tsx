@@ -54,17 +54,15 @@ export function ForgotPasswordForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 px-6 py-8 rounded-xl border border-gray-700 shadow-lg max-w-lg mx-auto"
+        className="space-y-6 px-6 py-8 rounded-xl border border-white shadow-lg max-w-lg mx-auto"
       >
         <div className="text-center">
           <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2">
             Link anfordern
           </h1>
           <div className="text-white text-[14px] lg:text-[16px] font-normal">
-            Gib deine E-Mail ein,
-       
-              um den Link zum Zurücksetzen deines Passworts zu erhalten.
-          
+            Gib deine E-Mail ein, um den Link zum Zurücksetzen deines Passworts
+            zu erhalten.
           </div>
         </div>
         <div className="space-y-2">

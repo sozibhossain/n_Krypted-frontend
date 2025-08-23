@@ -93,7 +93,7 @@ export default function ContactUsForm() {
       setSubmitStatus({
         success: true,
         message:
-          "Vielen Dank für Ihre Nachricht. Wir melden uns so schnell wie möglich bei Ihnen!",
+          "Vielen Dank für deine Nachricht. Wir melden uns so schnell wie möglich bei dir!",
       });
 
       // Log the full response for debugging
@@ -109,7 +109,7 @@ export default function ContactUsForm() {
     } finally {
       setIsSubmitting(false);
       toast.success(
-        "Vielen Dank für Ihre Nachricht. Wir melden uns so schnell wie möglich bei Ihnen!"
+        "Vielen Dank für deine Nachricht. Wir melden uns so schnell wie möglich bei dir!"
       );
     }
   };

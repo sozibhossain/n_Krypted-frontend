@@ -60,7 +60,7 @@ export function VerifyEmailForm() {
     mutationKey: ["resend-otp"],
     mutationFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/resend-verification`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/resend-verification`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -125,7 +125,7 @@ export function VerifyEmailForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-[#212121]/10 rounded-lg shadow-md border border-gray-700">
+    <div className="max-w-md mx-auto p-6 bg-[#212121]/10 rounded-lg shadow-md border border-white">
       <h2 className="text-2xl font-bold text-center mb-6 text-white">
         Code eingeben
       </h2>

@@ -32,12 +32,10 @@ export default function ResetPasswordPage() {
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
           </div>
-          <h2 className="mb-3 text-4xl font-bold text-white">
-            Stell dein Passwort wieder her
-          </h2>
+          <h2 className="mb-3 text-4xl font-bold text-white">Zurück im Grid</h2>
           <p className="max-w-md text-gray-300">
-            Gib rechts dein neues Passwort ein und erhalte sofort wieder Zugang
-            zu deinem Portal.
+            Ein neues Passwort bringt dich zurück ins Grid – mitten rein, um
+            wieder hinter die Kulissen unserer Stadtwelten zu treten.
           </p>
         </div>
       </div>
@@ -61,7 +59,7 @@ export default function ResetPasswordPage() {
             Walk Throughz
           </h1>
         </div>
-        <div className="w-full max-w-md space-y-8 rounded-lg bg-[#212121] p-8 shadow-lg border border-white/10">
+        <div className="w-full max-w-md space-y-8 rounded-lg bg-[#212121] p-8 shadow-lg border border-white">
           <div className="text-center space-y-2">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] text-white">
               Passwort zurücksetzen

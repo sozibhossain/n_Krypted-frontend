@@ -38,18 +38,38 @@ import Layout from "@/components/dashboard/layout";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+interface Deal {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  location: {
+    country: string;
+    city: string;
+  };
+  time?: number;
+  images: string[];
+  scheduleDates: Array<{
+    date: string;
+    active: boolean;
+    participationsLimit: number;
+    bookedCount: number;
+    _id: string;
+  }>;
+}
+
 interface Booking {
   _id: string;
-  userId: string;
+  userId: User;
   bookingId: string;
-  dealsId: {
-    _id: string;
-    title: string;
-    description: string;
-    price: number;
-    location: { country: string; city: string };
-    time?: number;
-  } | null;
+  dealsId: Deal | null;
   isBooked: boolean;
   notifyMe: boolean;
   quantity: number;
@@ -87,6 +107,7 @@ export default function BookingsPage() {
       }
       return response.json();
     },
+    enabled: !!token,
   });
 
   // Delete booking mutation
@@ -157,7 +178,15 @@ export default function BookingsPage() {
     pageNumbers.push(totalPages);
   }
 
-  console.log(bookings);
+  const formatDuration = (minutes?: number) => {
+    if (!minutes) return "N/A";
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins > 0 ? `${mins}m` : ""}`.trim();
+    }
+    return `${mins}m`;
+  };
 
   return (
     <Layout>
@@ -188,12 +217,13 @@ export default function BookingsPage() {
                   <TableRow className="text-[#595959] text-base font-medium py-4 hover:bg-transparent">
                     <TableHead>Booker</TableHead>
                     <TableHead>Booking ID</TableHead>
-                    <TableHead>Details</TableHead>
+                    <TableHead>Deal Title</TableHead>
+                    <TableHead>Location</TableHead>
                     <TableHead>Schedule Date</TableHead>
-                    <TableHead>Time</TableHead>
+                    <TableHead>Duration</TableHead>
                     <TableHead>Quantity</TableHead>
                     <TableHead>Price</TableHead>
-                    <TableHead>Booking Status</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -204,35 +234,43 @@ export default function BookingsPage() {
                       className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
                     >
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        <div>John Smith</div>
+                        <div>{booking.userId?.name || "N/A"}</div>
                         <div className="text-xs text-muted-foreground">
-                          john.smith@example.com
+                          {booking.userId?.email || "N/A"}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          +1 (555) 123-4567
+                          {booking.userId?.phoneNumber || "N/A"}
                         </div>
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        #{booking.bookingId.slice(-4)}
+                        #{booking.bookingId}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        {booking.dealsId
-                          ? booking.dealsId.title
-                          : "Lorem ipsum is a dummy or text..."}
+                        <div className="max-w-[200px] truncate">
+                          {booking.dealsId?.title || "Deal not available"}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-[#212121] text-base font-medium py-4">
+                        {booking.dealsId?.location
+                          ? `${booking.dealsId.location.city}, ${booking.dealsId.location.country}`
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
                         {booking.scheduleDate
                           ? format(
                               new Date(booking.scheduleDate),
-                              "yyyy-MM-dd HH:mm"
+                              "MMM dd, yyyy"
                             )
                           : "N/A"}
+                        <div className="text-xs text-muted-foreground">
+                          {booking.scheduleDate
+                            ? format(new Date(booking.scheduleDate), "h:mm a")
+                            : ""}
+                        </div>
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        {format(new Date(booking.createdAt), "yyyy-MM-dd")}
-                        <div>3:00 PM</div>
+                        {formatDuration(booking.dealsId?.time)}
                       </TableCell>
-
                       <TableCell className="text-[#212121] text-base font-medium py-4 text-center">
                         {booking.quantity}
                       </TableCell>
@@ -240,9 +278,12 @@ export default function BookingsPage() {
                         ${booking?.price?.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        {booking.isBooked
-                          ? "Payment Received"
-                          : "Payment Pending"}
+                        <div>{booking.isBooked ? "Confirmed" : "Pending"}</div>
+                        {booking.notifyMe && (
+                          <div className="text-xs text-blue-600">
+                            Notify enabled
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="text-center">
                         <Button
