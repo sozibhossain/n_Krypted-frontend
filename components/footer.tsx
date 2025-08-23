@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Globe, X } from "lucide-react";
+import { Facebook, Instagram, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import NewsletterSubscription from "./Subscribe";

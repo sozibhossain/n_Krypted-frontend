@@ -67,6 +67,7 @@ export default function Newsletter() {
         });
       }
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description:
@@ -108,6 +109,7 @@ export default function Newsletter() {
         });
       }
     } catch (error) {
+      console.log(error)
       toast({
         title: "Error",
         description: "Failed to delete subscriber",
@@ -156,6 +158,7 @@ export default function Newsletter() {
         });
       }
     } catch (error) {
+      console.log(error)
       toast({
         title: "Error",
         description: "Failed to send newsletter",
