@@ -93,7 +93,7 @@ const AuctionImageGallery: React.FC<AuctionImageGalleryProps> = ({
           onClick={() => onSelect(index)}
           className={`relative min-w-[70px] !w-[82px] md:!w-[70px] !h-[85px] md:h-20 rounded-md overflow-hidden border-2 transition-all ${
             selectedIndex === index
-              ? "border-blue-500 shadow-md"
+              ? " shadow-md"
               : "border-transparent hover:border-gray-300"
           }`}
         >
@@ -627,12 +627,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <div className="flex items-center gap-2 text-gray-500 -ml-[3px]">
               <MapPin className="w-4 h-4 text-white" />
               <span className="text-lg md:text-lg text-[#E0E0E0] font-medium">
-                {auction?.location.country}, {auction?.location.city}
+                {auction?.location.city}, {auction?.location.country}
               </span>
             </div>
             <div>
               <div className="text-xl font-semibold text-[#FFFFFF]">
-                <span className="mr-[3px]">€</span>{auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
+                <span className="mr-[3px] scale-80">€</span>
+                {auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
               </div>
             </div>
 
@@ -648,11 +649,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                         schedule.active
                           ? "bg-gray-600 text-gray-300"
                           : "bg-blue-600 text-white"
-                      } ${
-                        selectedSchedule?._id === schedule._id
-                          ? "ring-2 ring-blue-400"
-                          : ""
-                      }`}
+                      } ${selectedSchedule?._id === schedule._id ? "" : ""}`}
                       onClick={() => {
                         setSelectedSchedule(schedule);
                         setQuantity(1); // Reset quantity when schedule changes
@@ -780,7 +777,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             />
           </div>
           <Button
-            className="p-4 bg-[#FFFFFF] text-base text-[#212121] font-medium"
+            className="p-4 bg-white text-base text-[#212121] font-medium"
             type="submit"
             disabled={submitReviewMutation.isPending}
           >
@@ -874,10 +871,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       </Dialog>
 
       <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
-        <DialogContent className="p-0 max-w-md bg-gray-800 text-white border-none">
+        <DialogContent className="p-0 max-w-md bg-[#212121] text-white border-none">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Buchungsübersicht</h2>
+              <h2 className="text-xl font-semibold text-white">
+                Buchungsübersicht
+              </h2>
             </div>
             <div className="flex gap-4 mb-6">
               <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -899,7 +898,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-gray-300 space-y-1 sm:space-y-0">
                     {auction?.location && (
                       <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
+                        <MapPin className="w-3 h-3 text-gray-300" />
                         <span>
                           {auction.location.city}, {auction.location.country}
                         </span>
@@ -907,7 +906,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                     )}
                     {selectedSchedule && (
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
+                        <Calendar className="w-3 h-3 text-gray-300" />
                         <span className="text-sm text-nowrap">
                           {formatDate(selectedSchedule.date)}
                         </span>
@@ -927,12 +926,12 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                             }
                           }}
                           disabled={quantity <= 1}
-                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          className="w-8 h-8 bg-[#2a2a2a] text-white hover:bg-[#3f3f3f]"
                           aria-label="Decrease quantity"
                         >
                           -
                         </Button>
-                        <span className="w-12 text-center text-sm">
+                        <span className="w-12 text-center text-sm text-white">
                           {quantity}
                         </span>
                         <Button
@@ -955,7 +954,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                               selectedSchedule.participationsLimit -
                                 selectedSchedule.bookedCount
                           }
-                          className="w-8 h-8 bg-gray-700 text-white hover:bg-gray-600"
+                          className="w-8 h-8 bg-[#2a2a2a] text-white hover:bg-[#3f3f3f]"
                           aria-label="Increase quantity"
                         >
                           +
@@ -970,7 +969,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               <div className="flex justify-between font-semibold">
                 <span className="text-white">Gesamt (inkl. MwSt.)</span>
                 <span className="text-white">
-                  ${(auction?.price * quantity).toFixed(2) || "0.00"}
+                  {(auction?.price * quantity).toFixed(2) || "0.00"} EUR
                 </span>
               </div>
             </div>
@@ -978,7 +977,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               <div
                 className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "paypal"
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-gray-400 bg-gray-400/10"
                     : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("paypal")}
@@ -986,23 +985,23 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
                     selectedPaymentMethod === "paypal"
-                      ? "border-blue-500"
+                      ? "border-gray-400"
                       : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "paypal" && (
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400"></div>
                   )}
                 </div>
                 <span className="text-white">Bezahlen mit PayPal</span>
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold">PayPal</span>
+                  <span className="text-gray-300 font-semibold">PayPal</span>
                 </div>
               </div>
               <div
                 className={`flex items-center gap-3 px-2 border rounded-lg cursor-pointer ${
                   selectedPaymentMethod === "stripe"
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-gray-400 bg-gray-400/10"
                     : "border-gray-600"
                 }`}
                 onClick={() => setSelectedPaymentMethod("stripe")}
@@ -1010,93 +1009,88 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
                     selectedPaymentMethod === "stripe"
-                      ? "border-blue-500"
+                      ? "border-gray-400"
                       : "border-gray-600"
                   } flex items-center justify-center`}
                 >
                   {selectedPaymentMethod === "stripe" && (
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-400"></div>
                   )}
                 </div>
                 <span className="text-white flex gap-2 mt-3">
                   Bezahlen mit Stripe
                   <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                    {/* <p className="text-xs text-[#595959] mb-2 md:mb-0">Accepted payment methods”</p> */}
                     <div className="flex space-x-1">
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/visa.png"
-                          alt="Maestro"
+                          alt="Visa"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/maestro.png"
                           alt="Maestro"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
-                      <div className="flex items-center justify-center bg-white">
+                      <div className="flex items-center justify-center bg-[#2a2a2a] border border-gray-600 rounded">
                         <Image
                           src="/assets/amex.png"
                           alt="American Express"
                           width={60}
                           height={30}
-                          className="h-5 w-7 "
+                          className="h-5 w-7"
                         />
                       </div>
                     </div>
                   </div>
                 </span>
-
                 <div className="ml-auto">
-                  <span className="text-blue-500 font-semibold">Stripe</span>
+                  <span className="text-gray-300 font-semibold">Stripe</span>
                 </div>
               </div>
             </div>
             <div className="space-y-4 text-sm text-white pb-4">
-              {/* AGB Zustimmung */}
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
                   required
-                  className="mt-1 accent-blue-500"
+                  className="mt-1 accent-gray-400"
                   name="agbConsent"
                   checked={agbConsent}
-                  onChange={(e) => setAgbConsent(e.target.checked)} // Update state
+                  onChange={(e) => setAgbConsent(e.target.checked)}
                 />
                 <span>
                   Ich habe die{" "}
                   <Link
                     href="/report"
-                    className="underline text-blue-400 hover:text-blue-300"
+                    className="underline text-gray-300 hover:text-gray-100"
                   >
                     Allgemeinen Geschäftsbedingungen
                   </Link>{" "}
                   gelesen und akzeptiere sie.
                 </span>
               </label>
-
-              {/* Datenschutzhinweis */}
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
                   required
-                  className="mt-1 accent-blue-500"
+                  className="mt-1 accent-gray-400"
                   name="privacyConsent"
                   checked={privacyConsent}
-                  onChange={(e) => setPrivacyConsent(e.target.checked)} // Update state
+                  onChange={(e) => setPrivacyConsent(e.target.checked)}
                 />
                 <span>
                   Ich habe die{" "}
                   <Link
                     href="/refund-policies"
-                    className="underline text-blue-400 hover:text-blue-300"
+                    className="underline text-gray-300 hover:text-gray-100"
                   >
                     Datenschutzerklärung
                   </Link>{" "}
@@ -1104,7 +1098,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 </span>
               </label>
             </div>
-
             <DialogFooter className="flex gap-3 justify-end pt-0 border-t-0">
               <Button
                 onClick={confirmBooking}
@@ -1114,7 +1107,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   !selectedPaymentMethod ||
                   !agbConsent ||
                   !privacyConsent
-                } // Updated condition
+                }
               >
                 {isLoading ? "Verarbeitung..." : "Weiter zur Zahlung"}
               </Button>
@@ -1137,7 +1130,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <>
               {stripeLoading ? (
                 <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 "></div>
                 </div>
               ) : clientSecret && bookingId ? (
                 <Elements

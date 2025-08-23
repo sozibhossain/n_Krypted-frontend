@@ -23,13 +23,13 @@ export default function NewsletterSubscription() {
     e.preventDefault();
 
     if (!email) {
-      setMessage("Bitte trag deine E-Mail ein.");
+      setMessage("Bitte trag deine E-Mail ein!");
       return;
     }
 
     // Basic email validation
     if (!email.includes("@") || !email.includes(".")) {
-      setMessage("Bitte gib eine gültige E-Mail ein.");
+      setMessage("Bitte gib eine gültige E-Mail ein!");
       return;
     }
 
@@ -54,7 +54,7 @@ export default function NewsletterSubscription() {
         throw new Error(data.message || "Subscription failed");
       }
 
-      setMessage("Danke fürs Abonnieren des Newsletters");
+      setMessage("Danke fürs Abonnieren des Newsletters!");
       setEmail("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "error");

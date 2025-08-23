@@ -7,11 +7,7 @@ import PersonalInfoForm from "@/components/personal-info-form";
 import BookingHistoryTable from "@/components/booking-history-table";
 import NotifyMeList from "@/components/notify-me-list";
 import { PageHeader } from "@/Shared/PageHeader";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useSession, signOut } from "next-auth/react";
 import { toast } from "sonner";
 import ProfileChangepassword from "@/components/profileChangepassword";
@@ -82,12 +78,12 @@ export default function Dashboard() {
     // Validate file
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      toast.error("Please upload a JPEG, PNG, or WebP image");
+      toast.error("Bitte laden Sie ein JPEG-, PNG- oder WebP-Bild hoch");
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image size should be less than 2MB");
+      toast.error("Das Profilbild muss kleiner als 2 MB sein.");
       return;
     }
 
@@ -137,7 +133,7 @@ export default function Dashboard() {
       // Refresh user data
       await fetchUserData();
 
-      toast.success("Profilbild erfolgreich aktualisiert");
+      toast.success("Profilbild erfolgreich aktualisiert.");
     } catch (error) {
       console.error("Upload error:", error);
       toast.error(error instanceof Error ? error.message : "Upload failed");
@@ -306,7 +302,7 @@ export default function Dashboard() {
                 </div>
               </Link>
             </div>
-            <DialogTitle className="text-xl font-bold text-center">
+            <DialogTitle className="text-xl font-normal text-center">
               Möchtest du dich wirklich abmelden?
             </DialogTitle>
             <div className="flex gap-4 mt-6 w-full">
@@ -317,14 +313,14 @@ export default function Dashboard() {
                 }}
                 className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg"
               >
-                Yes
+                Ja
               </button>
 
               <button
                 onClick={() => setShowLogoutDialog(false)}
                 className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg"
               >
-                No
+                Nein
               </button>
             </div>
           </div>

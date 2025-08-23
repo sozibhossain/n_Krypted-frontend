@@ -147,7 +147,7 @@ function AddEditBlogs({
           {/* Add bottom padding */}
           <Button
             type="submit"
-            className="bg-[#212121]"
+            className="bg-[#212121] text-white"
             disabled={
               createBlogMutation.isPending || updateBlogMutation.isPending
             }

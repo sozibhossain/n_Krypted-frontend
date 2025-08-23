@@ -124,7 +124,7 @@ export function SignInForm() {
 
       <Button
         type="submit"
-        className="w-full bg-white text-gray-900 hover:bg-gray-200"
+        className="w-full bg-white text-black hover:bg-gray-200"
         disabled={isLoading}
       >
         {isLoading ? "Anmeldung erfolgt..." : "Anmelden"}
