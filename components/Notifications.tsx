@@ -524,7 +524,7 @@ const Notifications = () => {
                     size="sm"
                     onClick={prevPage}
                     disabled={currentPage === 1}
-                    className="border-gray-600 text-white hover:bg-gray-700"
+                    className="border-gray-600  hover:bg-gray-700"
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" />
                   </Button>
@@ -552,8 +552,8 @@ const Notifications = () => {
                           onClick={() => goToPage(pageNum)}
                           className={`w-10 h-10 p-0 ${
                             currentPage === pageNum
-                              ? "bg-gray-700 text-white border-gray-600"
-                              : "border-gray-600 text-white hover:bg-gray-700"
+                              ? "bg-gray-700  border-gray-600"
+                              : "border-gray-600  hover:bg-gray-700"
                           }`}
                         >
                           {pageNum}
@@ -568,7 +568,7 @@ const Notifications = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => goToPage(totalPages)}
-                        className="w-10 h-10 p-0 border-gray-600 text-white hover:bg-gray-700"
+                        className="w-10 h-10 p-0 border-gray-600  hover:bg-gray-700"
                       >
                         {totalPages}
                       </Button>
@@ -580,7 +580,7 @@ const Notifications = () => {
                     size="sm"
                     onClick={nextPage}
                     disabled={currentPage === totalPages}
-                    className="border-gray-600 text-white hover:bg-gray-700"
+                    className="border-gray-600  hover:bg-gray-700"
                   >
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>

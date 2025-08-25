@@ -438,7 +438,6 @@ export default function AddDealModal({
                   value={time}
                   onChange={handleTimeChange}
                   pattern="\d*\.?\d*"
-                  required
                 />
               </div>
 
