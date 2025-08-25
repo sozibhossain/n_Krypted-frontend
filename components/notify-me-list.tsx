@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { DealsCard } from "./DealsCard";
+import { DealsCard } from "./deals-card";
+import { toast } from "sonner";
 
 interface Booking {
   participationsLimit: number | undefined;
@@ -101,6 +102,40 @@ export default function NotifyMeList() {
     router.push(`?page=${newPage}&limit=${limit}`);
   };
 
+  const handleRemoveNotification = async (bookingId: string) => {
+    if (!token) {
+      toast.error("Nicht autorisiert");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${bookingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Fehler beim Entfernen der Benachrichtigung");
+      }
+
+      // Remove the booking from the local state
+      setBookings((prevBookings) =>
+        prevBookings.filter((booking) => booking._id !== bookingId)
+      );
+
+      toast.success("Benachrichtigung erfolgreich entfernt");
+    } catch (error) {
+      console.error("Error removing notification:", error);
+      toast.error("Fehler beim Entfernen der Benachrichtigung");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Benachrichtigungsliste</h1>
@@ -131,6 +166,9 @@ export default function NotifyMeList() {
                 price={booking.dealsId?.price}
                 participations={booking.dealsId?.participations}
                 maxParticipants={booking.dealsId?.maxParticipants}
+                showRemoveNotification={true}
+                bookingId={booking._id}
+                onRemoveNotification={handleRemoveNotification}
               />
             ))}
           </div>

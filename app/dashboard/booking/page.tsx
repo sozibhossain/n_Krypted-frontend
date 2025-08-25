@@ -178,15 +178,15 @@ export default function BookingsPage() {
     pageNumbers.push(totalPages);
   }
 
-  const formatDuration = (minutes?: number) => {
-    if (!minutes) return "N/A";
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins > 0 ? `${mins}m` : ""}`.trim();
-    }
-    return `${mins}m`;
-  };
+  // const formatDuration = (minutes?: number) => {
+  //   if (!minutes) return "N/A";
+  //   const hours = Math.floor(minutes / 60);
+  //   const mins = minutes % 60;
+  //   if (hours > 0) {
+  //     return `${hours}h ${mins > 0 ? `${mins}m` : ""}`.trim();
+  //   }
+  //   return `${mins}m`;
+  // };
 
   return (
     <Layout>
@@ -220,7 +220,6 @@ export default function BookingsPage() {
                     <TableHead>Deal Title</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Schedule Date</TableHead>
-                    <TableHead>Duration</TableHead>
                     <TableHead>Quantity</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Status</TableHead>
@@ -268,9 +267,9 @@ export default function BookingsPage() {
                             : ""}
                         </div>
                       </TableCell>
-                      <TableCell className="text-[#212121] text-base font-medium py-4">
+                      {/* <TableCell className="text-[#212121] text-base font-medium py-4">
                         {formatDuration(booking.dealsId?.time)}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="text-[#212121] text-base font-medium py-4 text-center">
                         {booking.quantity}
                       </TableCell>
