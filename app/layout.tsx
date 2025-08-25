@@ -39,7 +39,7 @@ export default function RootLayout({
         {/* Dynamically injected PayPal Script */}
         {paypalClientId && (
           <Script
-            src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD&intent=capture&disable-funding=paylater,venmo`}
+            src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&intent=capture&disable-funding=paylater,venmo`}
             data-sdk-integration-source="button-factory"
             strategy="afterInteractive"
           />
