@@ -13,8 +13,8 @@ import {
 export function Footer() {
   return (
     <footer className="bg-white text-white pt-[50px] pb-8">
-      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
-        <div>
+      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 text-sm">
+        <div className="lg:col-span-3 xl:col-span-3">
           {/* Logo */}
           <div>
             <Link href="/" className="flex items-center">
@@ -34,7 +34,7 @@ export function Footer() {
               </div>
             </Link>
           </div>
-          <div className="text-[#4E4E4E] py-4">
+          <div className="text-[#4E4E4E] pb-4">
             Folge uns in den sozialen Medien für exklusive Updates und
             Sonderangebote!
           </div>
@@ -83,7 +83,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div>
+        <div className="lg:col-span-2 xl:col-span-3">
           <h3 className="font-semibold text-lg mb-3">Quick Links</h3>
           <ul className="space-y-2 text-[#4E4E4E]">
             <li>
@@ -108,7 +108,7 @@ export function Footer() {
           </ul>
         </div>
 
-        <div>
+        <div className="lg:col-span-3 xl:col-span-3">
           <h3 className="font-semibold text-lg mb-3 text-[#212121]">
             Walk Throughz Sites
           </h3>
@@ -123,7 +123,7 @@ export function Footer() {
           </Select>
         </div>
 
-        <div>
+        <div className="lg:col-span-4 xl:col-span-3">
           <NewsletterSubscription />
         </div>
       </div>

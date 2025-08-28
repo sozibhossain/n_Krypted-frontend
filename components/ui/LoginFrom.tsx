@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { getSession, signIn } from "next-auth/react";
-import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

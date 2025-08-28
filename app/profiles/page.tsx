@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { User, Lock, Calendar, Bell, LogOut, Edit } from "lucide-react";
+import { User, Lock, Calendar, Bell, LogOut } from "lucide-react";
 import PersonalInfoForm from "@/components/personal-info-form";
 import BookingHistoryTable from "@/components/booking-history-table";
 import NotifyMeList from "@/components/notify-me-list";
@@ -173,13 +173,15 @@ export default function Dashboard() {
               >
                 <Image
                   src={avatar}
-                  alt="Profile"
+                  alt="         "
                   fill
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Edit className="h-6 w-6 text-white" />
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center  group-hover:opacity-100 transition-opacity">
+                  <div className="text-[12px] text-center">
+                    Profilbild hier hochladen <div>(max. 2 MB)</div>
+                  </div>
                 </div>
               </div>
               {isUploading && (
@@ -302,7 +304,7 @@ export default function Dashboard() {
                 </div>
               </Link>
             </div>
-            <DialogTitle className="text-xl font-normal text-center">
+            <DialogTitle className="text-lg font-normal text-center">
               Möchtest du dich wirklich abmelden?
             </DialogTitle>
             <div className="flex gap-4 mt-6 w-full">
@@ -311,14 +313,14 @@ export default function Dashboard() {
                   localStorage.clear();
                   signOut({ callbackUrl: "/login" });
                 }}
-                className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg"
+                className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg text-[16px]"
               >
                 Ja
               </button>
 
               <button
                 onClick={() => setShowLogoutDialog(false)}
-                className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg"
+                className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg text-[16px]"
               >
                 Nein
               </button>

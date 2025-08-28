@@ -36,7 +36,7 @@ const OurVision = () => {
               Unsere Vision
             </h1>
           </div>
-          <h3 className="text-xl sm:text-2xl lg:text-[32px] text-white font-semibold mt-4 sm:mt-5">
+          <h3 className="text-xl sm:text-2xl lg:text-[30px] text-white font-semibold mt-4 sm:mt-5">
             Was möchte Walk Throughz langfristig erreichen?
           </h3>
           <p className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
