@@ -35,8 +35,8 @@ export function Footer() {
             </Link>
           </div>
           <div className="text-[#4E4E4E] py-4">
-            Folge uns in den sozialen Medien{" "}
-            <div>für exklusive Updates und Sonderangebote!</div>
+            Folge uns in den sozialen Medien für exklusive Updates und
+            Sonderangebote!
           </div>
 
           {/* Social Media Icons */}

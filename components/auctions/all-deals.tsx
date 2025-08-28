@@ -848,7 +848,7 @@ function DealsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-6">
+        <div className="grid grid-cols-6 gap-10 xl:gap-2">
           <div className="hidden lg:block col-span-6 md:col-span-6 lg:col-span-2">
             <FilterSidebar />
           </div>

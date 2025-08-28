@@ -94,7 +94,7 @@ export function CategoriesSection() {
                   allCategory?.map((category: any, index: number) => (
                     <CarouselItem
                       key={category._id || index}
-                      className="basis-full py-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-[25px]"
+                      className="basis-full py-2 sm:basis-1/2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 pl-2 md:pl-[25px]"
                     >
                       <CategoryCard
                         title={category.categoryName}

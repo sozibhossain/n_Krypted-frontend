@@ -94,12 +94,12 @@ export function DealsSection() {
                   className="heading-size font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
                 >
-                  Popular
+                  Beliebt
                 </h1>
               </div>
             </div>
             <p className="text-xl md:text-2xl lg:text-[30px] font-bold text-white mt-1 md:mt-2">
-              Unsere beliebten Deals
+              Unsere angesagtesten Deals
             </p>
           </div>
 

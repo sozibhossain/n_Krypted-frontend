@@ -36,10 +36,12 @@ function BlogsCard({ blog }: { blog: Blog }) {
             <div className="flex items-center justify-between space-x-4 mb-4">
               <div className="flex items-center  space-x-2  text-gray-600">
                 <UserRound className="w-4 h-4" />
-                <span className="text-sm font-medium">{blog?.authorName}</span>
+                <span className="text-sm font-medium text-nowrap">
+                  {blog?.authorName}
+                </span>
               </div>
 
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 text-gray-600 text-nowrap">
                 <Calendar className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   {new Date(blog?.createdAt).toLocaleDateString("en-US", {

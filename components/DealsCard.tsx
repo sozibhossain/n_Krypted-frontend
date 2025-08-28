@@ -403,7 +403,7 @@ export function DealsCard({
               alt={title || "Deal Image"}
               width={600}
               height={400}
-              className={`w-[354px] h-[222px] aspect-[5/3] sm:aspect-[5/4] object-cover rounded-lg ${
+              className={`object-cover rounded-lg ${
                 isHovered ? "scale-105" : "scale-100"
               } transition-transform duration-300`}
             />
