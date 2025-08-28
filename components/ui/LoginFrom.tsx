@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-// Removed Next.js specific imports as they are not resolvable in this environment
-// import { getSession, signIn } from "next-auth/react";
-// import Link from "next/link";
+import { getSession, signIn } from "next-auth/react";
+import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-// Assuming these are generic UI components that are either available or will be replaced by standard HTML elements
-// For this environment, we'll keep them but note they depend on external UI library setup
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// Removed toast as it's an external library and would also cause resolution errors
-// import { toast } from "sonner";
+import { toast } from "sonner";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -23,20 +19,53 @@ export function SignInForm() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Removed Next.js Auth specific logic to resolve compilation errors.
-    // In a real application, you would implement your authentication logic here,
-    // potentially making a fetch request to your backend.
-    console.log("Attempting to sign in with:", { email, password });
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    // Simulate an async operation
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (res?.error) {
+        throw new Error(res.error);
+      }
 
-    // For demonstration, let's assume a successful login
-    console.log("Login attempt finished (simulated success).");
-    setIsLoading(false);
-    // You would typically redirect or update UI based on actual auth success/failure here.
-    // For now, we'll just log and reset loading state.
+      // ✅ Optional: wait a bit for session to be updated
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const session = await getSession(); // ← you need to import this from 'next-auth/react'
+
+      const role = session?.user?.role;
+
+      toast.success("Anmeldung erfolgreich");
+
+      if (role === "admin") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Ein unbekannter Fehler ist aufgetreten");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // const handleSocialSignIn = async (provider: string) => {
+  //   try {
+  //     setIsLoading(true)
+  //     await signIn(provider, { callbackUrl: "/dashboard" })
+  //   } catch {
+  //     toast.error("Login failed")
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   return (
     <form
