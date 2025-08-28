@@ -248,21 +248,21 @@ export default function AddDealModal({
     });
   };
 
-  const handleOfferChange = (index: number, value: string) => {
-    const newOffers = [...offers];
-    newOffers[index] = value;
-    setOffers(newOffers);
-  };
+  // const handleOfferChange = (index: number, value: string) => {
+  //   const newOffers = [...offers];
+  //   newOffers[index] = value;
+  //   setOffers(newOffers);
+  // };
 
-  const addOffer = () => {
-    setOffers([...offers, ""]);
-  };
+  // const addOffer = () => {
+  //   setOffers([...offers, ""]);
+  // };
 
-  const removeOffer = (index: number) => {
-    const newOffers = [...offers];
-    newOffers.splice(index, 1);
-    setOffers(newOffers);
-  };
+  // const removeOffer = (index: number) => {
+  //   const newOffers = [...offers];
+  //   newOffers.splice(index, 1);
+  //   setOffers(newOffers);
+  // };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
