@@ -14,7 +14,7 @@ const page = () => {
         >
           Gib gerne deine Nachricht an uns hier ein!{" "}
         </h2>
-        <div className="grid grid-cols-2 items-center">
+        <div className="grid grid-cols-2 items-center gap-10 xl:gap-2">
           <div className="col-span-1 hidden md:hidden lg:block">
             <Image
               src="/assets/kontact.jpg"

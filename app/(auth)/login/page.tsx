@@ -1,5 +1,7 @@
 import { SignInForm } from "@/components/ui/LoginFrom";
+import { Home } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense } from "react";
 
 export default function SignInPage() {
@@ -17,23 +19,24 @@ export default function SignInPage() {
             />
           </div>
           <div className="z-10 flex flex-col items-center justify-center text-center text-white">
-            <div className="mb-4 rounded-full bg-gray-800/70 p-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-8 w-8"
-              >
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </div>
+            <Link href="/">
+              <div className="mb-4 rounded-full bg-gray-800/70 p-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-8 w-8"
+                >
+                  <Home />
+                </svg>
+              </div>
+            </Link>
             <h2 className="mb-2 text-4xl font-bold">
               Schön, dass du wieder da bist
             </h2>
@@ -47,7 +50,7 @@ export default function SignInPage() {
         </div>
       </div>
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
-        <div className="w-full max-w-md space-y-8 rounded-lg p-8 text-white border border-white">
+        <div className="w-full max-w-md space-y-8 rounded-lg p-8 text-white ">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%]">
               Willkommen zurück

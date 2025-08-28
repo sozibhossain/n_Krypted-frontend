@@ -310,7 +310,7 @@ export function DealsCard({
         const data = await response.json();
         if (data.booking.notifyMe) {
           toast.success(
-            "Du wirst im Kundenportal benachrichtigt, wenn Plätze verfügbar werden."
+            "Du wirst benachrichtigt, wenn der Deal wieder verfügbar ist."
           );
           setIsBookingSummaryOpen(false);
           return;

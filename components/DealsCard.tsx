@@ -304,7 +304,7 @@ export function DealsCard({
         const data = await response.json();
         if (data.booking.notifyMe) {
           toast.success(
-            "Du wirst im Kundenportal benachrichtigt, wenn Plätze verfügbar werden."
+            "Du wirst benachrichtigt, wenn der Deal wieder verfügbar ist."
           );
           setIsBookingSummaryOpen(false);
           return;
@@ -403,7 +403,7 @@ export function DealsCard({
               alt={title || "Deal Image"}
               width={600}
               height={400}
-              className={`w-[354px] h-[222px] aspect-[5/3] sm:aspect-[5/4] object-cover rounded-lg ${
+              className={`h-[250px] object-cover rounded-lg ${
                 isHovered ? "scale-105" : "scale-100"
               } transition-transform duration-300`}
             />

@@ -20,7 +20,7 @@ export function FaqSection() {
                   FAQ
                 </h1>
               </div>
-              <h2 className="text-white text-[24px] font-semibold tracking-tight md:text-[30px] lg:text-[30px] mt-2 mb-4">Frequently Asked Questions</h2>
+              <h2 className="text-white text-[24px] font-semibold tracking-tight md:text-[28px] lg:text-[28px] mt-2 mb-4">Frequently Asked Questions</h2>
             </div>
             <Link href="/faq">
               <Button className="bg-white text-black">

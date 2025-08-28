@@ -110,8 +110,8 @@ export default function AddDealModal({
 
   const session = useSession();
 
-  console.log(status)
-  console.log(participationsLimit)
+  console.log(status);
+  console.log(participationsLimit);
 
   const token = session?.data?.user.accessToken;
 
@@ -359,7 +359,7 @@ export default function AddDealModal({
           <DialogTitle className="text-2xl font-bold">
             Deals
             <div className="text-base font-normal text-[#595959] mt-1">
-              Dashboard Deals Add Deal
+              Create Deal
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -550,7 +550,7 @@ export default function AddDealModal({
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <Label htmlFor="offers">Offers</Label>
               {offers.map((offer, index) => (
                 <div key={index} className="flex items-center gap-2 mt-2">
@@ -581,7 +581,7 @@ export default function AddDealModal({
               >
                 Add Offer
               </Button>
-            </div>
+            </div> */}
           </div>
 
           <div className="space-y-4">

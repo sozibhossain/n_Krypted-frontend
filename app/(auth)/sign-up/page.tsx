@@ -1,5 +1,7 @@
 import { RegisterForm } from "@/components/RegistrationFrom";
+import { Home } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense } from "react";
 
 export default function SignUpPage() {
@@ -33,24 +35,24 @@ export default function SignUpPage() {
             />
           </div>
           <div className="z-10 flex flex-col items-center justify-center text-center text-white">
-            <div className="mb-4 rounded-full bg-gray-800/70 p-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-8 w-8"
-              >
-                <path d="M18.5 2h-13A3.5 3.5 0 0 0 2 5.5v13A3.5 3.5 0 0 0 5.5 22h13a3.5 3.5 0 0 0 3.5-3.5v-13A3.5 3.5 0 0 0 18.5 2Z"></path>
-                <path d="M12 6v12"></path>
-                <path d="M6 12h12"></path>
-              </svg>
-            </div>
+            <Link href="/">
+              <div className="mb-4 rounded-full bg-gray-800/70 p-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-8 w-8"
+                >
+                  <Home />
+                </svg>
+              </div>
+            </Link>
             <h2 className="mb-2 text-4xl font-bold">
               Willkommen bei Walk Throughz
             </h2>

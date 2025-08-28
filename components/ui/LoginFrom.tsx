@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { getSession, signIn } from "next-auth/react";
-import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,9 +67,15 @@ export function SignInForm() {
   // }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      // Applied styling from RegisterForm
+      className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg"
+    >
       <div className="space-y-2">
-        <Label htmlFor="email">E-Mail</Label>
+        <Label htmlFor="email" className="text-white">
+          E-Mail
+        </Label>
         <div className="relative">
           <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -87,7 +92,9 @@ export function SignInForm() {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Passwort</Label>
+          <Label htmlFor="password" className="text-white">
+            Passwort
+          </Label>
         </div>
         <div className="relative">
           <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -113,12 +120,13 @@ export function SignInForm() {
           </button>
         </div>
         <div className="flex justify-end">
-          <Link
+          {/* Replaced Next.js Link with a standard anchor tag */}
+          <a
             href="/forgot-password"
-            className="text-sm text-blue-500 hover:text-blue-400"
+            className="text-white hover:text-blue-400 text-sm leading-none"
           >
             Passwort vergessen?
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -130,68 +138,12 @@ export function SignInForm() {
         {isLoading ? "Anmeldung erfolgt..." : "Anmelden"}
       </Button>
 
-      <div className="relative flex items-center justify-center">
-        <div className="h-px flex-1 bg-gray-600"></div>
-        <div className="h-px flex-1 bg-gray-600"></div>
-      </div>
-
-      {/* <div className="grid gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => handleSocialSignIn("apple")}
-          className="flex items-center justify-center gap-2 border-gray-600 bg-gray-700 text-white hover:bg-gray-600"
-          disabled={isLoading}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-          >
-            <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
-            <path d="M10 2c1 .5 2 2 2 5"></path>
-          </svg>
-          Continue With Apple
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => handleSocialSignIn("google")}
-          className="flex items-center justify-center gap-2 border-gray-600 bg-gray-700 text-white hover:bg-gray-600"
-          disabled={isLoading}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-          >
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 6v12"></path>
-            <path d="M6 12h12"></path>
-          </svg>
-          Continue With Google
-        </Button>
-      </div> */}
-
       <div className="text-center text-sm text-[#BABABA]">
         Du hast noch kein Konto?{" "}
-        <Link href="/sign-up" className="text-white hover:text-blue-400">
+        {/* Replaced Next.js Link with a standard anchor tag */}
+        <a href="/sign-up" className="text-white hover:text-blue-400">
           Jetzt registrieren
-        </Link>
+        </a>
       </div>
     </form>
   );

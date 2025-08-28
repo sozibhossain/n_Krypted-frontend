@@ -16,7 +16,7 @@ const OurMission = () => {
               Unsere Mission
             </h1>
           </div>
-          <h3 className="text-xl sm:text-2xl lg:text-[32px] text-white font-semibold mt-4 sm:mt-5">
+          <h3 className="text-xl sm:text-2xl lg:text-[30px] text-white font-semibold mt-4 sm:mt-5">
             Was ist der aktuelle Zweck von Walk Throughz?
           </h3>
           <div className="text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
