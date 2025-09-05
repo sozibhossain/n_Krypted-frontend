@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-lg space-y-8 p-8 text-white">
           <div className="text-center">
             <div>
-              <div className=" scale-[120%]">
+              {/* <div className=" scale-[120%]">
                 <div className="flex justify-center">
                   <Image
                     src="/assets/logo-icon.png"
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
                 >
                   Walk Throughz
                 </h1>
-              </div>
+              </div> */}
             </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>

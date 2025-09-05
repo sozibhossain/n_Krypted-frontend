@@ -97,7 +97,7 @@ export default function EditDealModal({
   dealId,
 }: EditDealModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [offerInput, setOfferInput] = useState("");
+  // const [offerInput, setOfferInput] = useState("");
   const [offers, setOffers] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -376,12 +376,12 @@ export default function EditDealModal({
     updateMutation.mutate(formData);
   };
 
-  const handleAddOffer = () => {
-    if (offerInput.trim()) {
-      setOffers([...offers, offerInput.trim()]);
-      setOfferInput("");
-    }
-  };
+  // const handleAddOffer = () => {
+  //   if (offerInput.trim()) {
+  //     setOffers([...offers, offerInput.trim()]);
+  //     setOfferInput("");
+  //   }
+  // };
 
   const handleRemoveOffer = (index: number) => {
     setOffers(offers.filter((_, i) => i !== index));
@@ -775,8 +775,7 @@ export default function EditDealModal({
               </div>
             </div>
             <div className="grid gap-2">
-              <Label>Offers</Label>
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 <Input
                   value={offerInput}
                   onChange={(e) => setOfferInput(e.target.value)}
@@ -786,7 +785,7 @@ export default function EditDealModal({
                 <Button type="button" onClick={handleAddOffer}>
                   Add
                 </Button>
-              </div>
+              </div> */}
               <div className="flex flex-wrap gap-2 mt-2">
                 {offers.map((offer, index) => (
                   <div

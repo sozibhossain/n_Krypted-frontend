@@ -54,17 +54,19 @@ export function ForgotPasswordForm() {
     <>
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 px-6 py-8 rounded-xl border border-white shadow-lg max-w-lg mx-auto"
+        // match SignInForm styles: dark card bg, rounded, padding
+        className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg max-w-lg mx-auto"
       >
-        <div className="text-center">
-          <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2">
+        <div className="text-center space-y-1">
+          <h1 className="text-white text-[26px] lg:text-[32px] font-semibold leading-[120%]">
             Link anfordern
           </h1>
-          <div className="text-white text-[14px] lg:text-[16px] font-normal">
+          <p className="text-[#BABABA] text-[14px] lg:text-[16px]">
             Gib deine E-Mail ein, um den Link zum Zurücksetzen deines Passworts
             zu erhalten.
-          </div>
+          </p>
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="email" className="text-white">
             E-Mail
@@ -78,7 +80,7 @@ export function ForgotPasswordForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="pl-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
+              className="pl-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -92,11 +94,11 @@ export function ForgotPasswordForm() {
         </Button>
       </form>
 
-      {/* Success Dialog */}
+      {/* Success Dialog - matched to card styling */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="sm:max-w-lg bg-black border border-gray-700 text-white rounded-xl shadow-xl">
+        <DialogContent className="sm:max-w-lg bg-[#373737] border border-gray-600 text-white rounded-xl shadow-xl">
           <DialogHeader className="flex flex-col items-center space-y-3">
-            <CheckCircle2 className="text-green-400 w-14 h-14" />
+            <CheckCircle2 className="w-14 h-14" />
             <DialogTitle className="text-xl font-semibold text-white">
               Überprüfe deine E-Mails
             </DialogTitle>

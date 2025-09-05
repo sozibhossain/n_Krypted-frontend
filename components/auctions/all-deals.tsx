@@ -801,7 +801,7 @@ function DealsPage() {
                 }}
                 className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
               >
-                EUR {min} - EUR {max}
+                € {min} - € {max}
               </button>
             ))}
           </div>

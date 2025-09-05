@@ -115,7 +115,7 @@ export default function ContactUsForm() {
   };
 
   return (
-    <div className="container py-24 lg:mt-24">
+    <div className="container py-24 lg:mt-8">
       <div>
         <h1 className="text-xl lg:text-4xl lg:text-[36px] font-bold mb-4 text-white text-center">
           Du hast Feedback oder eine Idee?

@@ -51,7 +51,6 @@ export function VerifyEmailForm() {
       router.push("/login");
     },
     onError: () => {
-      // console.error("Verification error:", error);
       toast.error("Ungültiger Bestätigungscode");
     },
   });
@@ -81,7 +80,8 @@ export function VerifyEmailForm() {
       setCanResend(false);
       startResendTimer();
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       toast.error(
         error.message ||
           "Der Code konnte nicht erneut gesendet werden. Bitte versuche es erneut."
@@ -125,46 +125,41 @@ export function VerifyEmailForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-[#212121]/10 rounded-lg shadow-md border border-white">
-      <h2 className="text-2xl font-bold text-center mb-6 text-white">
+    <div className="max-w-lg mx-auto bg-[#373737] px-[24px] py-[32px] rounded-lg shadow-md">
+      <h2 className="text-white text-[26px] lg:text-[32px] font-semibold leading-[120%] text-center mb-2">
         Code eingeben
       </h2>
-      <p className="text-center mb-6 text-gray-300">
+      <p className="text-[#BABABA] text-center mb-6">
         Gib den 6-stelligen Code ein, den wir an{" "}
-        <span className="font-semibold text-white">{email}</span>
-        <br /> verschickt haben.
+        <span className="font-semibold text-white">{email}</span> verschickt
+        haben.
       </p>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <CustomOtpInput
           value={otp}
           onChange={setOtp}
           disabled={isVerifying || isResending}
           numericOnly={false}
-          className="justify-center"
-          inputClassName="text-white bg-gray-800 border-gray-700 focus:border-gray-500"
+          className="justify-center gap-2"
+          inputClassName="h-12 w-12 text-center text-white bg-[#4b4b4b] border border-gray-600 rounded-md focus:outline-none focus:ring-0 focus:border-gray-400 placeholder:text-gray-400"
         />
+
         <button
           type="submit"
           disabled={isVerifying || isResending}
-          className="w-full py-3 bg-white text-gray-900 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors font-medium"
+          className="w-full py-3 bg-white text-black rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors font-medium"
         >
           {isVerifying ? "Wird verifiziert..." : "E-Mail bestätigen"}
         </button>
       </form>
 
-      <div className="mt-6 flex justify-between items-center">
-        {/* <button
-          type="button"
-          onClick={() => router.push("/register")}
-          className="text-gray-400 hover:text-white hover:underline text-sm"
-        >
-          Zurück zur Registrierung
-        </button> */}
+      <div className="mt-6 flex justify-end">
         <button
           type="button"
           onClick={() => resendOtp()}
           disabled={!canResend || isResending}
-          className="text-gray-400 hover:text-white hover:underline text-sm disabled:opacity-50"
+          className="text-white hover:text-blue-400 text-sm disabled:opacity-50"
         >
           {isResending
             ? "Wird gesendet..."

@@ -45,7 +45,7 @@ export default function VerifyEmailPage() {
       <div className="flex w-full items-center justify-center bg-[#212121] lg:w-1/2">
         <div className="w-full max-w-lg space-y-8  p-8 text-white">
           <div className="text-center">
-            <div className="py-1 scale-[125%]">
+            {/* <div className="py-1 scale-[125%]">
               <div className="flex justify-center">
                 <Image
                   src="/assets/logo-icon.png"
@@ -61,7 +61,7 @@ export default function VerifyEmailPage() {
               >
                 Walk Throughz
               </h1>
-            </div>
+            </div> */}
           </div>
           <Suspense fallback={<div>Laden...</div>}>
             <VerifyEmailForm />

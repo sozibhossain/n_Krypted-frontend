@@ -8,10 +8,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import PayPalCheckout from "./PayPalCheckout";
 import StripeCheckout from "./pyment/StripeCheckout";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import PayPalOverlay from "./PayPalOverlay";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -360,7 +360,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Benachrichtigt mich"}
+          {isLoading ? "Wird bearbeitet…" : "Benachrichtigt mich"}
         </Button>
       );
     }
@@ -761,17 +761,15 @@ export function DealsCard({
       </Dialog>
 
       {/* PayPal Checkout Modal */}
-      <Dialog open={isPayPalModalOpen} onOpenChange={setIsPayPalModalOpen}>
-        <DialogContent className="p-4 sm:p-5 w-full max-w-md">
-          {bookingId && (
-            <PayPalCheckout
-              amount={price * quantity} // Total price
-              userId={session?.user?.id ?? ""}
-              bookingId={bookingId}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {bookingId && (
+        <PayPalOverlay
+          open={isPayPalModalOpen}
+          onClose={() => setIsPayPalModalOpen(false)}
+          amount={price * quantity}
+          userId={session?.user?.id ?? ""}
+          bookingId={bookingId}
+        />
+      )}
 
       {/* Stripe Checkout Modal */}
       <Dialog open={isStripeModalOpen} onOpenChange={setIsStripeModalOpen}>
