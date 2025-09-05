@@ -75,13 +75,13 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     );
   }
 
-  console.log(blog)
+  console.log(blog);
 
   return (
     <div className="py-10">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl md:text-[31px] leading-[110%] font-bold text-white pb-4">
+          <h1 className="text-2xl md:text-[28px] leading-[110%] font-bold text-white pb-4">
             {blog.title}
           </h1>
           <div className="flex  items-center space-x-4">
@@ -94,8 +94,6 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
               })}
             </div>
           </div>
@@ -105,13 +103,13 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
           </div>
         </div>
 
-        <div className="relative aspect-video rounded-xl overflow-hidden">
+        <div className="rounded-xl aspect-video overflow-hidden">
           <Image
             src={blog.image || "/default-image.jpg"}
             alt={blog.title || "Blog image"}
             width={3000}
             height={3000}
-            className="object-cover w-full"
+            className="w-full h-full object-cover object-center"
             priority
           />
         </div>
@@ -138,7 +136,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             <BlogCommentsSection blogId={blogId} />
           </div> */}
         </div>
-{/* 
+        {/* 
         <BlogComments blogId={blogId} /> */}
       </div>
     </div>

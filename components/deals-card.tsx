@@ -378,7 +378,7 @@ export function DealsCard({
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Benachrichtigt mich"}
+          {isLoading ? "Wird bearbeitet…" : "Benachrichtigt mich"}
         </Button>
       );
     }

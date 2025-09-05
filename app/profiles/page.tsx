@@ -172,18 +172,22 @@ export default function Dashboard() {
                 onClick={handleImageClick}
               >
                 <Image
-                  src={avatar}
-                  alt="         "
+                  src={avatar || "/placeholder.png"} // fallback if no avatar
+                  alt="Profilbild"
                   fill
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center  group-hover:opacity-100 transition-opacity">
-                  <div className="text-[12px] text-center">
-                    Profilbild hier hochladen <div>(max. 2 MB)</div>
+
+                {!avatar && ( // 👈 show overlay only if no avatar
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center group-hover:opacity-100 transition-opacity">
+                    <div className="text-[12px] text-center">
+                      Profilbild hier hochladen <div>(max. 2 MB)</div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
+
               {isUploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
                   <div className="h-8 w-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>

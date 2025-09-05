@@ -83,7 +83,7 @@ const AuctionImageGallery: React.FC<AuctionImageGalleryProps> = ({
   onSelect,
 }) => {
   if (!images || images.length === 0) {
-    return <div>No images available</div>;
+    return <div className="text-white">Keine Bilder verfügbar</div>;
   }
   return (
     <div className="flex flex-row md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
@@ -101,7 +101,7 @@ const AuctionImageGallery: React.FC<AuctionImageGalleryProps> = ({
             src={image || "/placeholder.svg"}
             alt={`Thumbnail ${index + 1}`}
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority={index === 0}
           />
         </button>
@@ -549,7 +549,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           onClick={() => handleBooking(true)}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Benachrichtigt mich"}
+          {isLoading ? "Wird bearbeitet…" : "Benachrichtigt mich"}
         </Button>
       );
     } else {
@@ -590,15 +590,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               onSelect={setSelectedImageIndex}
             />
           </div>
-          <div className="col-span-7 md:col-span-6 space-y-4 order-1 md:order-2">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+          <div className="col-span-7 md:col-span-6 space-y-4 order-1 md:order-2 text-white">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-md ">
               <Image
                 src={
                   auction?.images?.[selectedImageIndex] || "/placeholder.svg"
                 }
                 alt={auction?.title || "Property image"}
-                fill
-                className="object-cover !h-[491px] md:!h-[391px]"
+                width={1000}
+                height={1000}
+                className="object-cover !h-[491px] md:!h-[391px] object-center"
                 priority
               />
             </div>
@@ -631,9 +632,13 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               </span>
             </div>
             <div>
-              <div className="text-xl font-semibold text-[#FFFFFF]">
-                <span className="mr-[3px] scale-80">€</span>
-                {auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
+              <div className="text-xl  text-[#FFFFFF]">
+                <span className="mr-[3px] scale-50">€</span>
+
+                <div className="font-semibold inline ">
+                  {" "}
+                  {auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
+                </div>
               </div>
             </div>
 
@@ -647,7 +652,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                       value={schedule._id}
                       className={`flex items-center gap-2 px-4 py-2 rounded-md ${
                         schedule.active
-                          ? "bg-gray-600 text-gray-300"
+                          ? "bg-gray-600 text-white"
                           : "bg-blue-600 text-white"
                       } ${selectedSchedule?._id === schedule._id ? "" : ""}`}
                       onClick={() => {

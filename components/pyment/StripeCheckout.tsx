@@ -41,8 +41,8 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
       .then(async ({ paymentIntent }) => {
         switch (paymentIntent?.status) {
           case "succeeded":
-            setMessage("Payment succeeded!");
-            toast.success("Payment succeeded!");
+            setMessage("Die Zahlung war erfolgreich!");
+            toast.success("Die Zahlung war erfolgreich!");
 
             // Call your API to confirm payment
             try {
@@ -116,8 +116,8 @@ const StripeCheckout = ({ bookingId, price }: StripeCheckoutProps) => {
       }
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       // Handle successful payment
-      setMessage("Payment succeeded!");
-      toast.success("Payment succeeded!");
+      setMessage("Die Zahlung war erfolgreich!");
+      toast.success("Die Zahlung war erfolgreich!");
 
       try {
         const response = await fetch(
