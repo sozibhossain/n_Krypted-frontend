@@ -228,7 +228,7 @@ export function CategoriesAndSearchBar() {
   const getLocationDisplayText = () => {
     if (selectedCity) return selectedCity;
     if (selectedCountry) return selectedCountry;
-    return "Frankfurt am Main";
+    return "Stadt auswählen";
   };
 
   return (
@@ -254,7 +254,9 @@ export function CategoriesAndSearchBar() {
                       <DropdownMenuItem
                         onClick={() => handleCategorySelect("")}
                         className={!selectedCategory ? "bg-neutral-100" : ""}
-                      >Alle</DropdownMenuItem>
+                      >
+                        Alle
+                      </DropdownMenuItem>
                       {isLoadingCategories ? (
                         <DropdownMenuItem disabled>
                           Loading categories...
@@ -296,15 +298,15 @@ export function CategoriesAndSearchBar() {
                         selectedCategory ||
                         selectedCountry ||
                         selectedCity) && (
-                          <button
-                            type="button"
-                            onClick={handleClearSearch}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white/20"
-                            aria-label="Clear search and filters"
-                          >
-                            <X className="h-4 w-4 stroke-2" />
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={handleClearSearch}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white/20"
+                          aria-label="Clear search and filters"
+                        >
+                          <X className="h-4 w-4 stroke-2" />
+                        </button>
+                      )}
                     </div>
                     {/* Location Dropdown */}
                     <DropdownMenu>
@@ -323,7 +325,7 @@ export function CategoriesAndSearchBar() {
                         className="p-0 max-w-[200px] z-50 overflow-visible"
                       >
                         {/* All Locations */}
-                        <div
+                        {/* <div
                           onClick={() => {
                             handleCountrySelect("");
                             handleCitySelect("", "");
@@ -335,7 +337,7 @@ export function CategoriesAndSearchBar() {
                           }`}
                         >
                           Frankfurt am Main
-                        </div>
+                        </div> */}
                         {/* Countries and Cities */}
                         {uniqueLocations.map(({ country, cities }) => (
                           <div key={country} className="relative group">
@@ -360,7 +362,9 @@ export function CategoriesAndSearchBar() {
                                     handleCitySelect(city, country)
                                   }
                                   className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
-                                    selectedCity === city ? "bg-neutral-100" : ""
+                                    selectedCity === city
+                                      ? "bg-neutral-100"
+                                      : ""
                                   }`}
                                 >
                                   {city}
