@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -36,19 +36,21 @@ interface Deal {
   title: string;
   price: number;
   description: string;
-  location: Location; // Object with country and city
+  location: Location;
   status: string;
   offers: string[];
   participations: number;
-  images: string[]; // Array of image URLs
+  images: string[];
   createdAt: string;
   updatedAt: string;
-  scheduleDates: ScheduleDate[]; // Array of schedule date objects
-  category?: string; // Optional, as seen in data
-  time?: number; // Optional, as seen in data
-  timer?: string; // Optional, as seen in data
-  __v?: number; // Optional, as seen in data
+  scheduleDates: ScheduleDate[];
+  category?: string;
+  time?: number;
+  timer?: string;
+  __v?: number;
 }
+
+type PaymentStatus = "complete" | "pending" | "failed";
 
 interface Booking {
   _id: string;
@@ -59,6 +61,12 @@ interface Booking {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  // fields from API sample
+  price?: number;
+  scheduleDate?: string;
+  quantity?: number;
+  paymentStatus?: PaymentStatus; // <- we'll filter by this
+  __v?: number;
 }
 
 interface ApiResponse {
@@ -77,8 +85,8 @@ export default function BookingHistoryTable() {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: session } = useSession();
-  const accessToken = session?.user?.accessToken;
-  const userId = session?.user?.id;
+  const accessToken = session?.user?.accessToken as string | undefined;
+  const userId = session?.user?.id as string | undefined;
 
   const fetchBookings = async (): Promise<ApiResponse> => {
     if (!userId || !accessToken) {
@@ -123,11 +131,24 @@ export default function BookingHistoryTable() {
   };
 
   // Use TanStack Query to fetch all bookings
-  const { data, isLoading, error } = useQuery<ApiResponse>({
+  const {
+    data,
+    isLoading,
+    error,
+  } = useQuery<ApiResponse>({
     queryKey: ["bookings", userId],
     queryFn: fetchBookings,
     enabled: !!userId && !!accessToken,
   });
+
+  // Filter: show only completed payments
+  const completedBookings = useMemo(
+    () =>
+      data?.data.filter(
+        (b) => (b.paymentStatus ?? "pending") === "complete"
+      ) ?? [],
+    [data?.data]
+  );
 
   // Use TanStack Query to fetch a single booking
   const {
@@ -146,8 +167,9 @@ export default function BookingHistoryTable() {
   };
 
   // Format price function
-  const formatPrice = (price: number) => {
-    return `€${price?.toFixed(2)}`;
+  const formatPrice = (price: number | undefined) => {
+    if (typeof price !== "number") return "€0.00";
+    return `€${price.toFixed(2)}`;
   };
 
   // Handle view button click
@@ -204,7 +226,7 @@ export default function BookingHistoryTable() {
   }
 
   // Handle error state
-  if (error) {
+  if (error instanceof Error) {
     return (
       <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
         <h2 className="text-xl font-semibold text-white mb-6">
@@ -219,125 +241,132 @@ export default function BookingHistoryTable() {
     );
   }
 
-  console.log(bookingDetails);
-
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
       <h2 className="text-2xl font-semibold text-white mb-6">Buchungsverlauf</h2>
 
-      {/* Table for medium and large screens */}
-      <div className="hidden sm:block bg-zinc-900/60 rounded-lg overflow-hidden">
-        <div className="min-w-full overflow-x-auto">
-          <table className="min-w-full divide-y divide-zinc-800">
-            <thead>
-              <tr className="bg-zinc-800">
-                <th
-                  scope="col"
-                  className="py-3 px-4 text-left text-sm font-medium text-gray-300"
-                >
-                  Deal
-                </th>
-                <th
-                  scope="col"
-                  className="py-3 px-4 text-left text-sm font-medium text-gray-300"
-                >
-                  Buchungscode
-                </th>
-                <th
-                  scope="col"
-                  className="py-3 px-4 text-left text-sm font-medium text-gray-300"
-                >
-                  Datum
-                </th>
-                <th
-                  scope="col"
-                  className="py-3 px-4 text-left text-sm font-medium text-gray-300"
-                >
-                  Menge
-                </th>
-                <th
-                  scope="col"
-                  className="py-3 px-4 text-left text-sm font-medium text-gray-300"
-                >
-                  Details
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-800">
-              {data?.data.map((booking) => (
-                <tr key={booking._id}>
-                  <td className="py-3 px-4 text-sm text-white">
-                    {booking?.dealsId?.title}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-white">
-                    #{booking?.bookingId?.slice(-4)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-white">
-                    {formatDate(booking?.createdAt)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-white">
-                    {formatPrice(booking?.dealsId?.price)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-white">
-                    <button
-                      className="text-white hover:text-gray-300 transition-colors"
-                      onClick={() => handleViewClick(booking._id)}
-                      aria-label={`View details for booking ${booking.bookingId}`}
-                    >
-                      <Eye className="h-5 w-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Empty state when no completed bookings */}
+      {completedBookings.length === 0 ? (
+        <div className="bg-zinc-900/60 rounded-lg p-6 text-center text-gray-300">
+          Keine abgeschlossenen Buchungen vorhanden.
         </div>
-      </div>
-
-      {/* Mobile view */}
-      <div className="sm:hidden space-y-3">
-        {data?.data.map((booking) => (
-          <div
-            key={booking._id}
-            className="bg-zinc-900/60 rounded-lg p-4 space-y-2"
-          >
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Deal</span>
-              <span className="text-white text-sm">
-                {booking?.dealsId?.title}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Buchungscode</span>
-              <span className="text-white text-sm">
-                #{booking?.bookingId?.slice(-3)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Datum</span>
-              <span className="text-white text-sm">
-                {formatDate(booking?.createdAt)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-xs">Menge</span>
-              <span className="text-white text-sm">
-                {formatPrice(booking?.dealsId?.price)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-xs">Details</span>
-              <button
-                className="text-white hover:text-gray-300 transition-colors"
-                onClick={() => handleViewClick(booking._id)}
-                aria-label={`View details for booking ${booking?.bookingId}`}
-              >
-                <Eye className="h-5 w-5" />
-              </button>
+      ) : (
+        <>
+          {/* Table for medium and large screens */}
+          <div className="hidden sm:block bg-zinc-900/60 rounded-lg overflow-hidden">
+            <div className="min-w-full overflow-x-auto">
+              <table className="min-w-full divide-y divide-zinc-800">
+                <thead>
+                  <tr className="bg-zinc-800">
+                    <th
+                      scope="col"
+                      className="py-3 px-4 text-left text-sm font-medium text-gray-300"
+                    >
+                      Deal
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3 px-4 text-left text-sm font-medium text-gray-300"
+                    >
+                      Buchungscode
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3 px-4 text-left text-sm font-medium text-gray-300"
+                    >
+                      Datum
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3 px-4 text-left text-sm font-medium text-gray-300"
+                    >
+                      Menge
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3 px-4 text-left text-sm font-medium text-gray-300"
+                    >
+                      Details
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800">
+                  {completedBookings.map((booking) => (
+                    <tr key={booking._id}>
+                      <td className="py-3 px-4 text-sm text-white">
+                        {booking?.dealsId?.title}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white">
+                        #{booking?.bookingId?.slice(-4)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white">
+                        {formatDate(booking?.createdAt)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white">
+                        {formatPrice(booking?.dealsId?.price)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white">
+                        <button
+                          className="text-white hover:text-gray-300 transition-colors"
+                          onClick={() => handleViewClick(booking._id)}
+                          aria-label={`View details `}
+                        >
+                          <Eye className="h-5 w-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Mobile view */}
+          <div className="sm:hidden space-y-3">
+            {completedBookings.map((booking) => (
+              <div
+                key={booking._id}
+                className="bg-zinc-900/60 rounded-lg p-4 space-y-2"
+              >
+                <div className="flex justify-between">
+                  <span className="text-gray-400 text-xs">Deal</span>
+                  <span className="text-white text-sm">
+                    {booking?.dealsId?.title}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400 text-xs">Buchungscode</span>
+                  <span className="text-white text-sm">
+                    #{booking?.bookingId?.slice(-4)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400 text-xs">Datum</span>
+                  <span className="text-white text-sm">
+                    {formatDate(booking?.createdAt)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400 text-xs">Menge</span>
+                  <span className="text-white text-sm">
+                    {formatPrice(booking?.dealsId?.price)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-xs">Details</span>
+                  <button
+                    className="text-white hover:text-gray-300 transition-colors"
+                    onClick={() => handleViewClick(booking._id)}
+                    aria-label={`View details `}
+                  >
+                    <Eye className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Booking Details Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -363,7 +392,7 @@ export default function BookingHistoryTable() {
                 <Skeleton className="h-4 w-full bg-zinc-800" />
               </div>
             </div>
-          ) : detailsError ? (
+          ) : detailsError instanceof Error ? (
             <div className="p-4 bg-red-900/20 border border-red-800 rounded-md">
               <p className="text-red-400">
                 Fehler beim Laden der Buchungsdetails: {detailsError.message}
@@ -375,21 +404,38 @@ export default function BookingHistoryTable() {
                 <h3 className="text-lg font-medium">
                   {bookingDetails?.data?.dealsId?.title}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge
                     variant="outline"
                     className="bg-zinc-800 text-white border-zinc-700"
                   >
-                    #{bookingDetails?.data?.bookingId}
+                    #{bookingDetails?.data?.bookingId?.slice(-4)}
                   </Badge>
                   <Badge
                     variant={
                       bookingDetails?.data?.isBooked ? "default" : "secondary"
                     }
-                    className="bg-emerald-600 text-white"
+                    className={
+                      bookingDetails?.data?.isBooked
+                        ? "bg-emerald-600 text-white"
+                        : "bg-zinc-700 text-white"
+                    }
                   >
-                    {bookingDetails.data.isBooked ? "Booked" : "Pending"}
+                    {bookingDetails.data.isBooked ? "Gebucht" : "Ausstehend"}
                   </Badge>
+                  {bookingDetails?.data?.paymentStatus && (
+                    <Badge
+                      className={
+                        bookingDetails.data.paymentStatus === "complete"
+                          ? "bg-emerald-700 text-white"
+                          : bookingDetails.data.paymentStatus === "failed"
+                          ? "bg-red-700 text-white"
+                          : "bg-yellow-700 text-white"
+                      }
+                    >
+                      Zahlung: {bookingDetails.data.paymentStatus}
+                    </Badge>
+                  )}
                 </div>
               </div>
 
@@ -432,42 +478,18 @@ export default function BookingHistoryTable() {
                     {formatDate(bookingDetails?.data?.createdAt)}
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-gray-400">Status</h4>
-                  <p className="text-sm capitalize">
-                    {bookingDetails?.data?.dealsId?.status}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-gray-400">
-                    Beteiligungen
-                  </h4>
-                  <p className="text-sm">
-                    {bookingDetails?.data.dealsId?.participations ?? "N/A"}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-gray-400">
-                    Benachrichtigungen
-                  </h4>
-                  <p className="text-sm">
-                    {bookingDetails?.data?.notifyMe ? "Enabled" : "Disabled"}
-                  </p>
-                </div>
               </div>
 
               {bookingDetails?.data?.dealsId?.offers?.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">
-                    Angebote
-                  </h4>
+                  <h4 className="text-sm font-medium text-gray-400">Angebote</h4>
                   <div className="bg-zinc-800/50 rounded-md p-3">
                     <ul className="list-disc list-inside space-y-1">
                       {(() => {
                         try {
-                          const parsedOffers = JSON.parse(
-                            bookingDetails?.data?.dealsId.offers[0]
-                          );
+                          const raw = bookingDetails?.data?.dealsId.offers[0];
+                          const parsedOffers =
+                            typeof raw === "string" ? JSON.parse(raw) : raw;
                           return Array.isArray(parsedOffers) ? (
                             parsedOffers.map((offer, index) => (
                               <li key={index} className="text-sm">
@@ -476,13 +498,13 @@ export default function BookingHistoryTable() {
                             ))
                           ) : (
                             <li className="text-sm">
-                              {bookingDetails.data.dealsId.offers[0]}
+                              {bookingDetails.data.dealsId.offers[0] as string}
                             </li>
                           );
                         } catch {
                           return (
                             <li className="text-sm">
-                              {bookingDetails.data.dealsId.offers[0]}
+                              {bookingDetails?.data?.dealsId?.offers?.[0]}
                             </li>
                           );
                         }
@@ -492,31 +514,9 @@ export default function BookingHistoryTable() {
                 </div>
               )}
 
-              {bookingDetails?.data?.dealsId?.scheduleDates?.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">
-                    Termine planen
-                  </h4>
-                  <div className="bg-zinc-800/50 rounded-md p-3">
-                    <ul className="list-disc list-inside space-y-1">
-                      {bookingDetails.data.dealsId.scheduleDates.map(
-                        (schedule) => (
-                          <li key={schedule._id} className="text-sm">
-                            {formatDate(schedule.date)} -{" "}
-                            {schedule.active ? "Active" : "Inactive"} (Booked:{" "}
-                            {schedule.bookedCount}/
-                            {schedule.participationsLimit})
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
               {bookingDetails?.data?.dealsId?.images?.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">Images</h4>
+                  <h4 className="text-sm font-medium text-gray-400">Bilder</h4>
                   <div className="grid grid-cols-2 gap-4">
                     {bookingDetails.data.dealsId.images.map((image, index) => (
                       <Image
