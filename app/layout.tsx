@@ -32,7 +32,7 @@ export default function RootLayout({
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   return (
-    <html lang="en">
+    <html lang="en" className="hyphens-auto">
       <body
         className={`${poppins.variable} font-poppins antialiased bg-[#212121]`}
       >
