@@ -51,7 +51,7 @@ export default function Dashboard() {
           <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
               title="Total Revenue"
-              value={data?.data.totalRevenue ?? ""}
+              value={data?.data.totalRevenue ? Number(data.data.totalRevenue).toFixed(2) : ""}
               icon={<DollarSign className="h-4 w-4 text-green-500" />}
               iconColor="bg-green-100"
             />

@@ -303,7 +303,7 @@ export default function BookingHistoryTable() {
                         {formatDate(booking?.createdAt)}
                       </td>
                       <td className="py-3 px-4 text-sm text-white">
-                        {formatPrice(booking?.dealsId?.price)}
+                        {formatPrice((booking?.dealsId?.price ?? 0) * (booking?.quantity ?? 1))}
                       </td>
                       <td className="py-3 px-4 text-sm text-white">
                         <button
@@ -349,7 +349,7 @@ export default function BookingHistoryTable() {
                 <div className="flex justify-between">
                   <span className="text-gray-400 text-xs">Menge</span>
                   <span className="text-white text-sm">
-                    {formatPrice(booking?.dealsId?.price)}
+                     {formatPrice((booking?.dealsId?.price ?? 0) * (booking?.quantity ?? 1))}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -457,7 +457,7 @@ export default function BookingHistoryTable() {
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">Preis</h4>
                   <p className="text-lg font-semibold">
-                    {formatPrice(bookingDetails?.data?.dealsId?.price)}
+                    {formatPrice((bookingDetails?.data?.dealsId?.price ?? 0) * (bookingDetails?.data?.quantity ?? 1))}
                   </p>
                 </div>
                 <div className="space-y-1">

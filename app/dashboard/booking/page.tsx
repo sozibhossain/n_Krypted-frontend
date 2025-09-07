@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
-import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -219,7 +218,6 @@ export default function BookingsPage() {
                     <TableHead>Booking ID</TableHead>
                     <TableHead>Deal Title</TableHead>
                     <TableHead>Location</TableHead>
-                    <TableHead>Schedule Date</TableHead>
                     <TableHead>Quantity</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Status</TableHead>
@@ -242,7 +240,7 @@ export default function BookingsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
-                        #{booking.bookingId}
+                        #{booking.bookingId.slice(-4)}
                       </TableCell>
                       <TableCell className="text-[#212121] text-base font-medium py-4">
                         <div className="max-w-[200px] truncate">
@@ -254,19 +252,7 @@ export default function BookingsPage() {
                           ? `${booking.dealsId.location.city}, ${booking.dealsId.location.country}`
                           : "N/A"}
                       </TableCell>
-                      <TableCell className="text-[#212121] text-base font-medium py-4">
-                        {booking.scheduleDate
-                          ? format(
-                              new Date(booking.scheduleDate),
-                              "MMM dd, yyyy"
-                            )
-                          : "N/A"}
-                        <div className="text-xs text-muted-foreground">
-                          {booking.scheduleDate
-                            ? format(new Date(booking.scheduleDate), "h:mm a")
-                            : ""}
-                        </div>
-                      </TableCell>
+                     
                       {/* <TableCell className="text-[#212121] text-base font-medium py-4">
                         {formatDuration(booking.dealsId?.time)}
                       </TableCell> */}
