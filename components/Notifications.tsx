@@ -1,98 +1,110 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSocketContext } from "@/Provider/SocketProvider";
+import type {
+  Notification as SocketNotification,
+  Deal as SocketDeal,
+} from "@/Provider/SocketProvider";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  BellRing,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  MapPin,
-} from "lucide-react";
+import { toast } from "sonner";
+import { BellRing, Clock, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 
-export interface Deal {
-  _id: string;
-  title: string;
-  description: string;
-  participationsLimit: number;
-  price: number;
-  location?: string | { country: string; city: string };
-  images?: string[];
-  offers?: string[];
-  status?: string;
-  category?:
-    | string
-    | {
-        _id: string;
-        categoryName: string;
-        image: string;
-        createdAt: string;
-        updatedAt: string;
-      };
-  time?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  __v?: number;
+const FILTER_MESSAGE = "Der folgende Deal ist jetzt verfügbar"; // unchanged
+
+// ---- helpers: normalize API -> provider types (message untouched) ----
+function normalizeLocation(loc: unknown): string | undefined {
+  if (!loc) return undefined;
+  if (typeof loc === "string") return loc.trim() || undefined;
+  if (typeof loc === "object" && loc !== null) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const country = (loc as any)?.country?.trim?.() ?? "";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const city = (loc as any)?.city?.trim?.() ?? "";
+    const combined = [city, country].filter(Boolean).join(", ");
+    return combined || undefined;
+  }
+  return undefined;
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeDeal(raw: any): SocketDeal {
+  return {
+    _id: String(raw?._id ?? ""),
+    title: String(raw?.title ?? ""),
+    description: String(raw?.description ?? ""),
+    participationsLimit: Number(raw?.participationsLimit ?? 0),
+    price: Number(raw?.price ?? 0),
+    location: normalizeLocation(raw?.location),
+    images: Array.isArray(raw?.images) ? raw.images.map(String) : undefined,
+    offers: Array.isArray(raw?.offers) ? raw.offers.map(String) : undefined,
+    status: raw?.status ? String(raw.status) : undefined,
+    category: raw?.category,
+    time: typeof raw?.time === "number" ? raw.time : undefined,
+    createdAt: raw?.createdAt ? String(raw.createdAt) : undefined,
+    updatedAt: raw?.updatedAt ? String(raw.updatedAt) : undefined,
+    __v: typeof raw?.__v === "number" ? raw.__v : undefined,
+  };
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeNotification(raw: any): SocketNotification {
+  let dealId: SocketNotification["dealId"] = undefined;
 
-export interface Notification {
-  _id: string;
-  message: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  isRead: boolean;
-  type: string;
-  dealId?: Deal | string;
-  auction?: {
-    title: string;
+  if (raw?.dealId && typeof raw.dealId === "object") {
+    dealId = normalizeDeal(raw.dealId);
+  } else if (typeof raw?.dealId === "string") {
+    dealId = raw.dealId;
+  }
+
+  // message is passed through exactly as received
+  return {
+    _id: String(raw?._id ?? ""),
+    message: String(raw?.message ?? ""),
+    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
+    updatedAt: String(raw?.updatedAt ?? new Date().toISOString()),
+    userId: String(raw?.userId ?? ""),
+    isRead: Boolean(raw?.isRead),
+    type: String(raw?.type ?? ""),
+    dealId,
+    auction: raw?.auction ? { title: String(raw.auction?.title ?? "") } : undefined,
   };
 }
 
+// ---------------------------------------------------------------------
+
 const Notifications = () => {
-  const { notifications, setNotifications, setNotificationCount, socket } =
-    useSocketContext();
+  const { notifications, setNotifications, setNotificationCount, socket } = useSocketContext();
   const session = useSession();
-  const userId = session?.data?.user?.id;
-  const token = session?.data?.user?.accessToken;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userId = (session?.data as any)?.user?.id as string | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const token = (session?.data as any)?.user?.accessToken as string | undefined;
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [markingAsRead, setMarkingAsRead] = useState(false);
-  const [markingIndividual, setMarkingIndividual] = useState<string | null>(
-    null
+  const [markingIndividual, setMarkingIndividual] = useState<string | null>(null);
+
+  // keep your existing filter (does not change message contents)
+  const filteredNotifications = useMemo(
+    () => notifications.filter((n: SocketNotification) => n.message === FILTER_MESSAGE),
+    [notifications]
   );
 
-  // Pagination state
+  // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  // Calculate paginated notifications
-  const totalPages = Math.ceil(notifications.length / itemsPerPage);
-  const paginatedNotifications = notifications.slice(
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage) || 1;
+  const paginatedNotifications = filteredNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Pagination controls
-  const goToPage = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  };
-
-  const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  const goToPage = (page: number) => setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
   const markNotificationsAsRead = async () => {
     if (!token || markingAsRead) return;
@@ -110,15 +122,25 @@ const Notifications = () => {
         }
       );
 
-      if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, isRead: true }))
-        );
-        localStorage.removeItem("notificationCount");
-        setNotificationCount(0);
-      }
-    } catch (error) {
-      console.error("Failed to mark notifications as read:", error);
+      if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.message === FILTER_MESSAGE ? { ...notif, isRead: true } : notif
+        )
+      );
+
+      const newUnreadCount = Math.max(
+        0,
+        filteredNotifications.filter((n) => !n.isRead).length
+      );
+      localStorage.removeItem("notificationCount");
+      setNotificationCount(newUnreadCount);
+
+      toast.success("Alle passenden Benachrichtigungen wurden als gelesen markiert.");
+    } catch (err) {
+      console.error("Failed to mark notifications as read:", err);
+      toast.error("Benachrichtigungen konnten nicht als gelesen markiert werden.");
     } finally {
       setMarkingAsRead(false);
     }
@@ -140,21 +162,21 @@ const Notifications = () => {
         }
       );
 
-      if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((notif) =>
-            notif._id === notificationId ? { ...notif, isRead: true } : notif
-          )
-        );
+      if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
-        setNotificationCount((prev) => Math.max(0, prev - 1));
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif._id === notificationId ? { ...notif, isRead: true } : notif
+        )
+      );
 
-        if (socket) {
-          socket.emit("mark_notification_read", notificationId);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to mark notification as read:", error);
+      setNotificationCount((prev) => Math.max(0, prev - 1));
+      if (socket) socket.emit("mark_notification_read", notificationId);
+
+      toast.success("Benachrichtigung als gelesen markiert.");
+    } catch (err) {
+      console.error("Failed to mark notification as read:", err);
+      toast.error("Die Benachrichtigung konnte nicht markiert werden.");
     } finally {
       setMarkingIndividual(null);
     }
@@ -180,27 +202,29 @@ const Notifications = () => {
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
         const data = await response.json();
 
-        if (data.notifications) {
-          setNotifications(data.notifications);
-          const unreadCount = data.notifications.filter(
-            (notif: Notification) => !notif.isRead
-          ).length;
-          setNotificationCount(unreadCount);
-        } else {
-          console.error("Failed to fetch initial notifications:", data.message);
-          setError(
-            data.message || "Abrufen der Benachrichtigungen fehlgeschlagen"
+        if (data?.notifications) {
+          // important: normalize only types (NOT message)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const normalized: SocketNotification[] = (data.notifications as any[]).map(
+            normalizeNotification
           );
+
+          const onlyWanted = normalized.filter((n) => n.message === FILTER_MESSAGE);
+          setNotifications(onlyWanted);
+          setNotificationCount(onlyWanted.filter((n) => !n.isRead).length);
+        } else {
+          const msg = data?.message || "Abrufen der Benachrichtigungen fehlgeschlagen";
+          setError(msg);
+          toast.error(msg);
         }
-      } catch (error) {
-        console.error("Error fetching initial notifications:", error);
-        setError(error instanceof Error ? error.message : "An error occurred");
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Es ist ein Fehler aufgetreten";
+        setError(msg);
+        toast.error("Benachrichtigungen konnten nicht geladen werden.");
       } finally {
         setLoading(false);
       }
@@ -213,23 +237,20 @@ const Notifications = () => {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInMinutes = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60)
-      );
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
 
-      if (diffInMinutes < 1) return "Just now";
-      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-      if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-      if (diffInMinutes < 10080)
-        return `${Math.floor(diffInMinutes / 1440)}d ago`;
+      if (diffInMinutes < 1) return "Gerade eben";
+      if (diffInMinutes < 60) return `vor ${diffInMinutes} Min.`;
+      if (diffInMinutes < 1440) return `vor ${Math.floor(diffInMinutes / 60)} Std.`;
+      if (diffInMinutes < 10080) return `vor ${Math.floor(diffInMinutes / 1440)} Tg.`;
 
-      return date.toLocaleDateString("en-US", {
+      return date.toLocaleDateString("de-DE", {
         month: "short",
         day: "numeric",
         year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
       });
     } catch {
-      return "Unknown date";
+      return "Unbekanntes Datum";
     }
   };
 
@@ -244,45 +265,21 @@ const Notifications = () => {
     }
   };
 
-  const getDealTitle = (notification: Notification) => {
+  const getDealTitle = (notification: SocketNotification) => {
     if (!notification.dealId) return "";
-
-    if (typeof notification.dealId === "string") {
-      return `Deal ID: ${notification.dealId}`;
-    } else {
-      return notification.dealId.title || "";
-    }
+    if (typeof notification.dealId === "string") return `Deal-ID: ${notification.dealId}`;
+    return notification.dealId.title || "";
   };
 
-  const getDealId = (notification: Notification) => {
+  const getDealId = (notification: SocketNotification) => {
     if (!notification.dealId) return "";
-
-    if (typeof notification.dealId === "string") {
-      return notification.dealId;
-    } else {
-      return notification.dealId._id || "";
-    }
+    if (typeof notification.dealId === "string") return notification.dealId;
+    return notification.dealId._id || "";
   };
 
-  const getDealStatus = (notification: Notification) => {
-    if (!notification.dealId || typeof notification.dealId === "string")
-      return "";
-    return notification.dealId.status || "";
-  };
-
-  const getDealLocation = (notification: Notification) => {
-    if (!notification.dealId || typeof notification.dealId === "string")
-      return "";
-
-    const location = notification.dealId.location;
-
-    if (typeof location === "string") {
-      return location;
-    } else if (location && typeof location === "object") {
-      return `${location.city}, ${location.country}`;
-    }
-
-    return "";
+  const getDealLocation = (notification: SocketNotification) => {
+    if (!notification.dealId || typeof notification.dealId === "string") return "";
+    return notification.dealId.location ?? "";
   };
 
   if (loading) {
@@ -310,24 +307,26 @@ const Notifications = () => {
 
   if (error) {
     return (
-      <Card className="bg-[#212121] border-gray-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <BellRing className="h-5 w-5" />
-            Fehler beim Laden der Benachrichtigungen
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-400 mb-4">{error}</p>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            className="border-gray-600 text-white hover:bg-gray-700"
-          >
-            Versuchen Sie es erneut
-          </Button>
-        </CardContent>
-      </Card>
+      <div>
+        <Card className="bg-[#212121] border-gray-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <BellRing className="h-5 w-5" />
+              Fehler beim Laden der Benachrichtigungen
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-400 mb-4">{error}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="border-gray-600 text-white hover:bg-gray-700"
+            >
+              Erneut versuchen
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -341,7 +340,7 @@ const Notifications = () => {
               Benachrichtigungen
             </div>
             <div className="flex items-center gap-2">
-              {notifications.length > 0 && (
+              {filteredNotifications.length > 0 && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -349,25 +348,21 @@ const Notifications = () => {
                   disabled={markingAsRead}
                   className=""
                 >
-                  {markingAsRead
-                    ? "Markierung..."
-                    : "Alle als gelesen markieren"}
+                  {markingAsRead ? "Wird markiert..." : "Alle als gelesen markieren"}
                 </Button>
               )}
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {notifications.length === 0 ? (
+          {filteredNotifications.length === 0 ? (
             <div className="text-center py-8">
               <BellRing className="h-12 w-12 mx-auto text-gray-600 mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">
-                Noch keine Benachrichtigungen
+                Noch keine passenden Benachrichtigungen
               </h3>
               <p className="text-gray-500">
-                {
-                  "Du siehst hier Benachrichtigungen, wenn dein gewünschter Deal wieder verfügbar ist."
-                }
+                Du siehst hier Benachrichtigungen, wenn dein gewünschter Deal wieder verfügbar ist.
               </p>
             </div>
           ) : (
@@ -375,7 +370,6 @@ const Notifications = () => {
               {paginatedNotifications.map((notification) => {
                 const dealId = getDealId(notification);
                 const dealTitle = getDealTitle(notification);
-                const dealStatus = getDealStatus(notification);
                 const dealLocation = getDealLocation(notification);
 
                 return (
@@ -411,12 +405,10 @@ const Notifications = () => {
                             {notification.message}
                           </p>
 
-                          {dealTitle && !dealTitle.startsWith("Deal ID:") && (
+                          {dealTitle && !dealTitle.startsWith("Deal-ID:") && (
                             <p
                               className={`text-sm mb-1 font-semibold ${
-                                notification.isRead
-                                  ? "text-gray-500"
-                                  : "text-white"
+                                notification.isRead ? "text-gray-500" : "text-white"
                               }`}
                             >
                               {dealTitle}
@@ -424,17 +416,6 @@ const Notifications = () => {
                           )}
 
                           <div className="flex items-center gap-2 mb-1">
-                            {dealStatus && (
-                              <span
-                                className={`text-xs px-2 py-1 rounded-full ${
-                                  dealStatus === "activate"
-                                    ? "bg-gray-700 text-white"
-                                    : "bg-gray-800 text-gray-400"
-                                }`}
-                              >
-                                {dealStatus}
-                              </span>
-                            )}
                             {dealLocation && (
                               <span className="text-xs text-gray-500 flex items-center gap-1">
                                 <MapPin className="w-4 h-4" /> {dealLocation}
@@ -445,12 +426,10 @@ const Notifications = () => {
                           {notification.auction && (
                             <p
                               className={`text-sm mb-2 ${
-                                notification.isRead
-                                  ? "text-gray-500"
-                                  : "text-gray-400"
+                                notification.isRead ? "text-gray-500" : "text-gray-400"
                               }`}
                             >
-                              Related to: {notification.auction.title}
+                              Zugehörig zu: {notification.auction.title}
                             </p>
                           )}
 
@@ -462,7 +441,7 @@ const Notifications = () => {
                             {!notification.isRead &&
                               markingIndividual === notification._id && (
                                 <span className="text-xs text-gray-400">
-                                  Marking as read...
+                                  Wird als gelesen markiert...
                                 </span>
                               )}
                           </div>
@@ -488,12 +467,10 @@ const Notifications = () => {
                           {notification.auction && (
                             <p
                               className={`text-sm mb-2 ${
-                                notification.isRead
-                                  ? "text-gray-500"
-                                  : "text-gray-400"
+                                notification.isRead ? "text-gray-500" : "text-gray-400"
                               }`}
                             >
-                              Related to: {notification.auction.title}
+                              Zugehörig zu: {notification.auction.title}
                             </p>
                           )}
 
@@ -505,7 +482,7 @@ const Notifications = () => {
                             {!notification.isRead &&
                               markingIndividual === notification._id && (
                                 <span className="text-xs text-gray-400">
-                                  Marking as read...
+                                  Wird als gelesen markiert...
                                 </span>
                               )}
                           </div>
@@ -516,8 +493,7 @@ const Notifications = () => {
                 );
               })}
 
-              {/* Pagination controls */}
-              {notifications.length > itemsPerPage && (
+              {filteredNotifications.length > itemsPerPage && (
                 <div className="flex items-center justify-between mt-6">
                   <Button
                     variant="outline"
@@ -545,9 +521,7 @@ const Notifications = () => {
                       return (
                         <Button
                           key={pageNum}
-                          variant={
-                            currentPage === pageNum ? "default" : "outline"
-                          }
+                          variant={currentPage === pageNum ? "default" : "outline"}
                           size="sm"
                           onClick={() => goToPage(pageNum)}
                           className={`w-10 h-10 p-0 ${
