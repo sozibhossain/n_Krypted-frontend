@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
 import { DealsCardSkeleton } from "./skeleton/dealsSkeleton";
 
-
 interface Deal {
   timer: string | undefined;
   time: number | undefined;
@@ -18,14 +17,14 @@ interface Deal {
   description: string;
   participations: number;
   price: number;
- 
+
   images: string[];
   offers: string[];
   status: string;
   category: string;
   createdAt: string;
   updatedAt: string;
-  scheduleDates?: [] ;
+  scheduleDates?: [];
   location?: {
     country: string;
     city: string;
@@ -66,12 +65,12 @@ export function BrowseOurDeals() {
                 className="heading-size font-normal font-benedict text-white leading-[120%] tracking-[0.04em] 
                  [text-shadow:_0_0_1px_#fff,_0_0_15px_#fff,_0_0_15px_#fff]"
               >
-                Deals
+                Walk Throughz
               </h1>
             </div>
           </div>
-          <p className="text-xl md:text-2xl lg:text-[28px] font-bold text-white mt-1 md:mt-2">
-            Stöbere durch unsere Deals
+          <p className="text-xl md:text-2xl lg:text-[26px] font-bold text-white mt-1 md:mt-2">
+            Stöbere durch unsere Walk Throughz
           </p>
         </div>
         <Link href={"/deals"}>

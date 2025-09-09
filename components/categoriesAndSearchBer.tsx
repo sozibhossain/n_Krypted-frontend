@@ -228,7 +228,7 @@ export function CategoriesAndSearchBar() {
   const getLocationDisplayText = () => {
     if (selectedCity) return selectedCity;
     if (selectedCountry) return selectedCountry;
-    return "Stadt auswählen";
+    return "Alle Städte";
   };
 
   return (

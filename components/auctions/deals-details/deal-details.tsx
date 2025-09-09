@@ -632,8 +632,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               </span>
             </div>
             <div>
-              <div className="text-xl  text-[#FFFFFF]">
-                <span className="mr-[3px] scale-50">€</span>
+              <div className="text-lg mt-[-10px] text-[#FFFFFF]">
+                <span className="mr-[3px] text-[17px]">€</span>
 
                 <div className="font-semibold inline ">
                   {" "}

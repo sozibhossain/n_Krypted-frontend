@@ -5,7 +5,7 @@ export default function TermsAndConditions() {
     <div>
       <PageHeader title="Geschäftsbedingungen" imge="/assets/report2.jpg" />
 
-      <div className="bg-black min-h-screen py-12">
+      <div className="min-h-screen py-12">
         {" "}
         {/* Added bg-black for consistent background */}
         <div className="w-full container mt-[80px] pb-[120px] text-white">

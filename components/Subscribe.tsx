@@ -65,7 +65,7 @@ export default function NewsletterSubscription() {
   };
 
   return (
-    <div className="max-w-lg w-full">
+    <div className="w-[85%] max-w-lg sm:w-full">
       <h2 className="text-xl font-bold mb-4 text-black">
         Jetzt anmelden und keine Deals mehr verpassen
       </h2>

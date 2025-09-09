@@ -423,19 +423,7 @@ export default function BookingHistoryTable() {
                   >
                     {bookingDetails.data.isBooked ? "Gebucht" : "Ausstehend"}
                   </Badge>
-                  {bookingDetails?.data?.paymentStatus && (
-                    <Badge
-                      className={
-                        bookingDetails.data.paymentStatus === "complete"
-                          ? "bg-emerald-700 text-white"
-                          : bookingDetails.data.paymentStatus === "failed"
-                          ? "bg-red-700 text-white"
-                          : "bg-yellow-700 text-white"
-                      }
-                    >
-                      Zahlung: {bookingDetails.data.paymentStatus}
-                    </Badge>
-                  )}
+                 
                 </div>
               </div>
 
@@ -456,7 +444,7 @@ export default function BookingHistoryTable() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">Preis</h4>
-                  <p className="text-lg font-semibold">
+                  <p className="text-sm font-semibold">
                     {formatPrice((bookingDetails?.data?.dealsId?.price ?? 0) * (bookingDetails?.data?.quantity ?? 1))}
                   </p>
                 </div>
