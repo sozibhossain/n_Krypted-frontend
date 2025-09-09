@@ -15,7 +15,7 @@ import Hideon from "@/Provider/Hideon";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Über uns", href: "/about-us" },
-  { name: "Deals", href: "/deals" },
+  { name: "Walk Throughz", href: "/deals" },
 
   { name: "Blog", href: "/blog" },
   { name: "FAQ", href: "/faq" },
@@ -65,9 +65,10 @@ export function Navbar() {
 
   const getIconClasses = (href: string) => `
     relative border-2 rounded-full p-2 transition-colors
-    ${pathname.startsWith(href)
-      ? "border-[#E6C475]"
-      : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
+    ${
+      pathname.startsWith(href)
+        ? "border-[#E6C475]"
+        : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
     }
   `;
   const getIconColor = (href: string) =>
@@ -119,10 +120,11 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[16px] font-medium text-white transition-colors relative ${isActive(link.href)
+                  className={`text-[16px] font-medium text-white transition-colors relative ${
+                    isActive(link.href)
                       ? "text-[#E4C072] after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:w-full after:h-[2px] after:bg-[#FFFFFF]"
                       : "after:content-[''] after:absolute after:left-1/2 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-[#FFFFFF] hover:after:w-full hover:after:left-0"
-                    }`}
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -166,8 +168,9 @@ export function Navbar() {
                         router.push(href);
                       }}
                       className={getIconClasses(href)}
-                      title={`${isConnected ? "Connected" : "Disconnected"
-                        } - ${notificationCount} notifications`}
+                      title={`${
+                        isConnected ? "Connected" : "Disconnected"
+                      } - ${notificationCount} notifications`}
                     >
                       <Icon className={getIconColor(href)} size={20} />
                       {notificationCount > 0 && (
@@ -208,10 +211,11 @@ export function Navbar() {
                         key={link.name}
                         href={link.href}
                         onClick={() => setOpen(false)}
-                        className={`px-3 py-2 rounded text-base font-medium transition-colors ${isActive(link.href)
+                        className={`px-3 py-2 rounded text-base font-medium transition-colors ${
+                          isActive(link.href)
                             ? "text-white font-semibold bg-[#2A2A2A]"
                             : "text-[#B3B3B3] hover:text-white hover:bg-[#2A2A2A]"
-                          }`}
+                        }`}
                       >
                         {link.name}
                       </Link>
@@ -249,10 +253,11 @@ export function Navbar() {
                                 router.push("/notifications");
                                 setOpen(false);
                               }}
-                              className={`px-3 py-2 rounded text-start text-base font-medium transition-colors ${isActive("/notifications")
+                              className={`px-3 py-2 rounded text-start text-base font-medium transition-colors ${
+                                isActive("/notifications")
                                   ? "text-white font-semibold bg-[#2A2A2A]"
                                   : "text-[#B3B3B3] hover:text-white hover:bg-[#2A2A2A]"
-                                }`}
+                              }`}
                             >
                               <div className="flex items-center gap-2">
                                 <span>Notifications</span>
@@ -270,10 +275,11 @@ export function Navbar() {
                             <Link
                               href="/profiles"
                               onClick={() => setOpen(false)}
-                              className={`px-3 py-2 rounded text-base font-medium transition-colors ${isActive("/profiles")
+                              className={`px-3 py-2 rounded text-base font-medium transition-colors ${
+                                isActive("/profiles")
                                   ? "text-white font-semibold bg-[#2A2A2A]"
                                   : "text-[#B3B3B3] hover:text-white hover:bg-[#2A2A2A]"
-                                }`}
+                              }`}
                             >
                               My Account
                             </Link>

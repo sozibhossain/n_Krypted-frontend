@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, CheckCircle2 } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -98,7 +98,22 @@ export function ForgotPasswordForm() {
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="sm:max-w-lg bg-[#373737] border border-gray-600 text-white rounded-xl shadow-xl">
           <DialogHeader className="flex flex-col items-center space-y-3">
-            <CheckCircle2 className="w-14 h-14" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#212121] mb-4 border border-gray-700">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
             <DialogTitle className="text-xl font-semibold text-white">
               Überprüfe deine E-Mails
             </DialogTitle>

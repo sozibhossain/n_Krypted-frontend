@@ -304,7 +304,7 @@ export function DealsCard({
         const data = await response.json();
         if (data.booking.notifyMe) {
           toast.success(
-            "Du wirst benachrichtigt, wenn der Deal wieder verfügbar ist."
+            "Du wirst benachrichtigt, wenn der Walk Through wieder verfügbar ist."
           );
           setIsBookingSummaryOpen(false);
           return;

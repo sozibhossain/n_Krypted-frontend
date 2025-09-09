@@ -16,10 +16,10 @@ const OurMission = () => {
               Unsere Mission
             </h1>
           </div>
-          <h3 className="text-xl sm:text-2xl lg:text-[30px] text-white font-semibold mt-4 sm:mt-5">
-            Was ist der aktuelle Zweck von Walk Throughz?
-          </h3>
-          <div className="hyphens-auto text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 text-justify">
+          <div className="text-xl sm:text-2xl lg:text-[28px] text-white font-semibold mt-4 sm:mt-5">
+            Was ist der aktuelle Zweck von <div>Walk Throughz?</div>
+          </div>
+          <div className="hyphens-auto text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 ">
             Unsere Mission ist es, Stadt neu erlebbar zu machen: Wir möchten
             Bürger:innen und Lokationen enger miteinander vernetzen und echte,
             bleibende Bindungen zu Orten schaffen, durch das Teilen von lokalem

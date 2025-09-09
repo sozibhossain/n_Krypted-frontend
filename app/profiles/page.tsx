@@ -155,7 +155,7 @@ export default function Dashboard() {
   //   }
   // };
 
-  const avatar = userData?.avatar || "/assets/default-avatar.png";
+  const avatar = userData?.avatar || "";
   const name = userData?.name || "N/A";
   const email = userData?.email || "N/A";
 
@@ -173,9 +173,9 @@ export default function Dashboard() {
               >
                 <Image
                   src={avatar || "/placeholder.png"} // fallback if no avatar
-                  alt="Profilbild"
+                  alt=""
                   fill
-                  className="object-cover"
+                  className="object-cover scale-[102%]"
                   priority
                 />
 

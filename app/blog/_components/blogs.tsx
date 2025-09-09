@@ -48,17 +48,20 @@ function Blogs() {
         <h1 className="text-[28px] lg:text-[36px] font-bold mb-8 text-center text-white">
           Stadtgedanken & Durchblicke
         </h1>
-        <div className="text-center text-gray-300 mb-12">
+        <div className="text-center text-gray-300 mb-12 text-[20px]">
           Unser Blog ist für alle, die Städte lieben, mit all ihren Ecken, Ideen
           und Begegnungen.
           <div>
             Bei uns geht’s um Themen, die das urbane Leben bewegen: Wie
-            entwickeln sich Städte? Wie entdeckt man neue Lieblingsorte?
+            entwickeln sich Städte?
           </div>
           <div>
-            Und was macht einen richtig guten Tag in der Stadt aus? Lies rein,
-            lass dich treiben und finde neue Perspektiven für dein eigenes
-            Stadterlebnis.
+            Wie entdeckt man neue Lieblingsorte? Und was macht einen richtig
+            guten Tag in der Stadt aus?
+          </div>
+          <div>
+            Lies rein, lass dich treiben und finde neue Perspektiven für dein
+            eigenes Stadterlebnis.
           </div>
         </div>
       </div>
