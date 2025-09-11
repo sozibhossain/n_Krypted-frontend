@@ -49,7 +49,7 @@ const page = () => {
         {/* <div>
           <TestimonialSection />
         </div> */}
-        <div className="pt-[100px]">
+        <div className=" lg:pt-[100px]">
           <ContactUsForm />
         </div>
       </div>

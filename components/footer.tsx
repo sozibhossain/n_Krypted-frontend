@@ -118,7 +118,7 @@ export function Footer() {
               <SelectValue placeholder="Select a country" />
             </SelectTrigger>
             <SelectContent className="bg-white text-[#4E4E4E]">
-              <SelectItem value="usa">Germany</SelectItem>
+              <SelectItem value="usa">Deutschland</SelectItem>
             </SelectContent>
           </Select>
         </div>
