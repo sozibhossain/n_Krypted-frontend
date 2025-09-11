@@ -5,10 +5,10 @@ export default function TermsAndConditions() {
     <div>
       <PageHeader title="Geschäftsbedingungen" imge="/assets/report2.jpg" />
 
-      <div className="min-h-screen py-12">
+      <div className=" py-16">
         {" "}
         {/* Added bg-black for consistent background */}
-        <div className="w-full container mt-[80px] pb-[120px] text-white">
+        <div className="w-full container  text-white">
           <h1 className="text-2xl md:text-[32px] font-semibold mb-6">
             Allgemeine Geschäftsbedingungen (AGB)
           </h1>

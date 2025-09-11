@@ -16,7 +16,7 @@ const OurMission = () => {
               Unsere Mission
             </h1>
           </div>
-          <div className="text-xl sm:text-2xl lg:text-[28px] text-white font-semibold mt-4 sm:mt-5">
+          <div className="text-xl sm:text-2xl lg:text-[26px] text-white font-semibold mt-4 sm:mt-5">
             Was ist der aktuelle Zweck von <div>Walk Throughz?</div>
           </div>
           <div className="hyphens-auto text-white text-sm sm:text-base lg:text-xl leading-[150%] font-normal mt-4 sm:mt-5 ">

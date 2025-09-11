@@ -5,7 +5,7 @@ export default function RefundPoliciesPage() {
   return (
     <div className=" ">
       <PageHeader title="Datenschutzerklärung" imge="/assets/panda.jpg" />
-      <div className="container mx-auto px-4 py-8 mt-[80px] mb-[120px] text-white">
+      <div className="container mx-auto px-4 py-16 text-white">
         <h1 className="text-3xl font-bold mb-6">Datenschutzerklärung</h1>
 
         <p className="mb-6">

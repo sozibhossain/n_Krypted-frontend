@@ -397,7 +397,7 @@ export default function AddDealModal({
                 id="price"
                 type="number"
                 step="0.01"
-                placeholder="$0.00"
+                placeholder="€0.00"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required

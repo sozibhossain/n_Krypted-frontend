@@ -565,7 +565,7 @@ export default function EditDealModal({
                 id="time"
                 type="text"
                 {...register("time", {
-                  required: "Deal time is required",
+                  // required: "Deal time is required",
                   pattern: {
                     value: /^\d*\.?\d*$/,
                     message: "Enter time in hours.minutes format (e.g., 2.30)",

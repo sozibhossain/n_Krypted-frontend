@@ -8,7 +8,7 @@ export default function SupportPage() {
     <div>
       <PageHeader title="Support" imge="/assets/support.jpg" />
 
-      <div className="min-h-screen flex items-center justify-center text-white p-4">
+      <div className="py-16 flex items-center justify-center text-white p-4">
         <div className="w-full container">
           <h1 className="text-[32px] font-semibold mb-5">
             Wir sind für dich da

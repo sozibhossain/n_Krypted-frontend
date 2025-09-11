@@ -78,7 +78,7 @@ export function CategoriesSection() {
           </p>
         </div>
 
-        <div className="w-full">
+        <div className="w-full translate-y-[-20px]">
           <Carousel
             setApi={setApi}
             className="w-full"

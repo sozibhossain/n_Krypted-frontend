@@ -98,7 +98,7 @@ export function DealsSection() {
                 </h1>
               </div>
             </div>
-            <p className="text-xl md:text-2xl lg:text-[28px] font-bold text-white mt-1 md:mt-2">
+            <p className="text-xl md:text-2xl lg:text-[26px] font-bold text-white mt-1 md:mt-2">
               Unsere angesagtesten Deals
             </p>
           </div>
