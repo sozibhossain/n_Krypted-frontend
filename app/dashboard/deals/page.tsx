@@ -424,7 +424,7 @@ export default function DealsManagement() {
                         </TableCell>
 
                         <TableCell className="text-[#212121] text-base font-medium py-4">
-                          ${deal.price.toFixed(2)}
+                          €{deal.price.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           <div className="relative">

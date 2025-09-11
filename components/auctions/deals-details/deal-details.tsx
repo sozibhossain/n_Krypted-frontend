@@ -475,6 +475,11 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     setIsBookingModalOpen(true);
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "." : text;
+  };
+
   const confirmBooking = async () => {
     if (
       !session?.data?.user?.id ||
@@ -567,7 +572,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   if (isLoadingAuction) {
     return (
       <div className="text-center py-10 text-white">
-        Auktionsdetails werden geladen ...
+        Der Walk Through wird geladen…
       </div>
     );
   }
@@ -610,30 +615,22 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <h1 className="text-2xl md:text-[28px] font-semibold text-[#FFFFFF]">
               {auction?.title || "Property Title"}
             </h1>
-            <p className="text-lg md:text-xl text-[#E0E0E0] font-normal leading-[150%]">
+            <p className="text-[14px] md:text-[16px] text-[#E0E0E0] font-normal leading-[150%]">
               <div
-                className="text-white truncate max-w-full list-item"
-                style={{
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 3,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
                 dangerouslySetInnerHTML={{
-                  __html: auction?.description ?? "Deals Description",
+                  __html: truncateText(auction?.description, 293),
                 }}
               />
             </p>
             <div className="flex items-center gap-2 text-gray-500 -ml-[3px]">
               <MapPin className="w-4 h-4 text-white" />
-              <span className="text-lg md:text-lg text-[#E0E0E0] font-medium">
+              <span className="text-[14px] md:text-[16px] text-[#E0E0E0] font-medium">
                 {auction?.location.city}, {auction?.location.country}
               </span>
             </div>
             <div>
-              <div className="text-lg mt-[-10px] text-[#FFFFFF]">
-                <span className="mr-[3px] text-[17px]">€</span>
+              <div className="text-[14px] md:text-[16px] mt-[-10px] text-[#FFFFFF]">
+                <span className="mr-[3px] text-[16px]">€</span>
 
                 <div className="font-semibold inline ">
                   {" "}
