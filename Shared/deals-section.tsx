@@ -99,7 +99,7 @@ export function DealsSection() {
               </div>
             </div>
             <p className="text-xl md:text-2xl lg:text-[26px] font-bold text-white mt-1 md:mt-2">
-              Unsere angesagtesten Deals
+              Angesagte Walk Throughz
             </p>
           </div>
 

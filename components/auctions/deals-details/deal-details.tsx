@@ -475,9 +475,16 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     setIsBookingModalOpen(true);
   };
 
-  const truncateText = (text: string, maxLength: number) => {
+  const truncateText = (text: string, maxLength: number = 3) => {
     if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "." : text;
+
+    // Split into sentences, keeping punctuation
+    const sentences = text.match(/[^.!?]+[.!?]+/g);
+
+    if (!sentences) return text;
+
+    // Take only the first 3 sentences (or maxLength)
+    return sentences.slice(0, maxLength).join(" ").trim();
   };
 
   const confirmBooking = async () => {
@@ -618,7 +625,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             <p className="text-[14px] md:text-[16px] text-[#E0E0E0] font-normal leading-[150%]">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: truncateText(auction?.description, 293),
+                  __html: truncateText(auction?.description, 3),
                 }}
               />
             </p>
