@@ -7,6 +7,14 @@ import { useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
 import { DealsCardSkeleton } from "./skeleton/dealsSkeleton";
 
+interface ScheduleDate {
+  date: string;
+  active: boolean;
+  participationsLimit: number;
+  bookedCount: number;
+  _id: string;
+}
+
 interface Deal {
   timer: string | undefined;
   time: number | undefined;
@@ -14,17 +22,18 @@ interface Deal {
   participationsLimit: number | undefined;
   _id: string;
   title: string;
+  /** NEW: optional short description from API */
+  shortDescription?: string;
   description: string;
   participations: number;
   price: number;
-
   images: string[];
   offers: string[];
   status: string;
   category: string;
   createdAt: string;
   updatedAt: string;
-  scheduleDates?: [];
+  scheduleDates?: ScheduleDate[];
   location?: {
     country: string;
     city: string;
@@ -41,7 +50,8 @@ export function BrowseOurDeals() {
       return data;
     },
   });
-  const dealsData = response?.deals || [];
+
+  const dealsData: Deal[] = response?.deals || [];
 
   // Create placeholder skeletons when loading
   const skeletonItems = Array(6)
@@ -83,7 +93,7 @@ export function BrowseOurDeals() {
       <div className="grid grid-cols-1 space-y-5 md:space-y-0 gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
         {isLoading
           ? skeletonItems
-          : dealsData.slice(0, 9).map((deal: Deal) => (
+          : dealsData.slice(0, 9).map((deal) => (
               <div key={deal._id}>
                 <div className="mx-auto w-full md:max-[32%]">
                   <DealsCard
@@ -91,6 +101,8 @@ export function BrowseOurDeals() {
                     title={deal.title}
                     status={deal.status}
                     image={deal.images[0] || "/assets/deals.png"}
+                    /** pass shortDescription to use 2-line slot in the card (or fallback inside the card) */
+                    shortDescription={deal.shortDescription}
                     description={deal.description}
                     time={deal.time}
                     createdAt={deal.createdAt}

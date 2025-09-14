@@ -25,6 +25,7 @@ interface Category {
 interface Deal {
   _id: string;
   title: string;
+  shortDescription?: string; // 👈 added
   description: string;
   participations: number;
   participationsLimit: number;
@@ -103,6 +104,7 @@ export default function DealDetailsModal({
         {isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-6 w-2/3" /> {/* shortDescription */}
             <Skeleton className="h-40 w-full" />
             <div className="grid grid-cols-2 gap-4">
               <Skeleton className="h-20 w-full" />
@@ -119,7 +121,10 @@ export default function DealDetailsModal({
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-2xl font-bold">{deal.title}</h2>
-                <p className="text-gray-500 text-sm">ID: {deal._id}</p>
+                {deal.shortDescription && (
+                  <p className="text-gray-600 mt-1">{deal.shortDescription}</p>
+                )}
+                <p className="text-gray-500 text-sm mt-1">ID: {deal._id}</p>
               </div>
               <Badge
                 variant={deal.status === "activate" ? "default" : "outline"}
@@ -151,7 +156,7 @@ export default function DealDetailsModal({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Description</h3>
               <div
-                className=" list-none text-gray-700"
+                className="list-none text-gray-700"
                 dangerouslySetInnerHTML={{
                   __html: deal?.description ?? "No description available",
                 }}
@@ -185,18 +190,22 @@ export default function DealDetailsModal({
                         {deal.category?.categoryName || "Uncategorized"}
                       </span>
                     </div>
-                    {/* <div className="flex justify-between">
-                      <span className="text-[#212121]">Participations:</span>
-                      <span className="font-medium">{deal.participations}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#212121]">Participations Limit:</span>
-                      <span className="font-medium">{deal.participationsLimit}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#212121]">Time (minutes):</span>
-                      <span className="font-medium">{deal.time} minutes</span>
-                    </div> */}
+                    {typeof deal.time === "number" && deal.time > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-[#212121]">Time:</span>
+                        <span className="font-medium">{deal.time} minutes</span>
+                      </div>
+                    )}
+                    {deal.participationsLimit !== undefined && (
+                      <div className="flex justify-between">
+                        <span className="text-[#212121]">
+                          Participations Limit:
+                        </span>
+                        <span className="font-medium">
+                          {deal.participationsLimit}
+                        </span>
+                      </div>
+                    )}
                     {deal.bookingCount !== undefined && (
                       <div className="flex justify-between">
                         <span className="text-[#212121]">Booking Count:</span>
@@ -223,6 +232,7 @@ export default function DealDetailsModal({
                         {formatDate(deal.updatedAt)}
                       </span>
                     </div>
+                    {/* If you later want schedule dates back, uncomment and adjust mapping */}
                     {/* {deal.scheduleDates && deal.scheduleDates.length > 0 ? (
                       <div className="space-y-2">
                         <span className="text-[#212121]">Schedule Dates:</span>
@@ -257,16 +267,6 @@ export default function DealDetailsModal({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Category Details</h3>
                 <div className="flex items-center space-x-4">
-                  {/* {deal.category.image && (
-                    <div className="relative h-16 w-16 rounded-md overflow-hidden">
-                      <Image
-                        src={deal.category.image || "/placeholder.svg"}
-                        alt={deal.category.categoryName}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )} */}
                   <div>
                     <p className="font-medium">{deal.category.categoryName}</p>
                     <p className="text-sm text-gray-500">

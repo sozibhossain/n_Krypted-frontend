@@ -19,7 +19,7 @@ const page = () => {
       <div className="mt-18 lg:mt-24 container">
         <div className="text-center mt-8">
           <h1 className="text-[25px] lg:text-[34px] font-semibold text-[#FFFFFF]">
-            Walk Throughz ist eine Plattform für echte Stadterlebnisse <br />–
+            Walk Throughz ist eine Plattform für echte Stadterlebnisse –
             lokal, lebendig und persönlich.
           </h1>
 

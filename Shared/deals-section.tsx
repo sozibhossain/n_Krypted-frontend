@@ -23,6 +23,7 @@ interface Deal {
   title: string;
   description: string;
   participations: number;
+   shortDescription?: string; 
   price: number;
 
   images: string[];
@@ -193,22 +194,24 @@ export function DealsSection() {
                     }`}
                   >
                     <div className="">
-                      <DealsCard
-                        id={deal._id}
-                        status={deal.status}
-                        title={deal.title}
-                        image={deal.images[0] || "/assets/deals.png"}
-                        description={deal.description}
-                        price={deal.price}
-                        time={deal.time}
-                        createdAt={deal.createdAt}
-                        updatedAt={deal.updatedAt}
-                        participations={deal.bookingCount}
-                        maxParticipants={deal.participationsLimit}
-                        scheduleDates={deal.scheduleDates}
-                        location={deal.location}
-                        timer={deal.timer}
-                      />
+                     <DealsCard
+  id={deal._id}
+  status={deal.status}
+  title={deal.title}
+  shortDescription={deal.shortDescription}  // ← add this line
+  image={deal.images[0] || "/assets/deals.png"}
+  description={deal.description}
+  price={deal.price}
+  time={deal.time}
+  createdAt={deal.createdAt}
+  updatedAt={deal.updatedAt}
+  participations={deal.bookingCount}
+  maxParticipants={deal.participationsLimit}
+  scheduleDates={deal.scheduleDates}
+  location={deal.location}
+  timer={deal.timer}
+/>
+
                     </div>
                   </CarouselItem>
                 ))

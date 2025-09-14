@@ -65,6 +65,7 @@ interface Deal {
   participationsLimit: number | undefined;
   _id: string;
   title: string;
+  shortDescription: string; // 👈 added
   description: string;
   participations: number;
   price: number;
@@ -91,6 +92,7 @@ export default function AddDealModal({
   categories,
 }: AddDealModalProps) {
   const [title, setTitle] = useState("");
+  const [shortDescription, setShortDescription] = useState(""); // 👈 added
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState<LocationData>({
@@ -107,11 +109,9 @@ export default function AddDealModal({
   const [status, setStatus] = useState("activate");
   const [timer, setTimer] = useState("off"); // Initialize timer as "off"
   const fileInputRef = useRef<HTMLInputElement>(null);
+  console.log(participationsLimit, status);
 
   const session = useSession();
-
-  console.log(status);
-  console.log(participationsLimit);
 
   const token = session?.data?.user.accessToken;
 
@@ -153,11 +153,14 @@ export default function AddDealModal({
           } else if (
             oldData &&
             "deals" in oldData &&
-            Array.isArray(oldData.deals)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Array.isArray((oldData as any).deals)
           ) {
             return {
-              ...oldData,
-              deals: [data, ...oldData.deals],
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...(oldData as any),
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              deals: [data, ...(oldData as any).deals],
             };
           }
           return oldData;
@@ -248,22 +251,6 @@ export default function AddDealModal({
     });
   };
 
-  // const handleOfferChange = (index: number, value: string) => {
-  //   const newOffers = [...offers];
-  //   newOffers[index] = value;
-  //   setOffers(newOffers);
-  // };
-
-  // const addOffer = () => {
-  //   setOffers([...offers, ""]);
-  // };
-
-  // const removeOffer = (index: number) => {
-  //   const newOffers = [...offers];
-  //   newOffers.splice(index, 1);
-  //   setOffers(newOffers);
-  // };
-
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -275,7 +262,7 @@ export default function AddDealModal({
     if (!timeString) return 0;
     const [hours, minutes] = timeString.split(".").map(Number);
     return (hours || 0) * 60 + (minutes || 0);
-  };
+    };
 
   const handleScheduleDateLimitChange = (index: number, value: string) => {
     setScheduleDates((prev) =>
@@ -304,12 +291,13 @@ export default function AddDealModal({
 
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("shortDescription", shortDescription); // 👈 added
     formData.append("description", description);
     formData.append("price", price);
     formData.append("location", JSON.stringify(location));
     formData.append("time", String(convertToMinutes(time)));
     formData.append("category", category === "none" ? "" : category);
-    formData.append("timer", timer); // Append timer value ("on" or "off")
+    formData.append("timer", timer);
     formData.append(
       "offers",
       JSON.stringify(offers.filter((offer) => offer.trim() !== ""))
@@ -329,12 +317,12 @@ export default function AddDealModal({
       formData.append("images", image);
     });
 
-    // console.log(formData);
     addDealMutation.mutate(formData);
   };
 
   const resetForm = () => {
     setTitle("");
+    setShortDescription(""); // 👈 added
     setDescription("");
     setPrice("");
     setLocation({ country: "", city: "" });
@@ -376,6 +364,18 @@ export default function AddDealModal({
                 placeholder="Type deal name here..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="shortDescription">Short description</Label>
+              <textarea
+                id="shortDescription"
+                value={shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+                placeholder="A brief summary shown in lists/cards..."
+                className="mt-1 w-full border rounded p-2 min-h-[80px]"
                 required
               />
             </div>
@@ -549,39 +549,6 @@ export default function AddDealModal({
                 )}
               </div>
             </div>
-
-            {/* <div>
-              <Label htmlFor="offers">Offers</Label>
-              {offers.map((offer, index) => (
-                <div key={index} className="flex items-center gap-2 mt-2">
-                  <Input
-                    id={`offer-${index}`}
-                    placeholder={`Offer ${index + 1}`}
-                    value={offer}
-                    onChange={(e) => handleOfferChange(index, e.target.value)}
-                  />
-                  {offers.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeOffer(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addOffer}
-                className="mt-2"
-              >
-                Add Offer
-              </Button>
-            </div> */}
           </div>
 
           <div className="space-y-4">

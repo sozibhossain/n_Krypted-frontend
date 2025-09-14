@@ -33,9 +33,12 @@ interface Location {
 interface DealsCardProps {
   id: string;
   title: string;
+  /** NEW: 2-line short blurb if available */
+  shortDescription?: string;
+  /** Full rich description (HTML allowed); used as fallback if shortDescription missing */
   description: string;
   price: number;
-  participations: number;
+  participations?: number;
   maxParticipants?: number;
   image?: string;
   status?: string;
@@ -58,6 +61,7 @@ interface TimeLeft {
 export function DealsCard({
   id,
   title,
+  shortDescription,
   description,
   price,
   createdAt,
@@ -87,19 +91,34 @@ export function DealsCard({
     isExpired: false,
   });
   const [clientSecret, setClientSecret] = useState<string>("");
-  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null); // Added to store paymentIntentId
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<ScheduleDate | null>(null);
-  const [quantity, setQuantity] = useState(1); // State for quantity
+  const [quantity, setQuantity] = useState(1);
 
   const [agbConsent, setAgbConsent] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  console.log(paymentIntentId);
 
   const token = session?.user?.accessToken ?? "";
 
-  console.log(paymentIntentId);
+  // ---- Helpers for short description (2-line fallback) ----
+  const stripHtml = (html: string) =>
+    html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
-  // Timer logic - only run if timer is "on"
+  const getTwoLineFallback = (html: string) => {
+    const text = stripHtml(html);
+    // We don't need exact sentence logic here—line clamp will handle the 2-line UI.
+    // Still, trim to a reasonable length to avoid huge DOM nodes:
+    return text.length > 220 ? `${text.slice(0, 220).trim()}…` : text;
+  };
+
+  // Content to show in the card’s short area (always plain text)
+  const shortBlurb =
+    (shortDescription && stripHtml(shortDescription)) ||
+    getTwoLineFallback(description);
+
+  // ---- Timer logic ----
   useEffect(() => {
     if (timer !== "on") {
       setTimeLeft({
@@ -161,11 +180,11 @@ export function DealsCard({
     return () => clearInterval(timerInterval);
   }, [time, createdAt, updatedAt, timer]);
 
-  // Set selectedDate to first available date on mount
+  // Default date selection
   useEffect(() => {
     const firstAvailable = getFirstAvailableDate();
     setSelectedDate(firstAvailable);
-    setQuantity(1); // Reset quantity when component mounts
+    setQuantity(1);
   }, [scheduleDates]);
 
   const createPaymentIntent = async () => {
@@ -183,8 +202,8 @@ export function DealsCard({
           body: JSON.stringify({
             userId: session?.user?.id,
             bookingId: bookingId,
-            price: price * quantity, // Total price
-            quantity, // Include quantity
+            price: price * quantity,
+            quantity,
           }),
         }
       );
@@ -195,7 +214,7 @@ export function DealsCard({
 
       const data = await response.json();
       setClientSecret(data.clientSecret);
-      setPaymentIntentId(data.paymentIntentId); // Store paymentIntentId
+      setPaymentIntentId(data.paymentIntentId);
     } catch (error) {
       toast.error("Failed to initialize payment");
       console.error(error);
@@ -208,7 +227,7 @@ export function DealsCard({
     if (isStripeModalOpen && bookingId && !clientSecret) {
       createPaymentIntent();
     }
-  }, [isStripeModalOpen, bookingId]);
+  }, [isStripeModalOpen, bookingId]); // eslint-disable-line
 
   const getFirstAvailableDate = () => {
     if (!scheduleDates || scheduleDates.length === 0) return null;
@@ -243,7 +262,7 @@ export function DealsCard({
     const availableDate = getFirstAvailableDate();
     if (!notifyMe && status === "activate" && availableDate) {
       setSelectedDate(availableDate);
-      setQuantity(1); // Reset quantity when opening booking summary
+      setQuantity(1);
       setIsBookingSummaryOpen(true);
     } else {
       await bookingPayment(notifyMe);
@@ -284,8 +303,8 @@ export function DealsCard({
         notifyMe,
         scheduleDate: dateToSend.date,
         scheduleId: dateToSend._id,
-        price: price * quantity, // Total price
-        quantity, // Include quantity
+        price: price * quantity,
+        quantity,
       };
 
       const response = await fetch(
@@ -419,29 +438,40 @@ export function DealsCard({
               </div>
             )}
           </div>
-          <CardContent className="space-y-2 pt-4 px-1 h-[140px] overflow-hidden">
+
+          {/* Content area with consistent heights on mobile/desktop */}
+          <CardContent className="pt-4 px-1">
             <div className="space-y-2">
-              <div className="col-span-2">
-                <h3 className="font-bold text-lg sm:text-[18px] my-1 line-clamp-1 text-[#212121]">
-                  {title}
-                </h3>
-                <p className="text-sm sm:text-[16px] font-normal text-[#737373]">
-                  <div
-                    className="text-[#737373] truncate max-w-full"
-                    style={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: description ?? "Deals Description",
-                    }}
-                  />
-                </p>
-              </div>
-              <div className="flex justify-between gap-4">
+              {/* Title: single line, fixed min-height so rows align */}
+              <h3
+                className="font-bold text-lg sm:text-[18px] text-[#212121] line-clamp-1"
+                style={{
+                  minHeight: "28px", // keeps one-line area consistent across cards
+                }}
+                title={title}
+              >
+                {title}
+              </h3>
+
+              {/* Short description area: always 2 lines height */}
+              <p
+                className="text-sm sm:text-[16px] font-normal text-[#737373]"
+                style={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2, // 2-line clamp
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  minHeight: "40px", // ~2 lines on mobile
+                  maxHeight: "40px",
+                  lineHeight: "1.25rem", // tighten slightly for consistency
+                }}
+                title={shortBlurb}
+              >
+                {shortBlurb}
+              </p>
+
+              <div className="flex justify-between gap-4 mt-1">
                 <div>
                   <Link href={`/deals/${id}`}>
                     <div className="flex items-center gap-1 text-black font-normal cursor-pointer text-sm sm:text-[14px]">
@@ -455,7 +485,8 @@ export function DealsCard({
                     </span>
                   </div>
                 </div>
-                <div className="col-span-1 flex flex-col gap-1 text-xs text-gray-600">
+
+                <div className="col-span-1 flex flex-col gap-1 text-xs text-gray-600 items-end">
                   {firstAvailableDate && (
                     <div className="flex items-center gap-1 flex-wrap">
                       <Calendar className="w-3 h-3" />
@@ -463,11 +494,9 @@ export function DealsCard({
                     </div>
                   )}
                   {location && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 max-w-[140px] sm:max-w-[180px]">
                       <MapPin className="w-3 h-3" />
-                      <span className="truncate text-wrap">
-                        {location.city}
-                      </span>
+                      <span className="truncate">{location.city}</span>
                     </div>
                   )}
                 </div>
@@ -475,7 +504,7 @@ export function DealsCard({
             </div>
           </CardContent>
         </Link>
-        <CardFooter className="">{renderActionButton()}</CardFooter>
+        <CardFooter>{renderActionButton()}</CardFooter>
       </Card>
 
       {/* Booking Summary Modal */}
@@ -530,7 +559,7 @@ export function DealsCard({
                                 (date) => date._id === e.target.value
                               );
                               setSelectedDate(selected || null);
-                              setQuantity(1); // Reset quantity when date changes
+                              setQuantity(1);
                             }}
                             className="bg-[#2a2a2a] text-white border-none rounded p-1 text-xs sm:text-sm"
                           >
@@ -792,7 +821,7 @@ export function DealsCard({
               <div className="scale-y-[111%] scale-x-[113%]">
                 <StripeCheckout
                   bookingId={bookingId}
-                  price={price * quantity} // Total price
+                  price={price * quantity}
                 />
               </div>
             </Elements>

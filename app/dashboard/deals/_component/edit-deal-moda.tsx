@@ -2,9 +2,9 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { X, Upload } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import {
   Select,
@@ -27,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
 import QuillEditor from "../../blogs/_components/QuillEditor";
 import { useSession } from "next-auth/react";
 
@@ -47,6 +45,7 @@ interface ScheduleDate {
 
 interface DealData {
   title: string;
+  shortDescription: string; // 👈 NEW
   description: string;
   price: number;
   location: Location;
@@ -97,7 +96,6 @@ export default function EditDealModal({
   dealId,
 }: EditDealModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  // const [offerInput, setOfferInput] = useState("");
   const [offers, setOffers] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -106,14 +104,14 @@ export default function EditDealModal({
   const [scheduleDates, setScheduleDates] = useState<ScheduleDate[]>([]);
   const [timer, setTimer] = useState("off");
   const [status, setStatus] = useState("activate");
+  console.log(status)
 
-  // New state for tracking removals
+  // Track removals
   const [scheduleDatesToRemove, setScheduleDatesToRemove] = useState<string[]>(
     []
   );
   const [imagesToRemove, setImagesToRemove] = useState<string[]>([]);
 
-  console.log(status);
   const session = useSession();
   const token = session?.data?.user.accessToken;
   const queryClient = useQueryClient();
@@ -121,18 +119,11 @@ export default function EditDealModal({
   const { data: categoriesData } = useQuery<CategoriesResponse>({
     queryKey: ["categories"],
     queryFn: async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        return response.json();
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        throw err;
-      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
+      );
+      if (!response.ok) throw new Error("Failed to fetch categories");
+      return response.json();
     },
   });
 
@@ -171,11 +162,11 @@ export default function EditDealModal({
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}`
           );
-          if (!response.ok) {
-            throw new Error("Failed to fetch deal data");
-          }
+          if (!response.ok) throw new Error("Failed to fetch deal data");
           const data = await response.json();
+
           setValue("title", data.deal.title || "");
+          setValue("shortDescription", data.deal.shortDescription || ""); // 👈 NEW
           setValue("description", data.deal.description || "");
           setDescription(data.deal.description || "");
           setValue("price", data.deal.price || 0);
@@ -189,36 +180,30 @@ export default function EditDealModal({
           setTimer(data.deal.timer || "off");
           setStatus(data.deal.status || "activate");
           setScheduleDates(
-            data.deal.scheduleDates
-              ? data.deal.scheduleDates
-                  .map(
-                    (dateObj: {
-                      date: string;
-                      active: boolean;
-                      participationsLimit: number;
-                      time: null;
-                      bookedCount: number;
-                      _id?: string;
-                    }) => {
-                      const date = new Date(dateObj.date);
-                      return isValidDate(date)
-                        ? {
-                            day: date,
-                            active: dateObj.active,
-                            participationsLimit:
-                              dateObj.participationsLimit || 0,
-                            time: dateObj.time,
-                            bookedCount: dateObj.bookedCount || 0,
-                            _id: dateObj._id,
-                          }
-                        : null;
-                    }
-                  )
-                  .filter(
-                    (date: ScheduleDate | null): date is ScheduleDate =>
-                      date !== null
-                  )
-              : []
+            (data.deal.scheduleDates || [])
+              .map(
+                (dateObj: {
+                  date: string;
+                  active: boolean;
+                  participationsLimit: number;
+                  time: null;
+                  bookedCount: number;
+                  _id?: string;
+                }) => {
+                  const date = new Date(dateObj.date);
+                  return isValidDate(date)
+                    ? {
+                        day: date,
+                        active: dateObj.active,
+                        participationsLimit: dateObj.participationsLimit || 0,
+                        time: dateObj.time,
+                        bookedCount: dateObj.bookedCount || 0,
+                        _id: dateObj._id,
+                      }
+                    : null;
+                }
+              )
+              .filter(Boolean) as ScheduleDate[]
           );
         } catch (error) {
           console.error("Error fetching deal data:", error);
@@ -252,9 +237,7 @@ export default function EditDealModal({
           },
         }
       );
-      if (!response.ok) {
-        throw new Error("Failed to update deal");
-      }
+      if (!response.ok) throw new Error("Failed to update deal");
       return response.json();
     },
     onSuccess: () => {
@@ -272,6 +255,7 @@ export default function EditDealModal({
 
   const resetForm = () => {
     setValue("title", "");
+    setValue("shortDescription", ""); // 👈 NEW
     setValue("description", "");
     setDescription("");
     setValue("price", 0);
@@ -286,7 +270,6 @@ export default function EditDealModal({
     setScheduleDates([]);
     setTimer("off");
     setStatus("activate");
-    // Reset removal tracking arrays
     setScheduleDatesToRemove([]);
     setImagesToRemove([]);
   };
@@ -298,6 +281,7 @@ export default function EditDealModal({
 
   const onSubmit = async (data: DealData) => {
     if (!dealId) return;
+
     if (scheduleDates.length === 0) {
       toast.error("Please select at least one schedule date", {
         position: "top-right",
@@ -307,9 +291,7 @@ export default function EditDealModal({
     if (scheduleDates.some((date) => date.participationsLimit <= 0)) {
       toast.error(
         "Please set a valid participation limit for all schedule dates",
-        {
-          position: "top-right",
-        }
+        { position: "top-right" }
       );
       return;
     }
@@ -327,6 +309,7 @@ export default function EditDealModal({
 
     const formData = new FormData();
     formData.append("title", data.title);
+    formData.append("shortDescription", data.shortDescription); // 👈 NEW (no length checks)
     formData.append("description", data.description);
     formData.append("price", data.price.toString());
     formData.append("location[country]", data.location.country);
@@ -361,27 +344,18 @@ export default function EditDealModal({
       )
     );
 
-    // Add the new fields for removals
     if (scheduleDatesToRemove.length > 0) {
       formData.append(
         "scheduleDatesToRemove",
         JSON.stringify(scheduleDatesToRemove)
       );
     }
-
     if (imagesToRemove.length > 0) {
       formData.append("imagesToRemove", JSON.stringify(imagesToRemove));
     }
 
     updateMutation.mutate(formData);
   };
-
-  // const handleAddOffer = () => {
-  //   if (offerInput.trim()) {
-  //     setOffers([...offers, offerInput.trim()]);
-  //     setOfferInput("");
-  //   }
-  // };
 
   const handleRemoveOffer = (index: number) => {
     setOffers(offers.filter((_, i) => i !== index));
@@ -428,19 +402,15 @@ export default function EditDealModal({
 
   const handleRemoveExistingImage = (index: number) => {
     const imageToRemove = existingImages[index];
-    // Add to removal tracking array
     setImagesToRemove((prev) => [...prev, imageToRemove]);
-    // Remove from existing images array
     setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   const handleRemoveScheduleDate = (index: number) => {
     const scheduleToRemove = scheduleDates[index];
-    // Only track for removal if it has an _id (exists in database)
     if (scheduleToRemove._id) {
       setScheduleDatesToRemove((prev) => [...prev, scheduleToRemove._id!]);
     }
-    // Remove from schedule dates array
     setScheduleDates((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -476,6 +446,24 @@ export default function EditDealModal({
                 <p className="text-red-500 text-sm">{errors.title.message}</p>
               )}
             </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="shortDescription">Short Description</Label>
+              <textarea
+                id="shortDescription"
+                className="w-full border rounded p-2 min-h-[80px]"
+                placeholder="A brief summary shown in lists/cards..."
+                {...register("shortDescription", {
+                  required: "Short description is required",
+                })}
+              />
+              {errors.shortDescription && (
+                <p className="text-red-500 text-sm">
+                  {errors.shortDescription.message}
+                </p>
+              )}
+            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
               <div className="border rounded-md">
@@ -494,6 +482,7 @@ export default function EditDealModal({
                 </p>
               )}
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="category">Deal Category</Label>
               <Select value={category} onValueChange={setCategory}>
@@ -510,6 +499,7 @@ export default function EditDealModal({
                 </SelectContent>
               </Select>
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="price">Price</Label>
               <Input
@@ -527,6 +517,7 @@ export default function EditDealModal({
                 <p className="text-red-500 text-sm">{errors.price.message}</p>
               )}
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="country">Country</Label>
@@ -559,13 +550,13 @@ export default function EditDealModal({
                 )}
               </div>
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="time">Deal Time (hours.minutes)</Label>
               <Input
                 id="time"
                 type="text"
                 {...register("time", {
-                  // required: "Deal time is required",
                   pattern: {
                     value: /^\d*\.?\d*$/,
                     message: "Enter time in hours.minutes format (e.g., 2.30)",
@@ -578,6 +569,7 @@ export default function EditDealModal({
                 <p className="text-red-500 text-sm">{errors.time.message}</p>
               )}
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="timer">Timer</Label>
               <div className="flex items-center space-x-2">
@@ -592,7 +584,8 @@ export default function EditDealModal({
                 <span>{timer === "on" ? "On" : "Off"}</span>
               </div>
             </div>
-            {/* Schedule Dates - Enhanced Section */}
+
+            {/* Schedule Dates */}
             <div className="grid gap-2">
               <Label htmlFor="scheduleDates">Schedule Dates</Label>
               <style jsx global>{`
@@ -653,7 +646,6 @@ export default function EditDealModal({
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    // Track all existing schedule dates for removal
                     const existingIds = scheduleDates
                       .filter((date) => date._id)
                       .map((date) => date._id!);
@@ -774,18 +766,8 @@ export default function EditDealModal({
                 )}
               </div>
             </div>
+
             <div className="grid gap-2">
-              {/* <div className="flex gap-2">
-                <Input
-                  value={offerInput}
-                  onChange={(e) => setOfferInput(e.target.value)}
-                  placeholder="Add an offer"
-                  className="flex-1"
-                />
-                <Button type="button" onClick={handleAddOffer}>
-                  Add
-                </Button>
-              </div> */}
               <div className="flex flex-wrap gap-2 mt-2">
                 {offers.map((offer, index) => (
                   <div
@@ -808,6 +790,7 @@ export default function EditDealModal({
                 ))}
               </div>
             </div>
+
             <div className="grid gap-2">
               <Label>Images</Label>
               <div className="border-2 border-dashed border-muted rounded-md p-4">
@@ -835,6 +818,7 @@ export default function EditDealModal({
                   </Button>
                 </div>
               </div>
+
               {existingImages.length > 0 && (
                 <div>
                   <Label className="mb-2 block">Existing Images</Label>
@@ -864,6 +848,7 @@ export default function EditDealModal({
                   </div>
                 </div>
               )}
+
               {selectedFiles.length > 0 && (
                 <div>
                   <Label className="mb-2 block">New Images</Label>
@@ -895,6 +880,7 @@ export default function EditDealModal({
               )}
             </div>
           </div>
+
           <DialogFooter>
             <Button
               type="button"

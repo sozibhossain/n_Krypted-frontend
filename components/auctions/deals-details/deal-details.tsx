@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -134,16 +133,15 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
   >(null);
   const [clientSecret, setClientSecret] = useState<string>("");
   const [stripeLoading, setStripeLoading] = useState(false);
-  const [quantity, setQuantity] = useState(1); // Added state for quantity
+  const [quantity, setQuantity] = useState(1);
 
   const session = useSession();
   const token = session?.data?.user?.accessToken;
   const queryClient = useQueryClient();
 
-  const [agbConsent, setAgbConsent] = useState(false); // State for AGB checkbox
-  const [privacyConsent, setPrivacyConsent] = useState(false); // State for privacy checkbox
+  const [agbConsent, setAgbConsent] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
-  // Fetch auction details
   const {
     data: auctionData,
     isLoading: isLoadingAuction,
@@ -166,7 +164,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     refetchIntervalInBackground: false,
   });
 
-  // Fetch reviews for this deal
   const {
     data: reviewsData,
     isLoading: isLoadingReviews,
@@ -190,7 +187,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   const auction = auctionData?.deal;
 
-  // Filter and limit schedule dates to only show available ones
   const today = new Date();
   const availableSchedules =
     auction?.scheduleDates
@@ -203,25 +199,21 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       })
       ?.slice(0, 4) || [];
 
-  // Check if all schedules are full
   const allSchedulesFull =
     auction?.scheduleDates?.every(
       (schedule: ScheduleDate) =>
         schedule.bookedCount >= schedule.participationsLimit
     ) || false;
 
-  // Check if there are no schedules at all
   const noSchedulesAvailable = auction?.scheduleDates?.length === 0;
 
-  // Set default schedule on mount
   useEffect(() => {
     if (availableSchedules.length > 0 && !selectedSchedule) {
       setSelectedSchedule(availableSchedules[0]);
-      setQuantity(1); // Reset quantity when schedule changes
+      setQuantity(1);
     }
   }, [availableSchedules]);
 
-  // Submit review mutation
   const submitReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData) => {
       if (!token) {
@@ -258,9 +250,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setName("");
       setEmail("");
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       toast.error(
-        error.message || "Bewertung konnte nicht übermittelt werden",
+        error?.message || "Bewertung konnte nicht übermittelt werden",
         {
           position: "top-right",
         }
@@ -268,7 +261,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     },
   });
 
-  // Delete review mutation
   const deleteReviewMutation = useMutation({
     mutationFn: async ({ reviewId }: DeleteReviewData) => {
       if (!token) {
@@ -301,9 +293,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setReviewToDelete(null);
       queryClient.invalidateQueries({ queryKey: ["dealReviews", auctionId] });
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       toast.error(
-        error.message || "Die Bewertung konnte nicht gelöscht werden.",
+        error?.message || "Die Bewertung konnte nicht gelöscht werden.",
         {
           position: "top-right",
         }
@@ -313,7 +306,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     },
   });
 
-  // Edit review mutation
   const editReviewMutation = useMutation({
     mutationFn: async ({
       reviewId,
@@ -358,9 +350,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       setEditComment("");
       setEditRating(0);
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       toast.error(
-        error.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
+        error?.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
         {
           position: "top-right",
         }
@@ -368,7 +361,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     },
   });
 
-  // Create Stripe Payment Intent
   const createPaymentIntent = async () => {
     if (!bookingId) return;
 
@@ -385,8 +377,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
           body: JSON.stringify({
             userId: session?.data?.user?.id,
             bookingId: bookingId,
-            price: auction?.price * quantity, // Total price
-            quantity, // Include quantity
+            price: auction?.price * quantity,
+            quantity,
           }),
         }
       );
@@ -471,19 +463,15 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       toast.error("Bitte wählen Sie ein Planungsdatum aus");
       return;
     }
-    setQuantity(1); // Reset quantity when opening booking modal
+    setQuantity(1);
     setIsBookingModalOpen(true);
   };
 
+  // Fallback: first 3 sentences
   const truncateText = (text: string, maxLength: number = 3) => {
     if (!text) return "";
-
-    // Split into sentences, keeping punctuation
     const sentences = text.match(/[^.!?]+[.!?]+/g);
-
     if (!sentences) return text;
-
-    // Take only the first 3 sentences (or maxLength)
     return sentences.slice(0, maxLength).join(" ").trim();
   };
 
@@ -511,8 +499,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             notifyMe: auction?.status === "deactivate" || allSchedulesFull,
             dealId: auctionId,
             scheduleDate: selectedSchedule?.date,
-            price: auction?.price * quantity, // Total price
-            quantity, // Include quantity
+            price: auction?.price * quantity,
+            quantity,
           }),
         }
       );
@@ -593,8 +581,10 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8">
-        <div className="grid grid-cols-7 gap-4 md:gap-6 lg:gap-8 col-span-6">
+    
+
+      <div className="grid grid-cols-12 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-7 gap-4 md:gap-6 lg:gap-8 col-span-12 md:col-span-6">
           <div className="col-span-7 md:col-span-1 order-2 md:order-1">
             <AuctionImageGallery
               images={auction?.images}
@@ -617,36 +607,45 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             </div>
           </div>
         </div>
-        <div className="md:col-span-6 order-3">
+
+        <div className="col-span-12 md:col-span-6 order-3">
           <div className="space-y-4">
-            <h1 className="text-2xl md:text-[28px] font-semibold text-[#FFFFFF]">
+            {/* Title (clamped on mobile) */}
+            <h1 className=" text-2xl md:text-[28px] font-semibold text-[#FFFFFF] leading-tight [overflow-wrap:anywhere]">
               {auction?.title || "Property Title"}
             </h1>
-            <p className="text-[14px] md:text-[16px] text-[#E0E0E0] font-normal leading-[150%]">
+
+            {/* Short Description (uses shortDescription if present; otherwise 3-sentence fallback) */}
+            {auction?.shortDescription ? (
+              <p className="text-[14px] md:text-[16px] text-[#E0E0E0] font-normal leading-[150%]">
+                {auction.shortDescription}
+              </p>
+            ) : (
               <div
+                className=" text-[14px] md:text-[16px] text-[#E0E0E0] font-normal leading-[150%] list-none"
                 dangerouslySetInnerHTML={{
                   __html: truncateText(auction?.description, 3),
                 }}
               />
-            </p>
+            )}
+
             <div className="flex items-center gap-2 text-gray-500 -ml-[3px]">
               <MapPin className="w-4 h-4 text-white" />
               <span className="text-[14px] md:text-[16px] text-[#E0E0E0] font-medium">
-                {auction?.location.city}, {auction?.location.country}
+                {auction?.location?.city}, {auction?.location?.country}
               </span>
             </div>
+
             <div>
               <div className="text-[14px] md:text-[16px] mt-[-10px] text-[#FFFFFF]">
                 <span className="mr-[3px] text-[16px]">€</span>
-
                 <div className="font-semibold inline ">
-                  {" "}
                   {auction?.price ? ` ${auction.price.toFixed(2)}` : "€0.00"}
                 </div>
               </div>
             </div>
 
-            {/* Schedule Dates Section */}
+            {/* Schedule Dates */}
             {availableSchedules.length > 0 ? (
               <Tabs className="w-full">
                 <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent h-full">
@@ -661,7 +660,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                       } ${selectedSchedule?._id === schedule._id ? "" : ""}`}
                       onClick={() => {
                         setSelectedSchedule(schedule);
-                        setQuantity(1); // Reset quantity when schedule changes
+                        setQuantity(1);
                       }}
                       disabled={!schedule.active}
                     >
@@ -673,9 +672,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               </Tabs>
             ) : (
               <div className="text-white py-4">
-                {allSchedulesFull
-                  ? "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."
-                  : noSchedulesAvailable
+                {allSchedulesFull || noSchedulesAvailable
                   ? "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."
                   : "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."}
               </div>
@@ -686,6 +683,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </div>
       </div>
 
+      {/* Full description (kept below as detailed section) */}
       <div
         className="list-item list-none text-white"
         dangerouslySetInnerHTML={{
@@ -693,6 +691,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         }}
       />
 
+      {/* Reviews */}
       <div className="space-y-6 pb-[20px] md:pb-[120px]">
         <h2 className="text-[24px] md:text-[28px] text-[#FFFFFF] font-semibold">
           Kundenrezensionen
@@ -795,6 +794,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </form>
       </div>
 
+      {/* Delete Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="bg-[#212121] border border-[#FFFFFF33] text-white">
           <DialogHeader>
@@ -825,6 +825,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="bg-[#212121] border border-[#FFFFFF33] text-white">
           <DialogHeader>
@@ -879,6 +880,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Booking Modal */}
       <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
         <DialogContent className="p-0 max-w-md bg-[#212121] text-white border-none">
           <div className="p-6">
@@ -1130,7 +1132,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         <DialogContent className="p-10 border-[#FFFFFF33] text-white">
           {selectedPaymentMethod === "paypal" && bookingId && (
             <PayPalCheckout
-              amount={auction?.price * quantity || 0} // Total price
+              amount={auction?.price * quantity || 0}
               userId={session?.data?.user?.id ?? ""}
               bookingId={bookingId}
             />
@@ -1155,7 +1157,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                   <div className="scale-y-[118%] scale-x-[120%]">
                     <StripeCheckout
                       bookingId={bookingId}
-                      price={auction?.price * quantity || 0} // Total price
+                      price={auction?.price * quantity || 0}
                     />
                   </div>
                 </Elements>

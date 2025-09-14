@@ -53,6 +53,7 @@ interface Deal {
   participationsLimit: number | undefined;
   _id: string;
   title: string;
+   shortDescription?: string;
   description: string;
   participations: number;
   price: number;
@@ -185,6 +186,9 @@ const ManualSlider = React.memo(
       setIsDragging(null);
       onDragEnd?.();
     }, [onDragEnd]);
+
+    // simple fallback: strip basic HTML tags and take first 3 sentences
+
 
     const handleTouchStart = (e: React.TouchEvent, thumb: "min" | "max") => {
       e.preventDefault();
@@ -342,6 +346,9 @@ function DealsPage() {
   const currentDealType = searchParams.get("dealType") || "";
   const currentPage = Number.parseInt(searchParams.get("page") || "1");
   const search = searchParams.get("search") || "";
+
+
+
 
   // Local state for filters
   const [selectedCategory, setSelectedCategory] =
@@ -819,6 +826,19 @@ function DealsPage() {
 
   FilterSidebar.displayName = "FilterSidebar";
 
+    const getShortOrFallback = (deal: Deal) => {
+  const plain =
+    (deal.shortDescription && deal.shortDescription.trim()) ||
+    (deal.description || "")
+      .replace(/<[^>]*>/g, " ")            // strip tags
+      .replace(/\s+/g, " ")                // collapse spaces
+      .trim();
+
+  const sentences = plain.match(/[^.!?]+[.!?]+/g);
+  if (!sentences) return plain;
+  return sentences.slice(0, 3).join(" ").trim();
+};
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="container mx-auto px-4 py-8">
@@ -875,23 +895,24 @@ function DealsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-3 md:space-y-0">
                   {filteredDealsData.length > 0 ? (
                     filteredDealsData.map((deal: Deal) => (
-                      <DealsCard
-                        id={deal._id}
-                        key={deal._id}
-                        status={deal.status}
-                        title={deal.title}
-                        image={deal.images[0] || "/assets/deals.png"}
-                        description={deal.description}
-                        price={deal.price}
-                        time={deal.time}
-                        createdAt={deal.createdAt}
-                        updatedAt={deal.updatedAt}
-                        participations={deal.bookingCount}
-                        maxParticipants={deal.participationsLimit}
-                        scheduleDates={deal.scheduleDates}
-                        location={deal.location}
-                        timer={deal.timer}
-                      />
+                     <DealsCard
+  id={deal._id}
+  key={deal._id}
+  status={deal.status}
+  title={deal.title}
+  image={deal.images[0] || "/assets/deals.png"}
+  description={getShortOrFallback(deal)}   // <-- change this line
+  price={deal.price}
+  time={deal.time}
+  createdAt={deal.createdAt}
+  updatedAt={deal.updatedAt}
+  participations={deal.bookingCount}
+  maxParticipants={deal.participationsLimit}
+  scheduleDates={deal.scheduleDates}
+  location={deal.location}
+  timer={deal.timer}
+/>
+
                     ))
                   ) : (
                     <div className="col-span-full text-center py-10">
