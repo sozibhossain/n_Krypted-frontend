@@ -260,7 +260,7 @@ export function Navbar() {
                               }`}
                             >
                               <div className="flex items-center gap-2">
-                                <span>Notifications</span>
+                                <span>Benachrichtigungen</span>
                                 {!isConnected && (
                                   <span className="text-xs">(Offline)</span>
                                 )}
@@ -281,7 +281,7 @@ export function Navbar() {
                                   : "text-[#B3B3B3] hover:text-white hover:bg-[#2A2A2A]"
                               }`}
                             >
-                              My Account
+                              Mein Konto
                             </Link>
                           </>
                         )}

@@ -11,9 +11,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { BellRing, Clock, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import {
+  BellRing,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+} from "lucide-react";
 
-const FILTER_MESSAGE = "Der folgende Deal ist jetzt verfügbar"; // unchanged
+const FILTER_MESSAGE = "Der folgende Walk Through ist jetzt verfügbar"; // unchanged
 
 // ---- helpers: normalize API -> provider types (message untouched) ----
 function normalizeLocation(loc: unknown): string | undefined {
@@ -68,14 +74,17 @@ function normalizeNotification(raw: any): SocketNotification {
     isRead: Boolean(raw?.isRead),
     type: String(raw?.type ?? ""),
     dealId,
-    auction: raw?.auction ? { title: String(raw.auction?.title ?? "") } : undefined,
+    auction: raw?.auction
+      ? { title: String(raw.auction?.title ?? "") }
+      : undefined,
   };
 }
 
 // ---------------------------------------------------------------------
 
 const Notifications = () => {
-  const { notifications, setNotifications, setNotificationCount, socket } = useSocketContext();
+  const { notifications, setNotifications, setNotificationCount, socket } =
+    useSocketContext();
   const session = useSession();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userId = (session?.data as any)?.user?.id as string | undefined;
@@ -85,25 +94,33 @@ const Notifications = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [markingAsRead, setMarkingAsRead] = useState(false);
-  const [markingIndividual, setMarkingIndividual] = useState<string | null>(null);
+  const [markingIndividual, setMarkingIndividual] = useState<string | null>(
+    null
+  );
 
   // keep your existing filter (does not change message contents)
   const filteredNotifications = useMemo(
-    () => notifications.filter((n: SocketNotification) => n.message === FILTER_MESSAGE),
+    () =>
+      notifications.filter(
+        (n: SocketNotification) => n.message === FILTER_MESSAGE
+      ),
     [notifications]
   );
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage) || 1;
+  const totalPages =
+    Math.ceil(filteredNotifications.length / itemsPerPage) || 1;
   const paginatedNotifications = filteredNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const goToPage = (page: number) => setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const goToPage = (page: number) =>
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  const nextPage = () =>
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
   const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
   const markNotificationsAsRead = async () => {
@@ -122,7 +139,8 @@ const Notifications = () => {
         }
       );
 
-      if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
       setNotifications((prev) =>
         prev.map((notif) =>
@@ -137,10 +155,14 @@ const Notifications = () => {
       localStorage.removeItem("notificationCount");
       setNotificationCount(newUnreadCount);
 
-      toast.success("Alle passenden Benachrichtigungen wurden als gelesen markiert.");
+      toast.success(
+        "Alle passenden Benachrichtigungen wurden als gelesen markiert."
+      );
     } catch (err) {
       console.error("Failed to mark notifications as read:", err);
-      toast.error("Benachrichtigungen konnten nicht als gelesen markiert werden.");
+      toast.error(
+        "Benachrichtigungen konnten nicht als gelesen markiert werden."
+      );
     } finally {
       setMarkingAsRead(false);
     }
@@ -162,7 +184,8 @@ const Notifications = () => {
         }
       );
 
-      if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
       setNotifications((prev) =>
         prev.map((notif) =>
@@ -202,27 +225,31 @@ const Notifications = () => {
           }
         );
 
-        if (!response.ok) throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+        if (!response.ok)
+          throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
         const data = await response.json();
 
         if (data?.notifications) {
           // important: normalize only types (NOT message)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const normalized: SocketNotification[] = (data.notifications as any[]).map(
-            normalizeNotification
-          );
+          const normalized: SocketNotification[] =
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (data.notifications as any[]).map(normalizeNotification);
 
-          const onlyWanted = normalized.filter((n) => n.message === FILTER_MESSAGE);
+          const onlyWanted = normalized.filter(
+            (n) => n.message === FILTER_MESSAGE
+          );
           setNotifications(onlyWanted);
           setNotificationCount(onlyWanted.filter((n) => !n.isRead).length);
         } else {
-          const msg = data?.message || "Abrufen der Benachrichtigungen fehlgeschlagen";
+          const msg =
+            data?.message || "Abrufen der Benachrichtigungen fehlgeschlagen";
           setError(msg);
           toast.error(msg);
         }
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Es ist ein Fehler aufgetreten";
+        const msg =
+          err instanceof Error ? err.message : "Es ist ein Fehler aufgetreten";
         setError(msg);
         toast.error("Benachrichtigungen konnten nicht geladen werden.");
       } finally {
@@ -237,12 +264,16 @@ const Notifications = () => {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      const diffInMinutes = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60)
+      );
 
       if (diffInMinutes < 1) return "Gerade eben";
       if (diffInMinutes < 60) return `vor ${diffInMinutes} Min.`;
-      if (diffInMinutes < 1440) return `vor ${Math.floor(diffInMinutes / 60)} Std.`;
-      if (diffInMinutes < 10080) return `vor ${Math.floor(diffInMinutes / 1440)} Tg.`;
+      if (diffInMinutes < 1440)
+        return `vor ${Math.floor(diffInMinutes / 60)} Std.`;
+      if (diffInMinutes < 10080)
+        return `vor ${Math.floor(diffInMinutes / 1440)} Tg.`;
 
       return date.toLocaleDateString("de-DE", {
         month: "short",
@@ -267,7 +298,8 @@ const Notifications = () => {
 
   const getDealTitle = (notification: SocketNotification) => {
     if (!notification.dealId) return "";
-    if (typeof notification.dealId === "string") return `Deal-ID: ${notification.dealId}`;
+    if (typeof notification.dealId === "string")
+      return `Deal-ID: ${notification.dealId}`;
     return notification.dealId.title || "";
   };
 
@@ -278,7 +310,8 @@ const Notifications = () => {
   };
 
   const getDealLocation = (notification: SocketNotification) => {
-    if (!notification.dealId || typeof notification.dealId === "string") return "";
+    if (!notification.dealId || typeof notification.dealId === "string")
+      return "";
     return notification.dealId.location ?? "";
   };
 
@@ -348,7 +381,9 @@ const Notifications = () => {
                   disabled={markingAsRead}
                   className=""
                 >
-                  {markingAsRead ? "Wird markiert..." : "Alle als gelesen markieren"}
+                  {markingAsRead
+                    ? "Wird markiert..."
+                    : "Alle als gelesen markieren"}
                 </Button>
               )}
             </div>
@@ -362,7 +397,8 @@ const Notifications = () => {
                 Noch keine passenden Benachrichtigungen
               </h3>
               <p className="text-gray-500">
-                Du siehst hier Benachrichtigungen, wenn dein gewünschter Deal wieder verfügbar ist.
+                Du siehst hier Benachrichtigungen, wenn dein gewünschter Walk
+                Through wieder verfügbar ist.
               </p>
             </div>
           ) : (
@@ -408,7 +444,9 @@ const Notifications = () => {
                           {dealTitle && !dealTitle.startsWith("Deal-ID:") && (
                             <p
                               className={`text-sm mb-1 font-semibold ${
-                                notification.isRead ? "text-gray-500" : "text-white"
+                                notification.isRead
+                                  ? "text-gray-500"
+                                  : "text-white"
                               }`}
                             >
                               {dealTitle}
@@ -426,7 +464,9 @@ const Notifications = () => {
                           {notification.auction && (
                             <p
                               className={`text-sm mb-2 ${
-                                notification.isRead ? "text-gray-500" : "text-gray-400"
+                                notification.isRead
+                                  ? "text-gray-500"
+                                  : "text-gray-400"
                               }`}
                             >
                               Zugehörig zu: {notification.auction.title}
@@ -467,7 +507,9 @@ const Notifications = () => {
                           {notification.auction && (
                             <p
                               className={`text-sm mb-2 ${
-                                notification.isRead ? "text-gray-500" : "text-gray-400"
+                                notification.isRead
+                                  ? "text-gray-500"
+                                  : "text-gray-400"
                               }`}
                             >
                               Zugehörig zu: {notification.auction.title}
@@ -521,7 +563,9 @@ const Notifications = () => {
                       return (
                         <Button
                           key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "outline"}
+                          variant={
+                            currentPage === pageNum ? "default" : "outline"
+                          }
                           size="sm"
                           onClick={() => goToPage(pageNum)}
                           className={`w-10 h-10 p-0 ${

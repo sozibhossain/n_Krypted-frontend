@@ -353,7 +353,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       toast.error(
-        error?.message || "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
+        error?.message ||
+          "Die Aktualisierung der Bewertung ist fehlgeschlagen.",
         {
           position: "top-right",
         }
@@ -581,8 +582,6 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
   return (
     <div className="space-y-4">
-    
-
       <div className="grid grid-cols-12 gap-4 md:gap-6 lg:gap-8">
         <div className="grid grid-cols-7 gap-4 md:gap-6 lg:gap-8 col-span-12 md:col-span-6">
           <div className="col-span-7 md:col-span-1 order-2 md:order-1">
@@ -673,8 +672,8 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
             ) : (
               <div className="text-white py-4">
                 {allSchedulesFull || noSchedulesAvailable
-                  ? "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."
-                  : "Momentan sind keine Buchungszeiten für diesen Deal verfügbar."}
+                  ? "Momentan sind keine Buchungszeiten für diesen Walk Through verfügbar."
+                  : "Momentan sind keine Buchungszeiten für diesen Walk Through verfügbar."}
               </div>
             )}
 
@@ -799,11 +798,11 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         <DialogContent className="bg-[#212121] border border-[#FFFFFF33] text-white">
           <DialogHeader>
             <DialogTitle className="text-xl text-white">
-              Delete Review
+              Rezension löschen
             </DialogTitle>
             <DialogDescription className="text-[#E0E0E0]">
-              Are you sure you want to delete this review? This action cannot be
-              undone.
+              Möchtest du diese Rezension wirklich entfernen? Bitte beachte: Das
+              kann nicht rückgängig gemacht werden.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2 sm:justify-end mt-4">
@@ -812,14 +811,14 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
               onClick={() => setIsDeleteModalOpen(false)}
               className="border-[#FFFFFF] text-[#212121]"
             >
-              Cancel
+              Abbrechen
             </Button>
             <Button
               onClick={handleConfirmDelete}
               className="bg-red-600 hover:bg-red-700 text-white"
               disabled={deleteReviewMutation.isPending}
             >
-              {deleteReviewMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteReviewMutation.isPending ? "Löschen" : "Löschen"}
             </Button>
           </DialogFooter>
         </DialogContent>

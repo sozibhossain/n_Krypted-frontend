@@ -40,7 +40,7 @@ export function Footer() {
           </div>
 
           {/* Social Media Icons */}
-          <div className="flex space-x-4 mt-2">
+          <div className="flex space-x-4 -mb-[35px] md:mb-0">
             <Link
               href=""
               aria-label="Facebook"

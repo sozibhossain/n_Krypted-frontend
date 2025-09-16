@@ -18,20 +18,23 @@ export function ResetPasswordForm() {
   const [email, setEmail] = useState<string | null>(null);
   const router = useRouter();
 
-  const sharch = useSearchParams();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const storedEmail = sharch.get("email");
+    const storedEmail = searchParams.get("email");
     if (!storedEmail) {
       toast.error("E-Mail nicht in URL-Parametern gefunden");
     } else {
       setEmail(storedEmail);
     }
 
-    if (sharch.get("token") === null && sharch.get("email") === null) {
+    if (
+      searchParams.get("token") === null &&
+      searchParams.get("email") === null
+    ) {
       window.location.href = "/";
     }
-  }, [sharch]);
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,13 +44,14 @@ export function ResetPasswordForm() {
       return;
     }
 
+    // Optional: Mindestlänge prüfen – aktivieren, wenn gewünscht
     // if (password.length < 8) {
     //   toast.error("Das Passwort muss mindestens 8 Zeichen lang sein");
     //   return;
     // }
 
     setIsLoading(true);
-    const resetToken = sharch.get("token");
+    const resetToken = searchParams.get("token");
 
     try {
       const response = await fetch(
@@ -77,7 +81,7 @@ export function ResetPasswordForm() {
       }
     } catch {
       toast.error(
-        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.."
+        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
       );
     } finally {
       setIsLoading(false);
@@ -87,27 +91,31 @@ export function ResetPasswordForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 bg-[#212121] px-[24px] py-[5px] rounded-lg text-white"
+      // Matcht das Design der SignInForm
+      className="space-y-4 bg-[#373737] px-[24px] py-[32px] rounded-lg"
     >
       <div className="space-y-2">
         <Label htmlFor="password" className="text-white">
           Neues Passwort
         </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-300" />
+          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Neues Passwort"
+            placeholder="Gib dein neues Passwort ein"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-300"
+            className="absolute right-3 top-3 text-gray-400"
+            aria-label={
+              showPassword ? "Passwort verbergen" : "Passwort anzeigen"
+            }
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -123,20 +131,25 @@ export function ResetPasswordForm() {
           Passwort bestätigen
         </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-300" />
+          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Passwort bestätigen"
+            placeholder="Bestätige dein neues Passwort"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="pl-10 pr-10 bg-[#4b4b4b] border border-gray-600 text-white placeholder:text-gray-400"
+            className="pl-10 pr-10 bg-[#4b4b4b] border-gray-600 text-white placeholder:text-gray-400"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-3 text-gray-300"
+            className="absolute right-3 top-3 text-gray-400"
+            aria-label={
+              showConfirmPassword
+                ? "Bestätigung verbergen"
+                : "Bestätigung anzeigen"
+            }
           >
             {showConfirmPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -154,6 +167,13 @@ export function ResetPasswordForm() {
       >
         {isLoading ? "Passwort wird zurückgesetzt..." : "Zurücksetzen"}
       </Button>
+
+      <div className="text-center text-sm text-[#BABABA]">
+        Zurück zur{" "}
+        <a href="/login" className="text-white hover:text-blue-400">
+          Anmeldung
+        </a>
+      </div>
     </form>
   );
 }

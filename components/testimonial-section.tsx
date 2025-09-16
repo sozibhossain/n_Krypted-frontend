@@ -110,7 +110,7 @@ export function TestimonialSection() {
               alt="quote"
               width={50}
               height={50}
-              className="h-[32px] w-[44px] text-white"
+              className="h-[25px] w-[35px] text-white"
             />
             <p className="text-white text-sm md:text-lg overflow-hidden">
               {feedback.message}
