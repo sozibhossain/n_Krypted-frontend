@@ -45,7 +45,7 @@ function Blogs() {
       <PageHeader title="Unsere Blogs" imge="/assets/Blogbanner.jpg" />
 
       <div className="container my-24">
-        <h1 className="text-[28px] lg:text-[36px] font-bold mb-8 text-center text-white">
+        <h1 className="text-[25px] lg:text-[34px] font-bold mb-8 text-center text-white">
           Stadtgedanken & Durchblicke
         </h1>
         <div className="text-center text-gray-300 mb-12 text-[20px]">

@@ -104,7 +104,7 @@ export default function EditDealModal({
   const [scheduleDates, setScheduleDates] = useState<ScheduleDate[]>([]);
   const [timer, setTimer] = useState("off");
   const [status, setStatus] = useState("activate");
-  console.log(status)
+  console.log(status);
 
   // Track removals
   const [scheduleDatesToRemove, setScheduleDatesToRemove] = useState<string[]>(
@@ -630,7 +630,7 @@ export default function EditDealModal({
                       });
                     }
                   }}
-                  placeholderText="Select dates..."
+                  placeholderText="Datum auswählen..."
                   minDate={new Date()}
                   className="w-full border rounded p-2 bg-[#f5f1eb]"
                   highlightDates={scheduleDates.map((d) => d.day)}

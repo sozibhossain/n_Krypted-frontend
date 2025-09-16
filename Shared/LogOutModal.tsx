@@ -48,7 +48,7 @@ const LogOutModal = ({
               </div>
             </Link>
           </div>
-          <DialogTitle className="text-lg font-normal text-center">
+          <DialogTitle className="text-[16px] font-normal text-center">
             Möchtest du dich wirklich abmelden?
           </DialogTitle>
           <div className="flex gap-4 mt-6 w-full">
