@@ -45,7 +45,7 @@ interface ScheduleDate {
 
 interface DealData {
   title: string;
-  shortDescription: string; // 👈 NEW
+  shortDescription: string;
   description: string;
   price: number;
   location: Location;
@@ -90,6 +90,9 @@ interface EditDealModalProps {
   dealId: string;
 }
 
+/** Store stable preview URLs so we can revoke them correctly. */
+type SelectedFile = { file: File; preview: string };
+
 export default function EditDealModal({
   open,
   onOpenChange,
@@ -97,13 +100,15 @@ export default function EditDealModal({
 }: EditDealModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [offers, setOffers] = useState<string[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("none");
   const [scheduleDates, setScheduleDates] = useState<ScheduleDate[]>([]);
   const [timer, setTimer] = useState("off");
   const [status, setStatus] = useState("activate");
+  const [submitting, setSubmitting] = useState(false);
+
   console.log(status);
 
   // Track removals
@@ -141,6 +146,7 @@ export default function EditDealModal({
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}.${mins.toString().padStart(2, "0")}`;
+    // NOTE: e.g. 2.05 = 2h 05m
   };
 
   const convertDecimalHoursToMinutes = (timeString: string): number => {
@@ -154,6 +160,7 @@ export default function EditDealModal({
     return date instanceof Date && !isNaN(date.getTime());
   };
 
+  /** Fetch deal when modal opens */
   useEffect(() => {
     if (open && dealId) {
       const fetchDealData = async (id: string) => {
@@ -166,7 +173,7 @@ export default function EditDealModal({
           const data = await response.json();
 
           setValue("title", data.deal.title || "");
-          setValue("shortDescription", data.deal.shortDescription || ""); // 👈 NEW
+          setValue("shortDescription", data.deal.shortDescription || "");
           setValue("description", data.deal.description || "");
           setDescription(data.deal.description || "");
           setValue("price", data.deal.price || 0);
@@ -217,11 +224,10 @@ export default function EditDealModal({
     }
   }, [open, dealId, setValue]);
 
+  /** Revoke any created preview URLs on unmount or when selectedFiles changes */
   useEffect(() => {
     return () => {
-      selectedFiles.forEach((file) =>
-        URL.revokeObjectURL(URL.createObjectURL(file))
-      );
+      selectedFiles.forEach(({ preview }) => URL.revokeObjectURL(preview));
     };
   }, [selectedFiles]);
 
@@ -243,7 +249,7 @@ export default function EditDealModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       toast.success("Deal updated successfully", { position: "top-right" });
-      onOpenChange(false);
+      handleOpenChange(false); // ✅ ensures resetForm() runs
     },
     onError: (error) => {
       console.error("Error updating deal:", error);
@@ -254,8 +260,12 @@ export default function EditDealModal({
   });
 
   const resetForm = () => {
+    // revoke previews before clearing
+    selectedFiles.forEach(({ preview }) => URL.revokeObjectURL(preview));
+    setSelectedFiles([]);
+
     setValue("title", "");
-    setValue("shortDescription", ""); // 👈 NEW
+    setValue("shortDescription", "");
     setValue("description", "");
     setDescription("");
     setValue("price", 0);
@@ -266,12 +276,12 @@ export default function EditDealModal({
     setCategory("none");
     setOffers([]);
     setExistingImages([]);
-    setSelectedFiles([]);
     setScheduleDates([]);
     setTimer("off");
     setStatus("activate");
     setScheduleDatesToRemove([]);
     setImagesToRemove([]);
+    setSubmitting(false);
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -282,79 +292,84 @@ export default function EditDealModal({
   const onSubmit = async (data: DealData) => {
     if (!dealId) return;
 
-    if (scheduleDates.length === 0) {
-      toast.error("Please select at least one schedule date", {
-        position: "top-right",
-      });
-      return;
-    }
-    if (scheduleDates.some((date) => date.participationsLimit <= 0)) {
-      toast.error(
-        "Please set a valid participation limit for all schedule dates",
-        { position: "top-right" }
+    if (submitting || updateMutation.isPending) return; // guard double submit
+    setSubmitting(true);
+
+    try {
+      if (scheduleDates.length === 0) {
+        toast.error("Please select at least one schedule date", {
+          position: "top-right",
+        });
+        return;
+      }
+      if (scheduleDates.some((date) => date.participationsLimit <= 0)) {
+        toast.error(
+          "Please set a valid participation limit for all schedule dates",
+          { position: "top-right" }
+        );
+        return;
+      }
+
+      const invalidDates = scheduleDates.filter(
+        (dateObj) => !isValidDate(dateObj.day)
       );
-      return;
-    }
+      if (invalidDates.length > 0) {
+        console.error("Invalid dates found in scheduleDates:", invalidDates);
+        toast.error("One or more schedule dates are invalid", {
+          position: "top-right",
+        });
+        return;
+      }
 
-    const invalidDates = scheduleDates.filter(
-      (dateObj) => !isValidDate(dateObj.day)
-    );
-    if (invalidDates.length > 0) {
-      console.error("Invalid dates found in scheduleDates:", invalidDates);
-      toast.error("One or more schedule dates are invalid", {
-        position: "top-right",
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("shortDescription", data.shortDescription);
+      formData.append("description", data.description);
+      formData.append("price", data.price.toString());
+      formData.append("location[country]", data.location.country);
+      formData.append("location[city]", data.location.city);
+      formData.append("time", String(convertDecimalHoursToMinutes(data.time)));
+      formData.append("timer", timer);
+      formData.append("category", category === "none" ? "" : category);
+
+      offers.forEach((offer, index) => {
+        formData.append(`offers[${index}]`, offer);
       });
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("shortDescription", data.shortDescription); // 👈 NEW (no length checks)
-    formData.append("description", data.description);
-    formData.append("price", data.price.toString());
-    formData.append("location[country]", data.location.country);
-    formData.append("location[city]", data.location.city);
-    formData.append("time", String(convertDecimalHoursToMinutes(data.time)));
-    formData.append("timer", timer);
-    formData.append("category", category === "none" ? "" : category);
+      // ⛔️ Do NOT send existingImages; server doesn't read it.
+      // selectedFiles -> actual files
+      selectedFiles.forEach(({ file }) => {
+        formData.append("images", file);
+      });
 
-    offers.forEach((offer, index) => {
-      formData.append(`offers[${index}]`, offer);
-    });
-
-    existingImages.forEach((image, index) => {
-      formData.append(`existingImages[${index}]`, image);
-    });
-
-    selectedFiles.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    formData.append(
-      "scheduleDates",
-      JSON.stringify(
-        scheduleDates.map((dateObj) => ({
-          date: dateObj.day.toISOString(),
-          active: dateObj.active,
-          participationsLimit: dateObj.participationsLimit,
-          time: dateObj.time,
-          bookedCount: dateObj.bookedCount,
-          _id: dateObj._id,
-        }))
-      )
-    );
-
-    if (scheduleDatesToRemove.length > 0) {
       formData.append(
-        "scheduleDatesToRemove",
-        JSON.stringify(scheduleDatesToRemove)
+        "scheduleDates",
+        JSON.stringify(
+          scheduleDates.map((dateObj) => ({
+            date: dateObj.day.toISOString(),
+            active: dateObj.active,
+            participationsLimit: dateObj.participationsLimit,
+            time: dateObj.time,
+            bookedCount: dateObj.bookedCount,
+            _id: dateObj._id,
+          }))
+        )
       );
-    }
-    if (imagesToRemove.length > 0) {
-      formData.append("imagesToRemove", JSON.stringify(imagesToRemove));
-    }
 
-    updateMutation.mutate(formData);
+      if (scheduleDatesToRemove.length > 0) {
+        formData.append(
+          "scheduleDatesToRemove",
+          JSON.stringify(scheduleDatesToRemove)
+        );
+      }
+      if (imagesToRemove.length > 0) {
+        formData.append("imagesToRemove", JSON.stringify(imagesToRemove));
+      }
+
+      await updateMutation.mutateAsync(formData);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleRemoveOffer = (index: number) => {
@@ -362,42 +377,57 @@ export default function EditDealModal({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const maxImages = 5;
-      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
-      const allowedTypes = ["image/jpeg", "image/png"];
-      const totalImages =
-        existingImages.length + selectedFiles.length + e.target.files.length;
-      if (totalImages > maxImages) {
-        toast.error(`You can only upload up to ${maxImages} images`, {
+    if (!e.target.files) return;
+
+    const maxImages = 5;
+    const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    const incoming = Array.from(e.target.files);
+
+    const totalImages =
+      existingImages.length + selectedFiles.length + incoming.length;
+    if (totalImages > maxImages) {
+      toast.error(`You can only upload up to ${maxImages} images`, {
+        position: "top-right",
+      });
+      return;
+    }
+
+    const validFiles = incoming.filter((file) => {
+      if (file.size > maxSizeInBytes) {
+        toast.error(`Image "${file.name}" exceeds 10MB limit`, {
           position: "top-right",
         });
-        return;
+        return false;
       }
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`Image "${file.name}" must be JPEG or PNG`, {
+          position: "top-right",
+        });
+        return false;
+      }
+      return true;
+    });
 
-      const validFiles = Array.from(e.target.files).filter((file) => {
-        if (file.size > maxSizeInBytes) {
-          toast.error(`Image "${file.name}" exceeds 10MB limit`, {
-            position: "top-right",
-          });
-          return false;
-        }
-        if (!allowedTypes.includes(file.type)) {
-          toast.error(`Image "${file.name}" must be JPEG or PNG`, {
-            position: "top-right",
-          });
-          return false;
-        }
-        return true;
-      });
-      setSelectedFiles([...selectedFiles, ...validFiles]);
-    }
+    const withPreviews: SelectedFile[] = validFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setSelectedFiles((prev) => [...prev, ...withPreviews]);
+
+    // reset the input value so the same file can be selected again if removed
+    e.currentTarget.value = "";
   };
 
   const handleRemoveFile = (index: number) => {
-    const file = selectedFiles[index];
-    URL.revokeObjectURL(URL.createObjectURL(file));
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => {
+      const next = [...prev];
+      const removed = next.splice(index, 1)[0];
+      if (removed) URL.revokeObjectURL(removed.preview);
+      return next;
+    });
   };
 
   const handleRemoveExistingImage = (index: number) => {
@@ -853,10 +883,10 @@ export default function EditDealModal({
                 <div>
                   <Label className="mb-2 block">New Images</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {selectedFiles.map((file, index) => (
+                    {selectedFiles.map(({ preview }, index) => (
                       <div key={index} className="relative">
                         <Image
-                          src={URL.createObjectURL(file) || "/placeholder.svg"}
+                          src={preview || "/placeholder.svg"}
                           width={100}
                           height={100}
                           alt={`New image ${index}`}
@@ -889,8 +919,11 @@ export default function EditDealModal({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending && (
+            <Button
+              type="submit"
+              disabled={submitting || updateMutation.isPending}
+            >
+              {(submitting || updateMutation.isPending) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Save Changes

@@ -125,7 +125,7 @@ export function VerifyEmailForm() {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-[#373737] px-[24px] py-[32px] rounded-lg shadow-md">
+    <div className="max-w-xl mx-auto bg-[#373737] px-[16px] py-[32px] rounded-lg shadow-md">
       <h2 className="text-white text-[26px] lg:text-[32px] font-semibold leading-[120%] text-center mb-2">
         Code eingeben
       </h2>

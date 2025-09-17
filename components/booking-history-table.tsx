@@ -131,11 +131,7 @@ export default function BookingHistoryTable() {
   };
 
   // Use TanStack Query to fetch all bookings
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery<ApiResponse>({
+  const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ["bookings", userId],
     queryFn: fetchBookings,
     enabled: !!userId && !!accessToken,
@@ -144,9 +140,8 @@ export default function BookingHistoryTable() {
   // Filter: show only completed payments
   const completedBookings = useMemo(
     () =>
-      data?.data.filter(
-        (b) => (b.paymentStatus ?? "pending") === "complete"
-      ) ?? [],
+      data?.data.filter((b) => (b.paymentStatus ?? "pending") === "complete") ??
+      [],
     [data?.data]
   );
 
@@ -188,12 +183,12 @@ export default function BookingHistoryTable() {
         <div className="bg-zinc-900/60 rounded-lg overflow-hidden">
           <div className="min-w-full overflow-x-auto">
             <div className="grid grid-cols-5 bg-zinc-800 py-3 px-4">
-              <div className="text-sm font-medium text-gray-300">Deal</div>
+              <div className="text-sm font-medium text-gray-300">Walk Through</div>
               <div className="text-sm font-medium text-gray-300">
                 Buchungscode
               </div>
               <div className="text-sm font-medium text-gray-300">Datum</div>
-              <div className="text-sm font-medium text-gray-300">Menge</div>
+              <div className="text-sm font-medium text-gray-300">Preis</div>
               <div className="text-sm font-medium text-gray-300">Details</div>
             </div>
             <div className="divide-y divide-zinc-800">
@@ -243,7 +238,9 @@ export default function BookingHistoryTable() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-full mx-auto">
-      <h2 className="text-2xl font-semibold text-white mb-6">Buchungsverlauf</h2>
+      <h2 className="text-2xl font-semibold text-white mb-6">
+        Buchungsverlauf
+      </h2>
 
       {/* Empty state when no completed bookings */}
       {completedBookings.length === 0 ? (
@@ -262,7 +259,7 @@ export default function BookingHistoryTable() {
                       scope="col"
                       className="py-3 px-4 text-left text-sm font-medium text-gray-300"
                     >
-                      Deal
+                      Walk Through
                     </th>
                     <th
                       scope="col"
@@ -280,7 +277,7 @@ export default function BookingHistoryTable() {
                       scope="col"
                       className="py-3 px-4 text-left text-sm font-medium text-gray-300"
                     >
-                      Menge
+                      Preis
                     </th>
                     <th
                       scope="col"
@@ -303,7 +300,10 @@ export default function BookingHistoryTable() {
                         {formatDate(booking?.createdAt)}
                       </td>
                       <td className="py-3 px-4 text-sm text-white">
-                        {formatPrice((booking?.dealsId?.price ?? 0) * (booking?.quantity ?? 1))}
+                        {formatPrice(
+                          (booking?.dealsId?.price ?? 0) *
+                            (booking?.quantity ?? 1)
+                        )}
                       </td>
                       <td className="py-3 px-4 text-sm text-white">
                         <button
@@ -329,7 +329,7 @@ export default function BookingHistoryTable() {
                 className="bg-zinc-900/60 rounded-lg p-4 space-y-2"
               >
                 <div className="flex justify-between">
-                  <span className="text-gray-400 text-xs">Deal</span>
+                  <span className="text-gray-400 text-xs">Walk Through</span>
                   <span className="text-white text-sm">
                     {booking?.dealsId?.title}
                   </span>
@@ -347,9 +347,11 @@ export default function BookingHistoryTable() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400 text-xs">Menge</span>
+                  <span className="text-gray-400 text-xs">Preis</span>
                   <span className="text-white text-sm">
-                     {formatPrice((booking?.dealsId?.price ?? 0) * (booking?.quantity ?? 1))}
+                    {formatPrice(
+                      (booking?.dealsId?.price ?? 0) * (booking?.quantity ?? 1)
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -423,7 +425,6 @@ export default function BookingHistoryTable() {
                   >
                     {bookingDetails.data.isBooked ? "Gebucht" : "Ausstehend"}
                   </Badge>
-                 
                 </div>
               </div>
 
@@ -445,7 +446,10 @@ export default function BookingHistoryTable() {
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium text-gray-400">Preis</h4>
                   <p className="text-sm font-semibold">
-                    {formatPrice((bookingDetails?.data?.dealsId?.price ?? 0) * (bookingDetails?.data?.quantity ?? 1))}
+                    {formatPrice(
+                      (bookingDetails?.data?.dealsId?.price ?? 0) *
+                        (bookingDetails?.data?.quantity ?? 1)
+                    )}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -470,7 +474,9 @@ export default function BookingHistoryTable() {
 
               {bookingDetails?.data?.dealsId?.offers?.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">Angebote</h4>
+                  <h4 className="text-sm font-medium text-gray-400">
+                    Angebote
+                  </h4>
                   <div className="bg-zinc-800/50 rounded-md p-3">
                     <ul className="list-disc list-inside space-y-1">
                       {(() => {

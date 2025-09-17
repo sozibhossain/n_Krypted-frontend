@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Edit, Trash, Plus, Eye } from "lucide-react";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -81,19 +80,29 @@ interface CategoriesResponse {
   pagination: PaginationInfo;
 }
 
+const PAGE_SIZE = 10;
+
 export default function DealsManagement() {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const token = session?.user?.accessToken;
 
-  const { data, isLoading } = useQuery<ApiResponse>({
-    queryKey: ["deals", page],
+  // Deals query with backend pagination (page & limit)
+  const {
+    data,
+    isLoading,
+    isFetching, // fetching a new page while showing previous data
+  } = useQuery<ApiResponse>({
+    queryKey: ["deals", page, PAGE_SIZE],
     queryFn: async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/deals?showAll=true`
-        );
+        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/deals`);
+        url.searchParams.set("showAll", "true");
+        url.searchParams.set("page", String(page));
+        url.searchParams.set("limit", String(PAGE_SIZE));
+
+        const response = await fetch(url.toString());
         if (!response.ok) {
           throw new Error("Failed to fetch deals");
         }
@@ -103,8 +112,8 @@ export default function DealsManagement() {
         throw err;
       }
     },
+    placeholderData: (previousData) => previousData, // smoother pagination UX
   });
-
 
   // Fetch categories from API
   const { data: categoriesData } = useQuery<CategoriesResponse>({
@@ -128,6 +137,22 @@ export default function DealsManagement() {
 
   const categories = categoriesData?.data || [];
 
+  const deals = (data as ApiResponse | undefined)?.deals || [];
+  const pagination = (data as ApiResponse | undefined)?.pagination || {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: PAGE_SIZE,
+  };
+
+  // If current page becomes out of range after a mutation (e.g., delete),
+  // snap back to the last available page.
+  useEffect(() => {
+    if (pagination.totalPages > 0 && page > pagination.totalPages) {
+      setPage(pagination.totalPages);
+    }
+  }, [pagination.totalPages, page]);
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(
@@ -148,8 +173,8 @@ export default function DealsManagement() {
       return response.json();
     },
     onSuccess: () => {
-      // Invalidate and refetch the deals query
-      queryClient.invalidateQueries({ queryKey: ["deals"] });
+      // Invalidate the current page
+      queryClient.invalidateQueries({ queryKey: ["deals", page, PAGE_SIZE] });
       toast.success("Deal deleted successfully", { position: "top-right" });
     },
     onError: (error) => {
@@ -184,15 +209,24 @@ export default function DealsManagement() {
 
       return response.json();
     },
+    onSuccess: () => {
+      // Ensure the current page reflects the latest backend state
+      queryClient.invalidateQueries({ queryKey: ["deals", page, PAGE_SIZE] });
+    },
     onError: (error, variables) => {
       console.error("Error updating deal status:", error);
       toast.error("Failed to update deal status", { position: "top-right" });
 
       // Revert the optimistic update on error
-      if (data) {
-        queryClient.setQueryData(["deals", page], {
-          ...data,
-          deals: data.deals.map((deal) =>
+      const prev = queryClient.getQueryData<ApiResponse>([
+        "deals",
+        page,
+        PAGE_SIZE,
+      ]);
+      if (prev) {
+        queryClient.setQueryData<ApiResponse>(["deals", page, PAGE_SIZE], {
+          ...prev,
+          deals: prev.deals.map((deal) =>
             deal._id === variables.id
               ? {
                   ...deal,
@@ -203,18 +237,12 @@ export default function DealsManagement() {
                 }
               : deal
           ),
+          pagination: prev.pagination,
+          success: prev.success,
         });
       }
     },
   });
-
-  const deals = data?.deals || [];
-  const pagination = data?.pagination || {
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 0,
-    itemsPerPage: 10,
-  };
 
   const [isPending, startTransition] = useTransition();
 
@@ -224,9 +252,9 @@ export default function DealsManagement() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editDealId, setEditDealId] = useState<string | null>(null);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (nextPage: number) => {
     startTransition(() => {
-      setPage(page);
+      setPage(nextPage);
     });
   };
 
@@ -240,12 +268,19 @@ export default function DealsManagement() {
         currentStatus === "activate" ? "deactivate" : "activate";
 
       // Optimistically update the UI
-      if (data) {
-        queryClient.setQueryData(["deals", page], {
-          ...data,
-          deals: data.deals.map((deal) =>
+      const prev = queryClient.getQueryData<ApiResponse>([
+        "deals",
+        page,
+        PAGE_SIZE,
+      ]);
+      if (prev) {
+        queryClient.setQueryData<ApiResponse>(["deals", page, PAGE_SIZE], {
+          ...prev,
+          deals: prev.deals.map((deal) =>
             deal._id === id ? { ...deal, status: newStatus } : deal
           ),
+          pagination: prev.pagination,
+          success: prev.success,
         });
       }
 
@@ -264,9 +299,7 @@ export default function DealsManagement() {
               `Deal ${
                 newStatus === "activate" ? "activated" : "deactivated"
               } successfully`,
-              {
-                position: "top-right",
-              }
+              { position: "top-right" }
             );
           },
         }
@@ -383,7 +416,6 @@ export default function DealsManagement() {
                     <TableHead>SKU</TableHead>
                     <TableHead>Country</TableHead>
                     <TableHead>City</TableHead>
-
                     <TableHead>Price</TableHead>
                     <TableHead>Activate</TableHead>
                     <TableHead>Actions</TableHead>
@@ -399,7 +431,7 @@ export default function DealsManagement() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    deals.map((deal) => (
+                    deals.map((deal : Deal) => (
                       <TableRow
                         key={deal._id}
                         className="border-b border-[#BABABA] hover:bg-[#BABABA]/10"
@@ -422,7 +454,6 @@ export default function DealsManagement() {
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           {deal.location.city}
                         </TableCell>
-
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           €{deal.price.toFixed(2)}
                         </TableCell>
@@ -481,12 +512,13 @@ export default function DealsManagement() {
                 totalItems={pagination.totalItems}
                 itemsPerPage={pagination.itemsPerPage}
                 onPageChange={handlePageChange}
-                isLoading={isLoading || isPending}
+                isLoading={isLoading || isPending || isFetching}
               />
             </div>
           </CardContent>
         </Card>
       </div>
+
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

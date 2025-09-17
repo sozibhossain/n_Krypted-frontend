@@ -553,7 +553,7 @@ export function DealsCard({
                             className="bg-[#2a2a2a] text-white border-none rounded p-1 text-xs sm:text-sm"
                           >
                             <option value="" disabled>
-                              Select a date
+                              Datum auswählen
                             </option>
                             {scheduleDates
                               .filter(

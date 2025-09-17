@@ -600,7 +600,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
                 alt={auction?.title || "Property image"}
                 width={1000}
                 height={1000}
-                className="object-cover !h-[491px] md:!h-[391px] object-center"
+                className="object-cover !h-[491px] md:!h-[391px] !object-center"
                 priority
               />
             </div>
@@ -610,7 +610,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
         <div className="col-span-12 md:col-span-6 order-3">
           <div className="space-y-4">
             {/* Title (clamped on mobile) */}
-            <h1 className=" text-2xl md:text-[28px] font-semibold text-[#FFFFFF] leading-tight [overflow-wrap:anywhere]">
+            <h1 className=" text-xl md:text-2xl lg:text-[26px] font-semibold text-[#FFFFFF] leading-tight [overflow-wrap:anywhere]">
               {auction?.title || "Property Title"}
             </h1>
 
@@ -692,7 +692,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
 
       {/* Reviews */}
       <div className="space-y-6 pb-[20px] md:pb-[120px]">
-        <h2 className="text-[24px] md:text-[28px] text-[#FFFFFF] font-semibold">
+        <h2 className="text-xl md:text-2xl lg:text-[26px] text-[#FFFFFF] font-semibold">
           Kundenrezensionen
         </h2>
         <div>

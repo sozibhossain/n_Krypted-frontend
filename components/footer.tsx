@@ -67,7 +67,7 @@ export function Footer() {
                 height={20}
               />
             </Link>
-            <Link
+            {/* <Link
               href=""
               aria-label="Twitter"
               className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-[#4E4E4E] hover:bg-gray-100 transition-colors"
@@ -79,7 +79,7 @@ export function Footer() {
                 height={20}
                 className="h-[14px] w-[14px]"
               />
-            </Link>
+            </Link> */}
           </div>
         </div>
 
@@ -93,7 +93,7 @@ export function Footer() {
               <Link href="/about-us">Über uns</Link>
             </li>
             <li>
-              <Link href="/deals">Deals</Link>
+              <Link href="/deals">Walk Throughz</Link>
             </li>
             <li>
               <Link href="/blog">Blogs</Link>

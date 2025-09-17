@@ -11,8 +11,10 @@ export default function SignUpPage() {
         <div className="w-full max-w-md space-y-8 rounded-lg  p-8 text-white">
           <div className="text-center">
             <h1 className="text-[26px] lg:text-[32px] font-semibold leading-[120%] mb-2 lg:text-nowrap lg:ml-[-13%]">
-              Werde Teil von Walk Throughz
+              Werde Teil von{" "}
+              <span className="whitespace-nowrap">Walk Throughz</span>
             </h1>
+
             <div className="text-white text-[14px] lg:text-[16px] font-normal">
               Registriere dich kostenlos{" "}
               <div>und starte deine ersten Walk Throughz</div>

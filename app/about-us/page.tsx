@@ -23,7 +23,7 @@ const page = () => {
             lokal, lebendig und persönlich.
           </h1>
 
-          <div className="mt-3 text-base lg:text-xl text-[#E0E0E0] leading-[150%]">
+          <div className="mt-5 text-base lg:text-xl text-[#E0E0E0] leading-[150%]">
             Wir bringen Menschen mit besonderen Orten und spannenden Themen
             zusammen.{" "}
             <p>

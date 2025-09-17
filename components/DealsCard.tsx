@@ -104,7 +104,10 @@ export function DealsCard({
 
   // ---- Helpers for short description (2-line fallback) ----
   const stripHtml = (html: string) =>
-    html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
 
   const getTwoLineFallback = (html: string) => {
     const text = stripHtml(html);
@@ -564,7 +567,7 @@ export function DealsCard({
                             className="bg-[#2a2a2a] text-white border-none rounded p-1 text-xs sm:text-sm"
                           >
                             <option value="" disabled>
-                              Select a date
+                              Datum auswählen
                             </option>
                             {scheduleDates
                               .filter(

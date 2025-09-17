@@ -98,7 +98,7 @@ export function ForgotPasswordForm() {
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="sm:max-w-lg bg-[#373737] border border-gray-600 text-white rounded-xl shadow-xl">
           <DialogHeader className="flex flex-col items-center space-y-3">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#212121] mb-4 border border-gray-700">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#212121] mb-4 border border-gray-300">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-green-500"
