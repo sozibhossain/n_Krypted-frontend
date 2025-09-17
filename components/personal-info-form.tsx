@@ -117,8 +117,8 @@ export default function PersonalInfoForm({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-[#FFFFFF]">
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <h1 className="text-xl md:text-2xl font-semibold text-[#FFFFFF]">
           Persönliche Informationen
         </h1>
         {!isEditing && (

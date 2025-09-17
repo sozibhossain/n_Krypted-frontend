@@ -19,8 +19,6 @@ import {
   MapPin,
 } from "lucide-react";
 
-const FILTER_MESSAGE = "Der folgende Walk Through ist jetzt verfügbar"; // unchanged
-
 // ---- helpers: normalize API -> provider types (message untouched) ----
 function normalizeLocation(loc: unknown): string | undefined {
   if (!loc) return undefined;
@@ -35,6 +33,7 @@ function normalizeLocation(loc: unknown): string | undefined {
   }
   return undefined;
 }
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeDeal(raw: any): SocketDeal {
   return {
@@ -54,6 +53,7 @@ function normalizeDeal(raw: any): SocketDeal {
     __v: typeof raw?.__v === "number" ? raw.__v : undefined,
   };
 }
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeNotification(raw: any): SocketNotification {
   let dealId: SocketNotification["dealId"] = undefined;
@@ -98,21 +98,24 @@ const Notifications = () => {
     null
   );
 
-  // keep your existing filter (does not change message contents)
-  const filteredNotifications = useMemo(
+  // show ALL notifications (remove message filter)
+  const allNotifications = notifications;
+
+  // sort newest first (optional, comment out if server already sorts)
+  const sortedNotifications = useMemo(
     () =>
-      notifications.filter(
-        (n: SocketNotification) => n.message === FILTER_MESSAGE
+      [...allNotifications].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       ),
-    [notifications]
+    [allNotifications]
   );
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages =
-    Math.ceil(filteredNotifications.length / itemsPerPage) || 1;
-  const paginatedNotifications = filteredNotifications.slice(
+  const totalPages = Math.ceil(sortedNotifications.length / itemsPerPage) || 1;
+  const paginatedNotifications = sortedNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -142,22 +145,15 @@ const Notifications = () => {
       if (!response.ok)
         throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif.message === FILTER_MESSAGE ? { ...notif, isRead: true } : notif
-        )
-      );
+      // mark all as read locally and sync unread count
+      setNotifications((prev) => {
+        const next = prev.map((n) => ({ ...n, isRead: true }));
+        setNotificationCount(0);
+        return next;
+      });
 
-      const newUnreadCount = Math.max(
-        0,
-        filteredNotifications.filter((n) => !n.isRead).length
-      );
       localStorage.removeItem("notificationCount");
-      setNotificationCount(newUnreadCount);
-
-      toast.success(
-        "Alle passenden Benachrichtigungen wurden als gelesen markiert."
-      );
+      toast.success("Alle Benachrichtigungen wurden als gelesen markiert.");
     } catch (err) {
       console.error("Failed to mark notifications as read:", err);
       toast.error(
@@ -187,15 +183,16 @@ const Notifications = () => {
       if (!response.ok)
         throw new Error(`HTTP-Fehler! Status: ${response.status}`);
 
-      setNotifications((prev) =>
-        prev.map((notif) =>
+      setNotifications((prev) => {
+        const next = prev.map((notif) =>
           notif._id === notificationId ? { ...notif, isRead: true } : notif
-        )
-      );
+        );
+        const unread = next.filter((n) => !n.isRead).length;
+        setNotificationCount(unread);
+        return next;
+      });
 
-      setNotificationCount((prev) => Math.max(0, prev - 1));
       if (socket) socket.emit("mark_notification_read", notificationId);
-
       toast.success("Benachrichtigung als gelesen markiert.");
     } catch (err) {
       console.error("Failed to mark notification as read:", err);
@@ -230,17 +227,14 @@ const Notifications = () => {
 
         const data = await response.json();
 
-        if (data?.notifications) {
-          // important: normalize only types (NOT message)
+        if (Array.isArray(data?.notifications)) {
+          // normalize EVERYTHING; do not filter by message
           const normalized: SocketNotification[] =
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (data.notifications as any[]).map(normalizeNotification);
 
-          const onlyWanted = normalized.filter(
-            (n) => n.message === FILTER_MESSAGE
-          );
-          setNotifications(onlyWanted);
-          setNotificationCount(onlyWanted.filter((n) => !n.isRead).length);
+          setNotifications(normalized);
+          setNotificationCount(normalized.filter((n) => !n.isRead).length);
         } else {
           const msg =
             data?.message || "Abrufen der Benachrichtigungen fehlgeschlagen";
@@ -373,7 +367,7 @@ const Notifications = () => {
               Benachrichtigungen
             </div>
             <div className="flex items-center gap-2">
-              {filteredNotifications.length > 0 && (
+              {sortedNotifications.length > 0 && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -390,15 +384,15 @@ const Notifications = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredNotifications.length === 0 ? (
+          {sortedNotifications.length === 0 ? (
             <div className="text-center py-8">
               <BellRing className="h-12 w-12 mx-auto text-gray-600 mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">
-                Noch keine passenden Benachrichtigungen
+                Noch keine Benachrichtigungen
               </h3>
               <p className="text-gray-500">
-                Du siehst hier Benachrichtigungen, wenn dein gewünschter Walk
-                Through wieder verfügbar ist.
+                Hier erscheinen deine Benachrichtigungen, sobald welche
+                vorhanden sind.
               </p>
             </div>
           ) : (
@@ -535,7 +529,7 @@ const Notifications = () => {
                 );
               })}
 
-              {filteredNotifications.length > itemsPerPage && (
+              {sortedNotifications.length > itemsPerPage && (
                 <div className="flex items-center justify-between mt-6">
                   <Button
                     variant="outline"

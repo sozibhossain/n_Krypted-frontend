@@ -383,7 +383,7 @@ function DealsPage() {
     queryKey: ["all-deals-locations"],
     queryFn: async () => {
       try {
-        const { data } = await axiosInstance.get("/api/deals?showAll=true");
+        const { data } = await axiosInstance.get("/api/deals");
         console.log("All Deals Data:", data); // Debug log
         return data.deals || [];
       } catch (error) {
@@ -548,7 +548,7 @@ function DealsPage() {
     if (selectedCountry) {
       return selectedCountry;
     }
-    return "All Städte";
+    return "Alle Städte";
   };
 
   // Count active filters
@@ -672,7 +672,7 @@ function DealsPage() {
                   !selectedCountry && !selectedCity ? "bg-gray-100" : ""
                 }`}
               >
-                All Städte
+                Alle Städte
               </div>
               {uniqueLocations.map(({ country, cities }) => (
                 <div key={country} className="relative group w-full">

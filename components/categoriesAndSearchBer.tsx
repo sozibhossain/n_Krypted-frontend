@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxios from "@/hooks/useAxios";
 import Hideon from "@/Provider/Hideon";
 
+/* ===================== Types ===================== */
 interface Category {
   _id: string;
   categoryName: string;
@@ -29,8 +30,8 @@ interface Location {
 }
 
 interface CountryWithCities {
-  country: string;
-  cities: string[];
+  country: string; // display label
+  cities: string[]; // display labels
 }
 
 interface Deal {
@@ -51,7 +52,30 @@ interface Deal {
   updatedAt: string;
 }
 
-// Custom hook for managing URL parameters (same as in DealsPage)
+/* ===================== Helpers ===================== */
+const normalizeKey = (s?: string | null) =>
+  (s ?? "").normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
+
+const prettyLabel = (s?: string | null) => {
+  const base = (s ?? "").normalize("NFKC").replace(/\s+/g, " ").trim();
+  // Title-case words (unicode safe) and keep hyphenated compounds nice
+  return base.replace(/\p{L}[\p{L}\p{M}'-]*/gu, (word) =>
+    word
+      .split("-")
+      .map((part) =>
+        part
+          ? part.charAt(0).toLocaleUpperCase() +
+            part.slice(1).toLocaleLowerCase()
+          : part
+      )
+      .join("-")
+  );
+};
+
+const eqNorm = (a?: string | null, b?: string | null) =>
+  normalizeKey(a) === normalizeKey(b);
+
+/* ============ URL Params Hook (canonical writes) ============ */
 function useURLParams() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -60,41 +84,41 @@ function useURLParams() {
     (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
       Object.entries(updates).forEach(([key, value]) => {
-        if (value === null || value === "" || value === "all") {
+        const canon = value == null ? null : prettyLabel(value);
+        if (!canon || canon === "all") {
           params.delete(key);
         } else {
-          params.set(key, value);
+          params.set(key, canon);
         }
       });
-      // Always reset to page 1 when filters change (except when only page is being updated)
       if (!updates.page && Object.keys(updates).length > 0) {
         params.set("page", "1");
       }
-      const queryString = params.toString();
-      router.push(`/deals?${queryString}`, { scroll: false });
+      router.push(`/deals?${params.toString()}`, { scroll: false });
     },
     [router, searchParams]
   );
   return { searchParams, updateParams };
 }
 
+/* ===================== Component ===================== */
 export function CategoriesAndSearchBar() {
   const { searchParams, updateParams } = useURLParams();
   const axiosInstance = useAxios();
 
-  // Get current filter values from URL
+  // Current filter values from URL (raw)
   const currentCategory = searchParams.get("categoryName") || "";
   const currentCountry = searchParams.get("country") || "";
   const currentCity = searchParams.get("city") || "";
   const currentSearchQuery = searchParams.get("search") || "";
 
-  // Local state - synchronized with URL
+  // Local state
   const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
   const [selectedCategory, setSelectedCategory] = useState(currentCategory);
   const [selectedCountry, setSelectedCountry] = useState(currentCountry);
   const [selectedCity, setSelectedCity] = useState(currentCity);
 
-  // Sync state with URL params whenever they change
+  // Sync when URL params change
   useEffect(() => {
     setSearchQuery(currentSearchQuery);
     setSelectedCategory(currentCategory);
@@ -102,53 +126,53 @@ export function CategoriesAndSearchBar() {
     setSelectedCity(currentCity);
   }, [currentSearchQuery, currentCategory, currentCountry, currentCity]);
 
-  // Handle category selection
+  // Handlers
   const handleCategorySelect = (category: string) => {
-    const newCategory = category === selectedCategory ? "" : category;
+    const newCategory = eqNorm(category, selectedCategory)
+      ? ""
+      : prettyLabel(category);
     setSelectedCategory(newCategory);
-    updateParams({ categoryName: newCategory });
+    updateParams({ categoryName: newCategory || null });
   };
 
-  // Handle country selection
   const handleCountrySelect = (country: string) => {
-    const newCountry = country === selectedCountry ? "" : country;
+    const newCountry = eqNorm(country, selectedCountry)
+      ? ""
+      : prettyLabel(country);
     setSelectedCountry(newCountry);
     setSelectedCity(""); // Clear city when country changes
     updateParams({
-      country: newCountry,
-      city: null, // Clear city param
+      country: newCountry || null,
+      city: null,
     });
   };
 
-  // Handle city selection
   const handleCitySelect = (city: string, country: string) => {
-    const newCity = city === selectedCity ? "" : city;
+    const newCity = eqNorm(city, selectedCity) ? "" : prettyLabel(city);
+    const canonCountry = prettyLabel(country);
     setSelectedCity(newCity);
-    setSelectedCountry(country); // Set country when city is selected
+    setSelectedCountry(canonCountry); // Ensure country is set
     updateParams({
-      city: newCity,
-      country: country, // Ensure country is set
+      city: newCity || null,
+      country: canonCountry || null,
     });
   };
 
-  // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  // Handle search form submission
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateParams({ search: searchQuery.trim() });
+    const q = searchQuery.trim();
+    updateParams({ search: q || null });
   };
 
-  // Handle clearing search
   const handleClearSearch = () => {
     setSearchQuery("");
     setSelectedCategory("");
     setSelectedCountry("");
     setSelectedCity("");
-    // Clear search-related params but preserve others
     updateParams({
       search: null,
       categoryName: null,
@@ -157,11 +181,11 @@ export function CategoriesAndSearchBar() {
     });
   };
 
-  // Handle search on Enter key
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      updateParams({ search: searchQuery.trim() });
+      const q = searchQuery.trim();
+      updateParams({ search: q || null });
     }
   };
 
@@ -179,40 +203,67 @@ export function CategoriesAndSearchBar() {
     },
   });
 
-  // Fetch deals to get unique locations
+  // Fetch deals (all) to build Location menu
   const { data: dealsData } = useQuery({
-    queryKey: ["deals-locations"],
+    queryKey: ["deals-all"],
     queryFn: async () => {
-      try {
-        const { data } = await axiosInstance.get("/api/deals");
-        return data.deals || [];
-      } catch (error) {
-        console.error("Error fetching deals:", error);
-        return [];
-      }
+      const { data } = await axiosInstance.get("/api/deals", {
+        params: {
+          page: 1,
+          limit: 100000,
+          showAll: true, // 👈 added here
+        },
+      });
+      return data.deals || [];
     },
   });
 
-  // Group locations by country
-  const locations: Location[] =
-    dealsData
-      ?.map((deal: Deal) => ({
-        country: deal.location?.country,
-        city: deal.location?.city,
-      }))
-      .filter((loc: Location) => loc.country && loc.city) || [];
+  // Build unique Countries → Cities (defensive, though backend now sanitizes)
+  const uniqueLocations: CountryWithCities[] = (() => {
+    const locs: Location[] =
+      dealsData
+        ?.map((d: Deal) => ({
+          country: d.location?.country,
+          city: d.location?.city,
+        }))
+        .filter((l: Location) => l.country && l.city) || [];
 
-  const uniqueLocations: CountryWithCities[] = Array.from(
-    new Map(
-      locations.reduce((acc: Map<string, string[]>, { country, city }) => {
-        const cities = acc.get(country) || [];
-        if (!cities.includes(city)) {
-          cities.push(city);
-        }
-        return acc.set(country, cities);
-      }, new Map())
-    )
-  ).map(([country, cities]) => ({ country, cities: [...cities].sort() }));
+    const countryMap = new Map<
+      string,
+      { label: string; cities: Map<string, string> }
+    >();
+
+    for (const { country, city } of locs) {
+      const cKey = normalizeKey(country);
+      const cityKey = normalizeKey(city);
+      if (!cKey || !cityKey) continue;
+
+      if (!countryMap.has(cKey)) {
+        countryMap.set(cKey, {
+          label: prettyLabel(country),
+          cities: new Map(),
+        });
+      }
+      const entry = countryMap.get(cKey)!;
+      if (!entry.cities.has(cityKey))
+        entry.cities.set(cityKey, prettyLabel(city));
+    }
+
+    // to array + sort
+    const arr: CountryWithCities[] = Array.from(countryMap.values()).map(
+      (v) => ({
+        country: v.label,
+        cities: Array.from(v.cities.values()).sort((a, b) =>
+          a.localeCompare(b, undefined, { sensitivity: "base" })
+        ),
+      })
+    );
+
+    arr.sort((a, b) =>
+      a.country.localeCompare(b.country, undefined, { sensitivity: "base" })
+    );
+    return arr;
+  })();
 
   const HIDDEN_ROUTES = [
     "/dashboard",
@@ -224,21 +275,20 @@ export function CategoriesAndSearchBar() {
     "/verify-otp",
   ];
 
-  // Get display text for location button
   const getLocationDisplayText = () => {
-    if (selectedCity) return selectedCity;
-    if (selectedCountry) return selectedCountry;
+    if (selectedCity) return prettyLabel(selectedCity);
+    if (selectedCountry) return prettyLabel(selectedCountry);
     return "Alle Städte";
   };
 
   return (
     <div className="sticky top-[100px] z-50 bg-[#212121] w-full">
       <Hideon routes={HIDDEN_ROUTES}>
-        <div className="">
+        <div>
           <header className="container py-3">
             <form onSubmit={handleSearchSubmit}>
               <div className="grid grid-cols-4 gap-2 md:gap-4 lg:gap-8">
-                {/* Categories Dropdown */}
+                {/* Categories */}
                 <div className="col-span-4 md:col-span-4 lg:col-span-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -262,30 +312,30 @@ export function CategoriesAndSearchBar() {
                           Loading categories...
                         </DropdownMenuItem>
                       ) : (
-                        categoriesData?.data?.map((category: Category) => (
-                          <DropdownMenuItem
-                            key={category._id}
-                            onClick={() =>
-                              handleCategorySelect(category.categoryName)
-                            }
-                            className={
-                              selectedCategory === category.categoryName
-                                ? "bg-neutral-100"
-                                : ""
-                            }
-                          >
-                            {category.categoryName}
-                          </DropdownMenuItem>
-                        ))
+                        categoriesData?.data?.map((category: Category) => {
+                          const label = prettyLabel(category.categoryName);
+                          const active = eqNorm(selectedCategory, label);
+                          return (
+                            <DropdownMenuItem
+                              key={category._id}
+                              onClick={() => handleCategorySelect(label)}
+                              className={active ? "bg-neutral-100" : ""}
+                            >
+                              {label}
+                            </DropdownMenuItem>
+                          );
+                        })
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
+
+                {/* Search + Location */}
                 <div className="col-span-4 md:col-span-4 lg:col-span-3">
-                  {/* Search Input and Location Dropdown */}
                   <div className="flex items-center border border-white justify-between rounded-lg">
+                    {/* Search */}
                     <div className="relative flex-1 max-w-2xl">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         type="text"
                         placeholder="Suche nach Titel..."
@@ -301,14 +351,15 @@ export function CategoriesAndSearchBar() {
                         <button
                           type="button"
                           onClick={handleClearSearch}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-white transition-colors duration-200 p-1 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white/20"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-white transition-colors duration-200 p-1 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white/20"
                           aria-label="Clear search and filters"
                         >
                           <X className="h-4 w-4 stroke-2" />
                         </button>
                       )}
                     </div>
-                    {/* Location Dropdown */}
+
+                    {/* Location */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -322,57 +373,45 @@ export function CategoriesAndSearchBar() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="p-0 max-w-[200px] z-50 overflow-visible"
+                        className="p-0 max-w-[220px] z-50 overflow-visible"
                       >
-                        {/* All Locations */}
-                        {/* <div
-                          onClick={() => {
-                            handleCountrySelect("");
-                            handleCitySelect("", "");
-                          }}
-                          className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
-                            !selectedCountry && !selectedCity
-                              ? "bg-neutral-100"
-                              : ""
-                          }`}
-                        >
-                          Frankfurt am Main
-                        </div> */}
-                        {/* Countries and Cities */}
-                        {uniqueLocations.map(({ country, cities }) => (
-                          <div key={country} className="relative group">
-                            {/* Country Item */}
-                            <div
-                              onClick={() => handleCountrySelect(country)}
-                              className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
-                                selectedCountry === country && !selectedCity
-                                  ? "bg-neutral-100"
-                                  : ""
-                              }`}
-                            >
-                              <span>{country}</span>
-                              <ChevronDown className="h-4 w-4 transform group-hover:rotate-180 transition-transform" />
+                        {uniqueLocations.map(({ country, cities }) => {
+                          const isActiveCountry =
+                            eqNorm(selectedCountry, country) && !selectedCity;
+                          return (
+                            <div key={country} className="relative group">
+                              {/* Country */}
+                              <div
+                                onClick={() => handleCountrySelect(country)}
+                                className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
+                                  isActiveCountry ? "bg-neutral-100" : ""
+                                }`}
+                              >
+                                <span>{country}</span>
+                                <ChevronDown className="h-4 w-4 transform group-hover:rotate-180 transition-transform" />
+                              </div>
+                              {/* Cities submenu */}
+                              <div className="absolute top-full left-0 w-full md:w-auto md:min-w-[180px] lg:left-full lg:top-0 hidden group-hover:flex flex-col bg-white border rounded-md shadow-md z-50">
+                                {cities.map((city) => {
+                                  const activeCity = eqNorm(selectedCity, city);
+                                  return (
+                                    <div
+                                      key={city}
+                                      onClick={() =>
+                                        handleCitySelect(city, country)
+                                      }
+                                      className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
+                                        activeCity ? "bg-neutral-100" : ""
+                                      }`}
+                                    >
+                                      {city}
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
-                            {/* Submenu: Cities */}
-                            <div className="absolute top-full left-0 w-full md:w-auto md:min-w-[160px] lg:left-full lg:top-0 hidden group-hover:flex flex-col bg-white border rounded-md shadow-md z-50">
-                              {cities.map((city) => (
-                                <div
-                                  key={city}
-                                  onClick={() =>
-                                    handleCitySelect(city, country)
-                                  }
-                                  className={`px-4 py-2 cursor-pointer hover:bg-neutral-100 ${
-                                    selectedCity === city
-                                      ? "bg-neutral-100"
-                                      : ""
-                                  }`}
-                                >
-                                  {city}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

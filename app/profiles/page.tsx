@@ -317,14 +317,14 @@ export default function Dashboard() {
                   localStorage.clear();
                   signOut({ callbackUrl: "/login" });
                 }}
-                className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg text-[16px]"
+                className="flex-1 bg-white text-black border border-black hover:bg-black hover:text-white transition-colors duration-200 p-2 rounded-lg text-[14px]"
               >
                 Ja
               </button>
 
               <button
                 onClick={() => setShowLogoutDialog(false)}
-                className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg text-[16px]"
+                className="flex-1 bg-black text-white border border-white hover:bg-white hover:text-black transition-colors duration-200 p-2 rounded-lg text-[14px]"
               >
                 Nein
               </button>
