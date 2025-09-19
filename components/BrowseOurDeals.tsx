@@ -80,7 +80,7 @@ export function BrowseOurDeals() {
             </div>
           </div>
           <p className="text-xl md:text-2xl lg:text-[26px] font-bold text-white my-2 md:my-3">
-            Finde deine Walk Throughs
+            Finde deine Walk Throughz
           </p>
         </div>
         <Link href={"/deals"}>
