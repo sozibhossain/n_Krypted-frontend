@@ -3,10 +3,10 @@ import Link from "next/link";
 
 const PaymentSuccessPage: FC = () => {
   return (
-    <div className="h-[70vh] flex items-center justify-center bg-[#212121]">
-      <div className="max-w-md mx-auto p-6 rounded-lg shadow-md border border-gray-300">
+    <div className="h-[70vh] lg:h-[60vh] flex items-center justify-center bg-[#212121] ">
+      <div className="max-w-md mx-auto p-6 rounded-lg shadow-md border-2 border-gray-300">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#212121] mb-4 border border-gray-300">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#212121] mb-4 border-2 border-gray-300">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-8 w-8 text-green-400"

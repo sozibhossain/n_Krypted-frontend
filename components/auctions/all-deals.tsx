@@ -592,7 +592,7 @@ function DealsPage() {
     <div className="space-y-6 bg-white p-4 sm:p-5 rounded-lg shadow-sm w-full max-w-full lg:max-w-[300px]">
       {/* Categories */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-lg sm:text-xl lg:text-[20px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Kategorien
         </h3>
         {isLoadingCategories ? (
@@ -621,7 +621,7 @@ function DealsPage() {
                 <div className="flex items-center gap-2">
                   <Label
                     htmlFor={`category-${category.categoryName}`}
-                    className="text-sm sm:text-base lg:text-xl cursor-pointer text-[#4E4E4E] font-medium"
+                    className="text-sm sm:text-base lg:text-lg cursor-pointer text-[#4E4E4E] font-medium"
                   >
                     {category.categoryName}
                   </Label>
@@ -634,7 +634,7 @@ function DealsPage() {
 
       {/* Locations */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-lg sm:text-xl lg:text-[20px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Städte
         </h3>
         {uniqueLocations.length === 0 ? (
@@ -652,7 +652,7 @@ function DealsPage() {
               >
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span className="text-sm sm:text-base lg:text-xl cursor-pointer text-[#4E4E4E] font-medium">
+                  <span className="text-sm sm:text-base lg:text-lg cursor-pointer text-[#4E4E4E] font-medium">
                     {getLocationDisplayText()}
                   </span>
                 </div>
@@ -709,15 +709,13 @@ function DealsPage() {
 
       {/* Price Range Slider */}
       <div>
-        <h3 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#212121] mb-3 sm:mb-4">
+        <h3 className="text-lg sm:text-xl lg:text-[20px] font-semibold text-[#212121] mb-3 sm:mb-4">
           Preisspanne
         </h3>
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <label className="text-sm text-gray-600 mb-1 block">
-                Min Preis
-              </label>
+              <label className="text-sm text-gray-600 mb-1 block">Von</label>
               <input
                 type="number"
                 min="0"
@@ -742,9 +740,7 @@ function DealsPage() {
             </div>
             <span className="text-gray-400 mt-6">-</span>
             <div className="flex-1">
-              <label className="text-sm text-gray-600 mb-1 block">
-                Max Preis
-              </label>
+              <label className="text-sm text-gray-600 mb-1 block">Bis</label>
               <input
                 type="number"
                 min="0"
@@ -854,7 +850,7 @@ function DealsPage() {
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] sm:w-[350px] p-0">
                 <div className="flex justify-between items-center p-4 border-b">
-                  <h2 className="text-xl font-semibold">Filters</h2>
+                  <h2 className="text-xl font-semibold">Filter</h2>
                 </div>
                 <div className="overflow-y-auto h-[calc(100vh-60px)]">
                   <FilterSidebar />

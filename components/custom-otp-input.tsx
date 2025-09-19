@@ -7,8 +7,8 @@ interface OtpInputProps {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
-  className?: string;
-  inputClassName?: string;
+  className?: string; // optional, not required
+  inputClassName?: string; // optional, not required
   numericOnly?: boolean;
 }
 
@@ -83,6 +83,15 @@ export function CustomOtpInput({
     [disabled, length, onChange, numericOnly, value]
   );
 
+  // Default dark styles for each input box
+  const baseInputClasses =
+    "h-12 w-12 rounded-md border text-center text-xl " +
+    "bg-black text-white caret-white " +
+    "border-gray-600 placeholder:text-gray-400 " +
+    "focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white " +
+    "disabled:opacity-50 disabled:cursor-not-allowed " +
+    "transition-colors";
+
   return (
     <div className={`flex justify-center space-x-2 ${className}`}>
       {Array.from({ length }, (_, index) => (
@@ -93,6 +102,8 @@ export function CustomOtpInput({
           }}
           type={numericOnly ? "tel" : "text"}
           inputMode={numericOnly ? "numeric" : "text"}
+          // Helps mobile keyboards; pattern is advisory (doesn't block input)
+          pattern={numericOnly ? "[0-9]*" : "[A-Za-z0-9]*"}
           maxLength={1}
           value={value[index] || ""}
           onChange={(e) => handleChange(index, e)}
@@ -100,8 +111,7 @@ export function CustomOtpInput({
           onPaste={index === 0 ? handlePaste : undefined}
           onFocus={(e) => e.target.select()}
           disabled={disabled}
-          className={`h-12 w-12 rounded-md border border-gray-400 text-center text-xl !text-black bg-white 
-            focus:outline-none focus:border-black disabled:opacity-50 ${inputClassName}`}
+          className={`${baseInputClasses} ${inputClassName}`}
           autoComplete={index === 0 ? "one-time-code" : "off"}
           aria-label={`Verification code digit ${index + 1} of ${length}`}
           data-testid={`otp-input-${index}`}

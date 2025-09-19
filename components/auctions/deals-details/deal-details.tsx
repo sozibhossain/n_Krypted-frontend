@@ -691,7 +691,7 @@ export default function DealDetails({ auctionId }: AuctionDetailsProps) {
       />
 
       {/* Reviews */}
-      <div className="space-y-6 pb-[20px] md:pb-[120px]">
+      <div className="space-y-5 pb-[20px] md:pb-[120px] pt-[50px]">
         <h2 className="text-xl md:text-2xl lg:text-[26px] text-[#FFFFFF] font-semibold">
           Kundenrezensionen
         </h2>
