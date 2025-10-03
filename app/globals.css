@@ -240,6 +240,8 @@ body {
   content: none;
 }
 
+
+
 /* Payment.css */
 .payment-container {
   max-width: 600px;
@@ -292,3 +294,54 @@ body {
   border-radius: 4px;
   color: #2e7d32;
 }
+
+
+
+/* QuillEditor custom styles */
+.list-item {
+  /* This already applies a line-height, which helps with vertical spacing */
+  @apply text-base leading-relaxed text-white; 
+}
+
+/* ... (Your existing list styles for ul/ol) ... */
+
+/* Heading styles for the list items: MARGINS REMOVED */
+.list-item h1,
+.list-item h2,
+.list-item h3,
+.list-item h4,
+.list-item h5,
+.list-item h6 {
+  /* Remove all top and bottom margins for the tightest possible fit */
+  margin-top: 0 !important; 
+  margin-bottom: 0 !important; 
+  font-weight: bold;
+  color: white !important;
+}
+
+.blogcontent {
+  color: white !important;
+}
+
+.list-item h1 {
+  @apply text-3xl;
+}
+/* ... (h2, h3, h4, h5, h6 size rules remain the same) ... */
+
+/* Paragraph styling: MARGINS REMOVED */
+.list-item p {
+  /* Remove all top and bottom margins */
+  margin-top: 0 !important; 
+  margin-bottom: 0 !important;
+  color: white !important;
+}
+
+.list-item span {
+  color: white !important;
+}
+
+.list-item {
+  @apply text-base leading-tight text-white; 
+}
+
+/* ... (Rest of your existing global.css code) ... */

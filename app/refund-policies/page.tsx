@@ -1,7 +1,13 @@
+"use client";
 import { PageHeader } from "@/Shared/PageHeader";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function RefundPoliciesPage() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className=" ">
       <PageHeader title="Datenschutzerklärung" imge="/assets/panda.jpg" />

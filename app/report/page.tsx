@@ -1,6 +1,12 @@
+"use client";
 import { PageHeader } from "@/Shared/PageHeader";
+import { useEffect } from "react";
 
 export default function TermsAndConditions() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <PageHeader title="Geschäftsbedingungen" imge="/assets/report2.jpg" />

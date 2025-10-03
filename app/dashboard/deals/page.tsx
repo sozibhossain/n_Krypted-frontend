@@ -59,6 +59,7 @@ interface Deal {
   category: Category | null;
   createdAt: string;
   updatedAt: string;
+  popularDeals: boolean;
 }
 
 interface PaginationInfo {
@@ -134,6 +135,36 @@ export default function DealsManagement() {
       }
     },
   });
+
+  const popularMutation = useMutation({
+  mutationFn: async (id: string) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deals/${id}/popular`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to toggle popularDeals");
+    }
+
+    return response.json();
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["deals", page, PAGE_SIZE] });
+    toast.success("Popular status updated", { position: "top-right" });
+  },
+  onError: (error) => {
+    console.error("Error toggling popularDeals:", error);
+    toast.error("Failed to update popular status", { position: "top-right" });
+  },
+});
+
 
   const categories = categoriesData?.data || [];
 
@@ -417,6 +448,7 @@ export default function DealsManagement() {
                     <TableHead>Country</TableHead>
                     <TableHead>City</TableHead>
                     <TableHead>Price</TableHead>
+                    <TableHead>Popular</TableHead>
                     <TableHead>Activate</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -457,6 +489,13 @@ export default function DealsManagement() {
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           €{deal.price.toFixed(2)}
                         </TableCell>
+                        <TableCell className="text-[#212121] text-base font-medium py-4">
+  <Switch
+    checked={deal.popularDeals}
+    onCheckedChange={() => popularMutation.mutate(deal._id)}
+  />
+</TableCell>
+
                         <TableCell className="text-[#212121] text-base font-medium py-4">
                           <div className="relative">
                             <Switch

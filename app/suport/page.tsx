@@ -2,8 +2,13 @@
 
 import { PageHeader } from "@/Shared/PageHeader";
 import ContactForm from "@/components/contactForm";
+import { useEffect } from "react";
 
 export default function SupportPage() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <PageHeader title="Support" imge="/assets/support.jpg" />

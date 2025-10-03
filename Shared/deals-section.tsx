@@ -23,9 +23,8 @@ interface Deal {
   title: string;
   description: string;
   participations: number;
-   shortDescription?: string; 
+  shortDescription?: string;
   price: number;
-
   images: string[];
   offers: string[];
   status: string;
@@ -43,10 +42,11 @@ interface Deal {
 export function DealsSection() {
   const axiosInstance = useAxios();
 
+  // ✅ use the new "popular" deals route
   const { data: response, isLoading } = useQuery({
-    queryKey: ["deals"],
+    queryKey: ["popularDeals"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get(`/api/deals?showAll=true`);
+      const { data } = await axiosInstance.get(`/api/deals/popular`);
       return data;
     },
   });
@@ -67,24 +67,15 @@ export function DealsSection() {
       }
     };
 
-    // Set initial value
     handleResize();
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
-
-    // Clean up
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Create an array of skeleton items based on itemsPerView
-  const skeletonItems = Array.from(
-    { length: itemsPerView },
-    (_, index) => index
-  );
+  const skeletonItems = Array.from({ length: itemsPerView }, (_, index) => index);
 
   return (
-    <section className="">
+    <section>
       <div className="container">
         <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-8">
           <div className="mb-4 sm:mb-0 space-y-4">
@@ -129,24 +120,16 @@ export function DealsSection() {
 
         <div className="relative px-0 sm:px-4">
           <Carousel
-            opts={{
-              align: "start",
-              loop: false,
-            }}
+            opts={{ align: "start", loop: false }}
             className="w-full"
             setApi={(api) => {
               if (api) {
-                const prevButton = document.getElementById(
-                  "carousel-prev-button"
-                );
-                const nextButton = document.getElementById(
-                  "carousel-next-button"
-                );
+                const prevButton = document.getElementById("carousel-prev-button");
+                const nextButton = document.getElementById("carousel-next-button");
 
                 if (prevButton) {
                   prevButton.addEventListener("click", () => api.scrollPrev());
                 }
-
                 if (nextButton) {
                   nextButton.addEventListener("click", () => api.scrollNext());
                 }
@@ -155,7 +138,6 @@ export function DealsSection() {
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {isLoading ? (
-                // Skeleton loading state
                 skeletonItems.map((index) => (
                   <CarouselItem
                     key={`skeleton-${index}`}
@@ -181,37 +163,35 @@ export function DealsSection() {
                   </div>
                 </CarouselItem>
               ) : (
-                // Actual data
                 dealsData.map((deal: Deal) => (
                   <CarouselItem
                     key={deal._id}
                     className={` ${
                       itemsPerView === 1
                         ? "basis-full"
-                        : itemsPerView === 1
+                        : itemsPerView === 2
                         ? "basis-1/2"
                         : "basis-1/3"
                     }`}
                   >
-                    <div className="">
-                     <DealsCard
-  id={deal._id}
-  status={deal.status}
-  title={deal.title}
-  shortDescription={deal.shortDescription}  // ← add this line
-  image={deal.images[0] || "/assets/deals.png"}
-  description={deal.description}
-  price={deal.price}
-  time={deal.time}
-  createdAt={deal.createdAt}
-  updatedAt={deal.updatedAt}
-  participations={deal.bookingCount}
-  maxParticipants={deal.participationsLimit}
-  scheduleDates={deal.scheduleDates}
-  location={deal.location}
-  timer={deal.timer}
-/>
-
+                    <div>
+                      <DealsCard
+                        id={deal._id}
+                        status={deal.status}
+                        title={deal.title}
+                        shortDescription={deal.shortDescription}
+                        image={deal.images[0] || "/assets/deals.png"}
+                        description={deal.description}
+                        price={deal.price}
+                        time={deal.time}
+                        createdAt={deal.createdAt}
+                        updatedAt={deal.updatedAt}
+                        participations={deal.bookingCount}
+                        maxParticipants={deal.participationsLimit}
+                        scheduleDates={deal.scheduleDates}
+                        location={deal.location}
+                        timer={deal.timer}
+                      />
                     </div>
                   </CarouselItem>
                 ))

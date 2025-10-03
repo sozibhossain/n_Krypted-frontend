@@ -85,9 +85,9 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             {blog.title}
           </h1>
           <div className="flex  items-center space-x-4">
-            <div className="mt-2 text-white  text-[18px] flex items-center gap-2">
+            <div className="mt-2 text-white  text-[16px] flex items-center gap-2">
               <div>
-                <Calendar />
+                <Calendar className="text-white w-[14px]" />
               </div>
               {new Date(blog.createdAt).toLocaleString("en-US", {
                 timeZone: "Europe/Berlin",
@@ -98,8 +98,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
             </div>
           </div>
           <div className=" space-x-2  mt-2 text-white  text-[18px] flex items-center gap-">
-            <UserRound className="" />
-            <span className="">{blog?.authorName}</span>
+            <UserRound className="text-white w-[14px]" />
+            <span className="text-white text-[16px]">{blog?.authorName}</span>
           </div>
         </div>
 
