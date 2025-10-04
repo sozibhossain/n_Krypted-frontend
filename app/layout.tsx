@@ -8,6 +8,7 @@ import { SocketProvider } from "@/Provider/SocketProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
 import StripeProvider from "@/components/pyment/StripeProvider";
+import ScrollToTop from "@/hooks/scrolltotop";
 
 // Load Poppins font
 const poppins = Poppins({
@@ -48,6 +49,7 @@ export default function RootLayout({
         <AppProvider>
           <SocketProvider>
             <Toaster position="top-right" />
+            <ScrollToTop />
             <LayoutShell>
               <StripeProvider>{children}</StripeProvider>
             </LayoutShell>
